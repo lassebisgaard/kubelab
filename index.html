@@ -4,11 +4,13 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' 
+        rel='stylesheet'>
         <title>Projekter</title>
         <link rel="stylesheet" href="style.css">
     </head>
 
-    <body>
+    <body class="sb-expanded">
         <aside>
             <nav>
                 <ul>
@@ -20,7 +22,7 @@
                     </li>
                     <li>
                         <a href="#">
-                            <i class="bx bx-home-circle"> </i>
+                            <i class='bx bx-hot'></i>
                             <span>Templates</span>
                         </a>
                     </li>
@@ -31,8 +33,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#">
-                            <i class="bx bx-home-circle"> </i>
+                        <a href="#" data-resize-btn>
+                            <i class='bx bx-book-content'></i>
                             <span>Users</span>
                         </a>
                     </li>
@@ -42,10 +44,17 @@
 
         <main>
             <h1>hej</h1>
-            <p>hej med dig</p>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aliquid, maiores voluptatem? Deleniti, numquam eum. Rem, similique natus, repellendus vitae eum unde error placeat perferendis id expedita at nostrum beatae sed?</p>
         </main>
 
+        <script>
+            const resizeBtn = document.querySelector('[data-resize-btn]');
 
+            resizeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.body.classList.toggle('sb-expanded')
+            });
+        </script>
 
 
     </body>
