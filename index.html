@@ -8,6 +8,7 @@
         rel='stylesheet'>
         <title>Projekter</title>
         <link rel="stylesheet" href="style.css">
+        <script src="script.js" defer></script>
     </head>
 
     <body class="dark-mode">
@@ -80,22 +81,6 @@
             <h1>hej</h1>
             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aliquid, maiores voluptatem? Deleniti, numquam eum. Rem, similique natus, repellendus vitae eum unde error placeat perferendis id expedita at nostrum beatae sed?</p>
         </main>
-
-        <script>
-            const resizeBtn = document.querySelector('[data-resize-btn]');
-            const themeToggle = document.querySelector('.theme-toggle');
-            const body = document.body;
-
-            resizeBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.body.classList.toggle('sb-expanded')
-            });
-
-            themeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                body.classList.toggle('light-mode');
-            });
-        </script>
 
 
     </body>

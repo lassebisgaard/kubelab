@@ -1,7 +1,8 @@
 /* Reusable grid layouts */
 .grid {
     display: grid;
-    gap: var(--spacing-xl);
+    gap: 24px;
+    padding: 24px;
 }
 
 .grid-2x2 {
