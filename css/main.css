@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.page-container {
+    padding: var(--spacing-xl);
+}
+
+.page-title {
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xl);
+    font-size: 2rem;
+} 
