@@ -15,6 +15,8 @@
     --card-background-light: #f8f8f8;
     --hover-background-light: #f0f0f0;
     --link-color-light: #4a90e2;
+    --active-color-light: #FF5733;
+
   
     /* Dark Mode Colors */
     --background-color-dark: #001B2E;
@@ -26,6 +28,7 @@
     --card-background-dark: #001724;
     --hover-background-dark: #0A2637;
     --link-color-dark: #03FFB2;
+    --active-color-dark: #03F7AD;
   
     /* Shared Colors */
     --success-color: #28a745;
@@ -45,6 +48,7 @@
     --card-background: var(--card-background-light);
     --hover-background: var(--hover-background-light);
     --link-color: var(--link-color-light);
+    --active-color: var(--active-color-light);
   }
   
   /* Dark Mode */
@@ -58,22 +62,22 @@
     --card-background: var(--card-background-dark);
     --hover-background: var(--hover-background-dark);
     --link-color: var(--link-color-dark);
+    --active-color: var(--active-color-dark);
   }
 
 body {
-  --sb-width: 5rem;
+  --sb-width: 102px;
   background-color: var(--background-color);
   color: var(--text-color);
 }
 
 body.sb-expanded {
-  --sb-width: 12.5rem;
+  --sb-width: 284px;
 }
 
 aside {
   position: fixed;
   inset: 0 auto 0 0;
-  padding: 1rem;
   width: var(--sb-width);
   background-color: var(--card-background);
   transition: width 0.5s ease-in-out;
@@ -82,6 +86,9 @@ aside {
 nav {
   height: 100%;
   display: flex;
+  margin-left: 39px;
+  margin-top: 50px;
+  margin-bottom: 31px;
   flex-direction: column;
 }
 
@@ -106,7 +113,7 @@ nav a {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 0.625rem 0.875rem;
+  margin: 40px 0 0 0;
   font-size: 1.25rem;
   line-height: 1;
   color: var(--text-color);
@@ -121,9 +128,10 @@ nav a.active,
 nav a:hover,
 nav a:focus-visible {
   outline: none;
-  color: var(--background-color);
-  background-color: var(--accent-color);
+  color: var(--active-color);
 }
+
+
 
 nav a span {
   font-size: 0.875rem;
@@ -137,6 +145,58 @@ nav a span {
 .sb-expanded nav a span {
   opacity: 1;
   visibility: visible;
+}
+
+/* Standard styling for create-button */
+.create-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 206px;
+  height: 41px;
+  margin-top: 64px;
+  background-color: #00FFBB;
+  border: none;
+  border-radius: 8px;
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 
+      background-color 0.3s,
+      width 0.3s,
+      padding 0.3s;
+}
+
+/* Styling af ikon inde i knappen */
+.create-button .icon {
+  font-size: 25px;
+  margin-right: 16px;
+  
+}
+
+
+
+/* Tilstand når sidebaren er lukket */
+body:not(.sb-expanded) .create-button {
+  width: 38px; /* Mindre bredde men ikke cirkulær */
+  height: 35px;
+  padding: 0;
+  border-radius: 8px; /* Bevar let afrundede hjørner */
+}
+
+
+body:not(.sb-expanded) .create-button .icon {
+  margin-right: 0px !important;
+}
+/* Skjul teksten fuldstændigt i lukket tilstand */
+body:not(.sb-expanded) .create-button .icon + span {
+  display: none;
+}
+
+.icons {
+  width: 27px;
+  height: 27px;
 }
 
 main {
