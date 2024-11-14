@@ -1,15 +1,30 @@
+/* === Base Styles === */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
+    --sb-width: 102px;
+    background-color: var(--background-color);
+    color: var(--text-color);
     margin: 0;
     padding: 0;
     font-family: system-ui, -apple-system, sans-serif;
 }
 
-.page-container {
-    padding: var(--spacing-xl);
+body.sb-expanded {
+    --sb-width: 284px;
 }
 
-.page-title {
-    color: var(--text-color);
-    margin-bottom: var(--spacing-xl);
-    font-size: 2rem;
+main {
+    margin-left: var(--sb-width);
+    padding: 1rem 2rem;
+    transition: margin-left 0.5s ease-in-out;
+}
+
+p {
+    line-height: 1.5;
 } 

@@ -1,0 +1,47 @@
+/* === Page Layout === */
+main {
+    margin-left: var(--sb-width);
+    padding: 3rem 3rem;
+    transition: margin-left 0.5s ease-in-out;
+}
+
+.page-container {
+    padding: var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-title {
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xl);
+    font-size: 2rem;
+}
+
+/* === Grid System === */
+.grid {
+    display: grid;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.grid-2x2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3x3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-list {
+    grid-template-columns: 1fr;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid-2x2,
+    .grid-3x3 {
+        grid-template-columns: 1fr;
+    }
+} 
