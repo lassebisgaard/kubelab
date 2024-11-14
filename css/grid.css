@@ -1,0 +1,16 @@
+/* Reusable grid layouts */
+.grid {
+    display: grid;
+    gap: var(--spacing-xl);
+}
+
+.grid-2x2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid-2x2 {
+        grid-template-columns: 1fr;
+    }
+} 
