@@ -120,4 +120,971 @@ body:not(.sb-expanded) .create-button .icon + span {
 .icons {
     width: 27px;
     height: 27px;
+}
+
+/* === Step Indicators === */
+.steps {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 32px 0;
+    max-width: 800px;
+    margin-left: 0;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-color);
+    opacity: 0.5;
+    font-size: 14px;
+    transition: opacity 0.3s ease-out, color 0.3s ease-out;
+}
+
+.step.active {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+.step.completed {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+.step-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease-out;
+}
+
+.step.active .step-number {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--background-color);
+}
+
+.step-divider {
+    flex: 1;
+    height: 2px;
+    background-color: var(--border-color);
+    transition: background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-divider.completed {
+    background-color: var(--accent-color);
+}
+
+.step-divider.completed::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--accent-color);
+    transform: translateX(-100%);
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+@keyframes slideIn {
+    to {
+        transform: translateX(0);
+    }
+}
+
+.step.completed .step-number {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--background-color);
+    font-size: 16px;
+}
+
+.step.completed .step-number i {
+    opacity: 0;
+    animation: fadeInRotate 0.4s ease-out forwards;
+}
+
+@keyframes fadeInRotate {
+    0% {
+        opacity: 0;
+        transform: rotate(-90deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(0);
+    }
+}
+
+/* === Template Cards === */
+.template-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    height: 100%;
+    transform: translateY(0);
+    animation: cardAppear 0.5s ease-out backwards;
+}
+
+.template-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.template-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.template-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.template-card.selected {
+    border-color: var(--accent-color);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.template-card h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.template-card p {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.template-card .author {
+    font-size: 14px;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin: 16px 0;
+}
+
+.template-card .preview-container {
+    width: 100%;
+    max-height: 150px;
+    border-radius: 4px;
+    margin: 16px 0;
+    overflow: hidden;
+    background-color: var(--card-background-dark);
+}
+
+.template-card .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.template-card .services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.service-tag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    padding-right: 32px;
+    background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 100px;
+    color: var(--text-color);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.service-tag .remove-service {
+    position: absolute;
+    right: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.service-tag:hover .remove-service {
+    opacity: 0.7;
+}
+
+.service-tag .remove-service:hover {
+    opacity: 1;
+}
+
+.service-tag.active {
+    border-color: var(--accent-color);
+    background-color: var(--card-background);
+    color: var(--accent-color);
+}
+
+.service-tag i {
+    font-size: 14px;
+}
+
+/* === Form Components === */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.form-group textarea {
+    min-height: 60px;
+    resize: none;
+}
+
+.domain-input {
+    display: flex;
+    align-items: center;
+}
+
+.domain-input input {
+    flex: 1;
+}
+
+.domain-suffix {
+    margin-left: 8px;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* Placeholder styling */
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+/* === Flow Navigation Buttons === */
+.flow-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.back-button i {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.next-button,
+.create-project-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--accent-color);
+    color: var(--background-color);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.next-button i,
+.create-project-button i {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+/* === Page Subtitle === */
+.page-subtitle {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    margin-bottom: 32px;
+}
+
+/* === Search Bar === */
+.search-bar {
+    margin-bottom: 24px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.search-bar input::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+/* === Confirmation Details === */
+.confirmation-details {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    margin-top: 24px;
+}
+
+.detail-group {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.detail-group label {
+    display: block;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.detail-group div {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.detail-description {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    margin: 8px 0 16px 0;
+}
+
+/* === Form Card === */
+.form-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 32px;
+    max-width: 800px;
+}
+
+.form-card h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+/* === Step Content Animations === */
+.step-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.step-content.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* === Step Indicator Animations === */
+.step {
+    transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.step.completed .step-number {
+    transition: all 0.3s ease;
+}
+
+.step.completed .step-number i {
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* === Template Card Animations === */
+.template-card {
+    animation: cardAppear 0.5s ease-out backwards;
+}
+
+.template-card:nth-child(1) { animation-delay: 0.1s; }
+.template-card:nth-child(2) { animation-delay: 0.2s; }
+
+/* === Form Card Animations === */
+.form-card {
+    animation: cardAppear 0.5s ease-out backwards;
+}
+
+.form-group {
+    animation: cardAppear 0.5s ease-out backwards;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+
+/* === Detail Group Animations === */
+.form-card h2,
+.form-card .detail-description,
+.form-card .services {
+    animation: cardAppear 0.5s ease-out backwards;
+}
+
+.detail-group {
+    animation: cardAppear 0.5s ease-out backwards;
+}
+
+.detail-group:nth-child(1) { animation-delay: 0.1s; }
+.detail-group:nth-child(2) { animation-delay: 0.2s; }
+.detail-group:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === Loading & Success Overlays === */
+.loading-overlay,
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-content,
+.success-content {
+    text-align: center;
+    color: white;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success Icon */
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transform: scale(0);
+    animation: popIn 0.5s ease-out forwards;
+}
+
+.success-icon i {
+    font-size: 40px;
+    color: var(--background-color);
+}
+
+@keyframes popIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+/* Show states */
+.loading-overlay.show,
+.success-overlay.show {
+    display: flex;
+}
+
+/* === YAML Upload Area === */
+.yaml-upload {
+    position: relative;
+    height: 150px;
+}
+
+.yaml-upload .upload-area {
+    width: 100%;
+    height: 100%;
+    border: 2px dashed var(--border-color);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--card-background-dark);
+}
+
+.yaml-upload .upload-area:hover {
+    border-color: var(--accent-color);
+}
+
+.yaml-upload .upload-area i {
+    font-size: 24px;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+    opacity: 0.7;
+}
+
+.yaml-upload .upload-area span {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Når en fil er valgt */
+.yaml-upload.has-file .upload-area {
+    border-style: solid;
+    border-color: var(--accent-color);
+}
+
+/* === Services Selection === */
+.services-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.service-tag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    padding-right: 32px;
+    background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 100px;
+    color: var(--text-color);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.service-tag .remove-service {
+    position: absolute;
+    right: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.service-tag:hover .remove-service {
+    opacity: 0.7;
+}
+
+.service-tag .remove-service:hover {
+    opacity: 1;
+}
+
+.service-tag.active {
+    border-color: var(--accent-color);
+    background-color: var(--card-background);
+    color: var(--accent-color);
+}
+
+.service-tag i {
+    font-size: 14px;
+}
+
+/* === Create Service Link === */
+.create-service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    margin-left: auto;
+}
+
+.create-service-link:hover {
+    opacity: 1;
+}
+
+.create-service-link i {
+    font-size: 14px;
+}
+
+/* === Modal === */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+/* === Modal Buttons === */
+.button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button.secondary {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.button.primary {
+    background-color: var(--accent-color);
+    border: none;
+    color: var(--background-color);
+}
+
+/* === Configuration Grid === */
+.config-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 32px;
+    margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+    .config-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .preview-section {
+        min-width: 0; /* Fjern min-width på mobile */
+    }
+}
+
+/* === Services Header === */
+.services-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.create-service-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 4px;
+    color: var(--background-color);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.create-service-btn i {
+    font-size: 16px;
+}
+
+/* === Icon Grid === */
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.icon-option {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: none;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.icon-option:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.icon-option.selected {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--background-color);
+}
+
+.icon-option i {
+    font-size: 24px;
+}
+
+/* === Small Modal === */
+.modal-content.small {
+    max-width: 400px;
+}
+
+/* === Preview Image === */
+.preview-container {
+    width: 100%;
+    max-height: 150px;
+    border-radius: 4px;
+    margin: 16px 0;
+    overflow: hidden;
+    background-color: var(--card-background-dark);
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Styling for confirmation step */
+.detail-group .preview-container {
+    max-height: 120px;
+    margin: 8px 0;
+}
+
+/* === YAML File Display === */
+.yaml-file-display {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.yaml-file-display i {
+    font-size: 20px;
+    color: var(--accent-color);
+    flex-shrink: 0;
+}
+
+.yaml-file-display .filename {
+    flex: 1;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.remove-file {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 4px;
+    transition: opacity 0.2s ease;
+}
+
+.remove-file:hover {
+    opacity: 1;
+}
+
+/* === Preview Upload with Remove === */
+.preview-upload {
+    position: relative;
+}
+
+.preview-container {
+    position: relative;
+}
+
+.preview-container .remove-file {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* === Preview Upload === */
+.preview-section {
+    min-width: 300px;
+}
+
+.preview-upload {
+    position: relative;
+    height: 150px;
+}
+
+.preview-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Opdater upload area styling */
+.preview-upload .upload-area {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 } 

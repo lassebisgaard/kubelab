@@ -3,6 +3,7 @@ main {
     margin-left: var(--sb-width);
     padding: 3rem 3rem;
     transition: margin-left 0.5s ease-in-out;
+    padding-bottom: 100px;
 }
 
 .page-container {
@@ -44,4 +45,5 @@ main {
     .grid-3x3 {
         grid-template-columns: 1fr;
     }
-} 
+}
+ 
