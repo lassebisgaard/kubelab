@@ -170,7 +170,7 @@ class BaseStepForm {
 
         // Preview Image Upload
         const previewInput = document.querySelector('#preview-image');
-        const previewUpload = document.querySelector('.preview-upload');
+        const previewUpload = document.querySelector('.preview-container--upload');
         
         previewInput?.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -179,21 +179,20 @@ class BaseStepForm {
                 reader.onload = (e) => {
                     this.formData.previewImage = e.target.result;
                     previewUpload.innerHTML = `
-                        <div class="preview-container">
-                            <img src="${e.target.result}" alt="Preview">
-                            <button class="remove-file">
-                                <i class='bx bx-x'></i>
-                            </button>
-                        </div>
+                        <img src="${e.target.result}" alt="Preview">
+                        <button class="remove-file" aria-label="Remove image">
+                            <i class='bx bx-x'></i>
+                        </button>
                     `;
 
                     const removeBtn = previewUpload.querySelector('.remove-file');
-                    removeBtn?.addEventListener('click', () => {
+                    removeBtn?.addEventListener('click', (e) => {
+                        e.preventDefault();
                         this.formData.previewImage = null;
                         previewUpload.innerHTML = `
                             <input type="file" id="preview-image" hidden accept="image/*">
                             <label for="preview-image" class="upload-area">
-                                <i class='bx bx-image-add'></i>
+                                <i class='bx bx-image'></i>
                                 <span>Click to upload preview image</span>
                             </label>
                         `;
@@ -371,11 +370,28 @@ class BaseStepForm {
     updateTemplateConfirmation() {
         const nameConfirm = document.getElementById('template-name-confirm');
         const descriptionConfirm = document.getElementById('template-description-confirm');
+        const yamlConfirm = document.querySelector('.yaml-file-display');
+        const previewConfirm = document.querySelector('.preview-container--detail');
         const servicesContainer = document.querySelector('#template-step2 .service-tags');
         
+        // Opdater navn og beskrivelse
         if (nameConfirm) nameConfirm.textContent = this.formData.name;
         if (descriptionConfirm) descriptionConfirm.textContent = this.formData.description;
         
+        // Opdater YAML fil visning
+        if (yamlConfirm && this.formData.yamlFile) {
+            yamlConfirm.innerHTML = `
+                <i class='bx bx-file'></i>
+                <span class="filename">${this.formData.yamlFile.name}</span>
+            `;
+        }
+        
+        // Opdater preview billede
+        if (previewConfirm && this.formData.previewImage) {
+            previewConfirm.innerHTML = `<img src="${this.formData.previewImage}" alt="Preview">`;
+        }
+        
+        // Opdater services
         if (servicesContainer) {
             servicesContainer.innerHTML = this.formData.services.length > 0
                 ? this.formData.services.map(service => `
@@ -395,23 +411,27 @@ class BaseStepForm {
         const nameConfirm = document.getElementById('project-name-confirm');
         const domainConfirm = document.getElementById('project-domain-confirm');
         const descriptionConfirm = document.getElementById('project-description-confirm');
+        const templateDisplay = document.querySelector('.template-display');
 
+        // Opdater basis projekt information
         if (nameConfirm) nameConfirm.textContent = this.formData.name;
         if (domainConfirm) domainConfirm.textContent = `${this.formData.domain}.kubelab.dk`;
         if (descriptionConfirm) descriptionConfirm.textContent = this.formData.description || 'Not specified';
 
-        // Opdater template preview med services
-        const templatePreview = document.querySelector('.selected-template-preview .template-info');
-        if (templatePreview && this.formData.template) {
-            templatePreview.innerHTML = `
-                <div>
+        // Opdater template visning med services
+        if (templateDisplay && this.formData.template) {
+            templateDisplay.innerHTML = `
+                <i class='bx bx-code-block'></i>
+                <div class="template-info">
                     <h3>${this.formData.template.name}</h3>
                     <p>${this.formData.template.description}</p>
-                    <div class="services">
-                        ${window.renderServiceTags(
-                            this.formData.template.services.map(service => service.id),
-                            false
-                        )}
+                    <div class="service-tags">
+                        ${this.formData.template.services.map(service => `
+                            <span class="service-tag">
+                                <i class='bx ${service.icon}'></i>
+                                <span>${service.name}</span>
+                            </span>
+                        `).join('')}
                     </div>
                 </div>
             `;
