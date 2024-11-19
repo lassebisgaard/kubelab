@@ -209,110 +209,44 @@ class BaseStepForm {
      * Håndterer service tilføjelse og redigering
      */
     initServiceFunctionality() {
-        // Tilføj event listeners til eksisterende services
-        const existingServices = document.querySelectorAll('.services-selection .service-tag');
-        existingServices.forEach(service => {
-            // Click event for at toggle active state
-            service.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('remove-service') && 
-                    !e.target.parentElement.classList.contains('remove-service')) {
-                    service.classList.toggle('active');
-                }
-            });
+        const servicesSelection = document.querySelector('.services-selection');
+        if (!servicesSelection) return;
 
-            // Remove button event
-            const removeBtn = service.querySelector('.remove-service');
+        // Render initial services
+        servicesSelection.innerHTML = window.renderServiceTags(Object.keys(window.SERVICES), true);
+
+        // Håndter service clicks (active state)
+        servicesSelection.addEventListener('click', (e) => {
+            const serviceTag = e.target.closest('.service-tag');
+            if (serviceTag && !e.target.classList.contains('remove-service')) {
+                serviceTag.classList.toggle('active');
+                this.updateSelectedServices();
+            }
+        });
+
+        // Håndter service removal
+        servicesSelection.addEventListener('click', (e) => {
+            const removeBtn = e.target.closest('.remove-service');
             if (removeBtn) {
-                removeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    service.remove();
-                });
+                const serviceTag = removeBtn.closest('.service-tag');
+                if (serviceTag) {
+                    // Vis confirmation dialog
+                    this.showDeleteServiceConfirmation(serviceTag);
+                }
             }
         });
 
-        // Modal functionality
-        const createServiceModal = document.getElementById('createServiceModal');
-        const createBtn = document.querySelector('.create-service-link');
-        const closeBtn = createServiceModal?.querySelector('.close-modal');
-        const cancelBtn = document.getElementById('cancelCreateService');
-        const saveBtn = document.getElementById('saveCreateService');
-        const iconOptions = createServiceModal?.querySelectorAll('.icon-option');
-        const nameInput = document.getElementById('service-name-input');
-
-        createBtn?.addEventListener('click', () => {
-            createServiceModal?.classList.add('show');
-            // Reset form
-            if (nameInput) nameInput.value = '';
-            iconOptions?.forEach(opt => opt.classList.remove('selected'));
-        });
-
-        closeBtn?.addEventListener('click', () => createServiceModal?.classList.remove('show'));
-        cancelBtn?.addEventListener('click', () => createServiceModal?.classList.remove('show'));
-        
-        // Icon selection
-        iconOptions?.forEach(option => {
-            option.addEventListener('click', () => {
-                iconOptions.forEach(opt => opt.classList.remove('selected'));
-                option.classList.add('selected');
-            });
-        });
-
-        // Save new service
-        saveBtn?.addEventListener('click', () => {
-            const selectedIcon = createServiceModal.querySelector('.icon-option.selected');
-            const nameValue = nameInput?.value?.trim();
-            
-            let hasError = false;
-            
-            if (!nameValue) {
-                console.log('Name missing');
-                hasError = true;
-            }
-            
-            if (!selectedIcon) {
-                console.log('Icon missing');
-                hasError = true;
-            }
-            
-            if (hasError) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
-            this.createNewService(nameValue, selectedIcon.dataset.icon);
-            createServiceModal.classList.remove('show');
-        });
+        // Initialize create service modal
+        this.initCreateServiceModal();
     }
 
-    /**
-     * Opretter en ny service tag med given navn og ikon
-     */
-    createNewService(name, iconClass) {
-        const servicesContainer = document.querySelector('.services-selection');
-        const newService = document.createElement('button');
-        newService.className = 'service-tag';
-        newService.innerHTML = `
-            <i class='bx ${iconClass}'></i>
-            <span>${name}</span>
-            <i class='bx bx-x remove-service'></i>
-        `;
-
-        newService.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('remove-service') && 
-                !e.target.parentElement.classList.contains('remove-service')) {
-                newService.classList.toggle('active');
-            }
-        });
-
-        const removeBtn = newService.querySelector('.remove-service');
-        if (removeBtn) {
-            removeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                newService.remove();
-            });
-        }
-
-        servicesContainer?.appendChild(newService);
+    updateSelectedServices() {
+        const activeServices = document.querySelectorAll('.services-selection .service-tag.active');
+        this.formData.services = Array.from(activeServices).map(tag => ({
+            id: tag.dataset.service,
+            name: tag.querySelector('span').textContent,
+            icon: tag.querySelector('i').className.split(' ')[1]
+        }));
     }
 
     // === Project-Specific Methods ===
@@ -321,36 +255,26 @@ class BaseStepForm {
      * Initialiserer template selection funktionalitet
      */
     initTemplateSelection() {
-        console.log('Initializing template selection');
-        const templateCards = document.querySelectorAll('.project-template-grid .project-template-card');
-        console.log('Found template cards:', templateCards.length);
-        
-        if (templateCards.length === 0) {
-            console.warn('No template cards found on the page');
-            return;
-        }
+        const templateCards = document.querySelectorAll('.project-template-card');
+        if (!templateCards.length) return;
         
         templateCards.forEach(card => {
             card.addEventListener('click', () => {
-                console.log('Template card clicked');
                 templateCards.forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 
-                try {
-                    const services = Array.from(card.querySelectorAll('.service-tag')).map(tag => ({
-                        icon: tag.querySelector('i').className,
-                        name: tag.querySelector('span').textContent.trim()
-                    }));
-                    
-                    this.formData.template = {
-                        name: card.querySelector('h2')?.textContent || '',
-                        description: card.querySelector('p')?.textContent || '',
-                        services: services
-                    };
-                    console.log('Selected template with services:', this.formData.template);
-                } catch (error) {
-                    console.error('Error selecting template:', error);
-                }
+                this.formData.template = {
+                    name: card.querySelector('h2')?.textContent || '',
+                    description: card.querySelector('p')?.textContent || '',
+                    services: Array.from(card.querySelectorAll('.service-tag')).map(tag => ({
+                        id: tag.dataset.service,
+                        name: tag.querySelector('span').textContent,
+                        icon: tag.querySelector('i').className.split(' ')[1]
+                    }))
+                };
+                
+                // Opdater preview i confirmation step
+                this.updateProjectConfirmation();
             });
         });
     }
@@ -384,12 +308,10 @@ class BaseStepForm {
             this.formData.name = nameInput.value;
             this.formData.description = descriptionInput?.value || '';
             
-            const activeServices = document.querySelectorAll('.services-selection .service-tag.active');
-            this.formData.services = Array.from(activeServices).map(tag => ({
-                icon: tag.querySelector('i:not(.remove-service)').className,
-                name: tag.querySelector('span').textContent.trim()
-            }));
+            // Opdater services data
+            this.updateSelectedServices();
 
+            // Opdater confirmation step
             this.updateTemplateConfirmation();
             return true;
         }
@@ -449,36 +371,20 @@ class BaseStepForm {
     updateTemplateConfirmation() {
         const nameConfirm = document.getElementById('template-name-confirm');
         const descriptionConfirm = document.getElementById('template-description-confirm');
+        const servicesContainer = document.querySelector('#template-step2 .service-tags');
         
         if (nameConfirm) nameConfirm.textContent = this.formData.name;
-        if (descriptionConfirm) descriptionConfirm.textContent = this.formData.description || 'Not specified';
-
-        const servicesContainer = document.querySelector('#template-step2 .detail-group .service-tags');
+        if (descriptionConfirm) descriptionConfirm.textContent = this.formData.description;
+        
         if (servicesContainer) {
-            if (this.formData.services && this.formData.services.length > 0) {
-                servicesContainer.innerHTML = this.formData.services.map(service => `
+            servicesContainer.innerHTML = this.formData.services.length > 0
+                ? this.formData.services.map(service => `
                     <span class="service-tag">
-                        <i class='${service.icon}'></i>
+                        <i class='bx ${service.icon}'></i>
                         <span>${service.name}</span>
                     </span>
-                `).join('');
-            } else {
-                servicesContainer.innerHTML = '<div class="detail-value">No services selected</div>';
-            }
-        }
-
-        const yamlDisplay = document.querySelector('#template-step2 .yaml-file-display');
-        if (yamlDisplay) {
-            yamlDisplay.innerHTML = this.formData.yamlFile 
-                ? `<i class='bx bx-file'></i><span class="filename">${this.formData.yamlFile.name}</span>`
-                : `<i class='bx bx-file'></i><span class="filename">No file uploaded</span>`;
-        }
-
-        const previewContainer = document.querySelector('#template-step2 .preview-container');
-        if (previewContainer) {
-            previewContainer.innerHTML = this.formData.previewImage
-                ? `<img src="${this.formData.previewImage}" alt="Preview">`
-                : `<div class="no-preview">No preview image uploaded</div>`;
+                `).join('')
+                : '<div class="detail-value">No services selected</div>';
         }
     }
 
@@ -494,20 +400,18 @@ class BaseStepForm {
         if (domainConfirm) domainConfirm.textContent = `${this.formData.domain}.kubelab.dk`;
         if (descriptionConfirm) descriptionConfirm.textContent = this.formData.description || 'Not specified';
 
+        // Opdater template preview med services
         const templatePreview = document.querySelector('.selected-template-preview .template-info');
         if (templatePreview && this.formData.template) {
-            console.log('Template services:', this.formData.template.services); // Debug log
             templatePreview.innerHTML = `
                 <div>
                     <h3>${this.formData.template.name}</h3>
                     <p>${this.formData.template.description}</p>
                     <div class="services">
-                        ${this.formData.template.services.map(service => `
-                            <span class="service-tag">
-                                <i class='${service.icon}'></i>
-                                <span>${service.name}</span>
-                            </span>
-                        `).join('')}
+                        ${window.renderServiceTags(
+                            this.formData.template.services.map(service => service.id),
+                            false
+                        )}
                     </div>
                 </div>
             `;
@@ -554,6 +458,133 @@ class BaseStepForm {
     hideLoadingOverlay() {
         const loadingOverlay = document.querySelector('.loading-overlay');
         loadingOverlay?.classList.remove('show');
+    }
+
+    // === Create Service Modal Methods ===
+    
+    /**
+     * Initialiserer create service modal funktionalitet
+     */
+    initCreateServiceModal() {
+        const createServiceModal = document.getElementById('createServiceModal');
+        if (!createServiceModal) return;
+
+        const createBtn = document.querySelector('.create-service-link');
+        const closeBtn = createServiceModal.querySelector('.close-modal');
+        const cancelBtn = document.getElementById('cancelCreateService');
+        const saveBtn = document.getElementById('saveCreateService');
+        const iconOptions = createServiceModal.querySelectorAll('.icon-option');
+        const nameInput = document.getElementById('service-name-input');
+
+        // Show modal
+        createBtn?.addEventListener('click', () => {
+            createServiceModal.classList.add('show');
+            nameInput.value = '';
+            iconOptions.forEach(opt => opt.classList.remove('selected'));
+        });
+
+        // Hide modal
+        [closeBtn, cancelBtn].forEach(btn => {
+            btn?.addEventListener('click', () => {
+                createServiceModal.classList.remove('show');
+            });
+        });
+
+        // Icon selection
+        iconOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                iconOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+
+        // Save new service
+        saveBtn?.addEventListener('click', () => {
+            const selectedIcon = createServiceModal.querySelector('.icon-option.selected');
+            const nameValue = nameInput?.value?.trim();
+            
+            if (!nameValue || !selectedIcon) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Opret nyt service objekt
+            const newServiceId = nameValue.toLowerCase().replace(/\s+/g, '-');
+            const newService = {
+                id: newServiceId,
+                name: nameValue,
+                icon: selectedIcon.dataset.icon,
+                description: `Custom service: ${nameValue}`
+            };
+
+            // Tilføj til globalt SERVICES objekt
+            window.SERVICES[newServiceId] = newService;
+
+            // Tilføj til UI
+            const servicesSelection = document.querySelector('.services-selection');
+            if (servicesSelection) {
+                servicesSelection.insertAdjacentHTML('beforeend', 
+                    window.renderServiceTags([newServiceId], true)
+                );
+            }
+
+            // Reset og luk modal
+            nameInput.value = '';
+            selectedIcon.classList.remove('selected');
+            createServiceModal.classList.remove('show');
+        });
+    }
+
+    // === Delete Service Confirmation Methods ===
+    
+    /**
+     * Viser confirmation dialog for service removal
+     */
+    showDeleteServiceConfirmation(serviceTag) {
+        const dialog = document.createElement('div');
+        dialog.className = 'modal delete-service-dialog show';
+        dialog.innerHTML = `
+            <div class="modal-content small">
+                <div class="modal-header">
+                    <h3>Delete Service</h3>
+                    <button class="close-modal">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this service?</p>
+                    <div class="service-preview">
+                        ${serviceTag.outerHTML}
+                    </div>
+                    <div class="warning-message">
+                        <i class='bx bx-error-circle'></i>
+                        <div>
+                            <p class="warning-title">Warning</p>
+                            <p class="warning-text">This will remove the service from all projects and templates that use it.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" id="cancelDelete">Cancel</button>
+                    <button class="button delete" id="confirmDelete">Delete Service</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(dialog);
+
+        const closeDialog = () => {
+            dialog.classList.remove('show');
+            setTimeout(() => dialog.remove(), 300);
+        };
+
+        dialog.querySelector('.close-modal')?.addEventListener('click', closeDialog);
+        dialog.querySelector('#cancelDelete')?.addEventListener('click', closeDialog);
+        dialog.querySelector('#confirmDelete')?.addEventListener('click', () => {
+            serviceTag.remove();
+            this.updateSelectedServices();
+            closeDialog();
+        });
     }
 }
 

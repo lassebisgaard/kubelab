@@ -10,9 +10,6 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/navigation.css">
     <link rel="stylesheet" href="../css/components.css">
-    <script src="../js/forms/BaseStepForm.js" defer></script>
-    <script src="../js/forms/TemplateForm.js" defer></script>
-    <script src="../js/script.js" defer></script>
 </head>
 <body class="dark-mode">
     <aside>
@@ -146,26 +143,7 @@
                                 </button>
                             </div>
                             <div class="services-selection">
-                                <button class="service-tag">
-                                    <i class='bx bxl-wordpress'></i>
-                                    <span>WordPress</span>
-                                    <i class='bx bx-x remove-service'></i>
-                                </button>
-                                <button class="service-tag">
-                                    <i class='bx bx-data'></i>
-                                    <span>MySQL</span>
-                                    <i class='bx bx-x remove-service'></i>
-                                </button>
-                                <button class="service-tag">
-                                    <i class='bx bx-server'></i>
-                                    <span>phpMyAdmin</span>
-                                    <i class='bx bx-x remove-service'></i>
-                                </button>
-                                <button class="service-tag">
-                                    <i class='bx bx-cloud'></i>
-                                    <span>Nginx</span>
-                                    <i class='bx bx-x remove-service'></i>
-                                </button>
+                                <!-- Services will be rendered here by JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -324,9 +302,24 @@
         </div>
     </main>
 
+    <!-- Service tag template -->
+    <script id="service-tag-template" type="text/x-handlebars-template">
+        <div class="service-tag" data-service="{{id}}">
+            <i class='bx {{icon}}'></i>
+            <span>{{name}}</span>
+            {{#if isRemovable}}
+                <i class='bx bx-x remove-service'></i>
+            {{/if}}
+        </div>
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script src="../js/forms/BaseStepForm.js"></script>
+    <script src="../js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            new TemplateForm();
+            new BaseStepForm('template');
         });
     </script>
 </body>

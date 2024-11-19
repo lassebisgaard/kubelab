@@ -1,9 +1,86 @@
+// Services data - dette vil senere komme fra MySQL
+const SERVICES = {
+    wordpress: {
+        id: 'wordpress',
+        name: 'WordPress',
+        icon: 'bxl-wordpress',
+        description: 'Latest version of WordPress CMS'
+    },
+    mysql: {
+        id: 'mysql',
+        name: 'MySQL',
+        icon: 'bx-data',
+        description: 'MySQL Database Server'
+    },
+    phpmyadmin: {
+        id: 'phpmyadmin',
+        name: 'phpMyAdmin',
+        icon: 'bx-server',
+        description: 'Database Management Tool'
+    },
+    nginx: {
+        id: 'nginx',
+        name: 'Nginx',
+        icon: 'bx-server',
+        description: 'Web Server'
+    },
+    php: {
+        id: 'php',
+        name: 'PHP',
+        icon: 'bxl-php',
+        description: 'PHP Runtime'
+    }
+};
+
+// Vent på at DOM er loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Site-wide initialization
     initNavigation();
     initThemeToggle();
-    initForms();
+
+    // Vent på at Handlebars er loaded før vi initialiserer services
+    if (typeof Handlebars !== 'undefined') {
+        const templateSource = document.getElementById('service-tag-template');
+        if (templateSource) {
+            // Compile Handlebars template
+            const serviceTagTemplate = Handlebars.compile(templateSource.innerHTML);
+
+            // Gør services og render funktion tilgængelig globalt
+            window.SERVICES = SERVICES;
+            window.renderServiceTags = function(serviceIds, isRemovable = false) {
+                return serviceIds.map(id => {
+                    const service = SERVICES[id];
+                    if (!service) return '';
+                    return serviceTagTemplate({
+                        ...service,
+                        isRemovable
+                    });
+                }).join('');
+            };
+
+            // Initialiser services på siden
+            initializePageServices();
+        }
+    }
 });
+
+function initializePageServices() {
+    // Template creation page
+    const servicesSelection = document.querySelector('.services-selection');
+    if (servicesSelection) {
+        servicesSelection.innerHTML = window.renderServiceTags(Object.keys(SERVICES), true);
+    }
+
+    // Project creation page
+    const templateCards = document.querySelectorAll('.project-template-card');
+    templateCards.forEach(card => {
+        const services = card.dataset.services?.split(',') || [];
+        const servicesContainer = card.querySelector('.services');
+        if (servicesContainer) {
+            servicesContainer.innerHTML = window.renderServiceTags(services, false);
+        }
+    });
+}
 
 function initNavigation() {
     const resizeBtn = document.querySelector('[data-resize-btn]');
@@ -22,18 +99,5 @@ function initThemeToggle() {
             document.body.classList.toggle('dark-mode');
             document.body.classList.toggle('light-mode');
         });
-    }
-}
-
-function initForms() {
-    // Initialize appropriate form based on page
-    const templateConfigGrid = document.querySelector('.template-config-grid');
-    const configGrid = document.querySelector('.config-grid');
-    const projectStep = document.querySelector('.project-step');
-    
-    if (templateConfigGrid || configGrid) {
-        new BaseStepForm('template');
-    } else if (projectStep) {
-        new BaseStepForm('project');
     }
 }

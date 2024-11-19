@@ -110,7 +110,7 @@
                     </div>
                     
                     <div class="project-template-grid">
-                        <div class="project-template-card">
+                        <div class="project-template-card" data-services="wordpress,mysql,phpmyadmin">
                             <h2>Wordpress Kenneth</h2>
                             <p class="text-secondary">Wordpress installation with MySQL and phpMyAdmin. Perfect for 2nd semester projects.</p>
                             <div class="preview-container preview-container--template">
@@ -119,18 +119,7 @@
                             <div class="author text-secondary">By Kenneth</div>
                             <div class="included-services text-secondary">Included services:</div>
                             <div class="services">
-                                <span class="service-tag">
-                                    <i class='bx bxl-wordpress'></i>
-                                    <span>wordpress</span>
-                                </span>
-                                <span class="service-tag">
-                                    <i class='bx bx-data'></i>
-                                    <span>mySQL</span>
-                                </span>
-                                <span class="service-tag">
-                                    <i class='bx bx-server'></i>
-                                    <span>phpMyAdmin</span>
-                                </span>
+                                <!-- Services will be rendered here by JavaScript -->
                             </div>
                         </div>
 
@@ -260,5 +249,26 @@
             <p>Your project has been successfully created.</p>
         </div>
     </div>
+
+    <!-- Service tag template -->
+    <script id="service-tag-template" type="text/x-handlebars-template">
+        <div class="service-tag" data-service="{{id}}">
+            <i class='bx {{icon}}'></i>
+            <span>{{name}}</span>
+            {{#if isRemovable}}
+                <i class='bx bx-x remove-service'></i>
+            {{/if}}
+        </div>
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script src="../js/forms/BaseStepForm.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new BaseStepForm('project');
+        });
+    </script>
 </body>
 </html> 

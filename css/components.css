@@ -724,25 +724,37 @@ body:not(.sb-expanded) .create-button .icon + span {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border-color);
-    position: relative;
-    z-index: 2;
 }
 
-/* Service tag container and layout */
+.create-service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.create-service-link:hover {
+    opacity: 1;
+}
+
 .services-selection {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 8px;
 }
 
 .service-tag {
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     padding: 6px 12px;
     padding-right: 32px;
     background-color: var(--card-background-dark);
@@ -761,56 +773,29 @@ body:not(.sb-expanded) .create-button .icon + span {
 
 .service-tag .remove-service {
     position: absolute;
-    right: 8px;
+    right: 10px;
     width: 16px;
     height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--text-color);
     opacity: 0;
     transition: opacity 0.2s ease;
-    cursor: pointer;
 }
 
 .service-tag:hover .remove-service {
     opacity: 0.7;
 }
 
-.service-tag .remove-service:hover {
+.service-tag:hover .remove-service:hover {
     opacity: 1;
+    color: var(--accent-color);
 }
 
 .service-tag.active {
     background-color: var(--background-color);
     border-color: var(--accent-color);
-}
-
-.service-tag i {
-    font-size: 14px;
-}
-
-/* === Create Service Link === */
-.create-service-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 12px;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-    margin-left: auto;
-}
-
-.create-service-link:hover {
-    opacity: 1;
-}
-
-.create-service-link i {
-    font-size: 14px;
 }
 
 /* === Loading & Success Overlays === */
@@ -1355,4 +1340,138 @@ body:not(.sb-expanded) .create-button .icon + span {
     opacity: 0.7;
     font-size: 14px;
 }
-  
+
+/* === Confirmation Dialog === */
+.confirmation-dialog .modal-content {
+    max-width: 400px;
+    padding: 24px;
+}
+
+.confirmation-dialog .modal-body {
+    text-align: center;
+    padding: 24px 0;
+}
+
+.confirmation-dialog .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 24px;
+}
+
+/* Danger button */
+.button.danger {
+    background-color: var(--accent-color);
+    border: none;
+    color: var(--background-color);
+}
+
+/* Make remove button always visible on hover */
+.service-tag:hover .remove-service {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+/* === Delete Service Dialog === */
+.delete-service-dialog .modal-content {
+    max-width: 400px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.delete-service-dialog .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.delete-service-dialog .modal-header h3 {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.delete-service-dialog .modal-body {
+    padding: 24px;
+}
+
+.delete-service-dialog .modal-body > p {
+    font-size: 14px;
+    margin-bottom: 16px;
+    color: var(--text-color);
+}
+
+.delete-service-dialog .service-preview {
+    display: flex;
+    margin-bottom: 24px;
+}
+
+.delete-service-dialog .service-preview .service-tag {
+    pointer-events: none;
+    background-color: var(--background-color);
+    border-color: var(--border-color);
+}
+
+/* Warning message styling */
+.delete-service-dialog .warning-message {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: rgba(255, 71, 87, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 71, 87, 0.2);
+}
+
+.delete-service-dialog .warning-message i {
+    color: #ff4757;
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.delete-service-dialog .warning-title {
+    color: #ff4757;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.delete-service-dialog .warning-text {
+    color: var(--text-color);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.delete-service-dialog .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Buttons */
+.delete-service-dialog .button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-service-dialog .button.secondary {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.delete-service-dialog .button.delete {
+    background-color: #ff4757;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+}
+
+.delete-service-dialog .button.delete:hover {
+    background-color: #ff6b81;
+}
+
