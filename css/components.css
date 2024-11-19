@@ -5,12 +5,14 @@
     justify-content: center;
 }
 
+.text-secondary {
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
 /* === Buttons === */
 /* Primary action button used in navigation */
 .create-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 206px;
     height: 41px;
     margin-top: 64px;
@@ -93,8 +95,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 .card p {
-    color: var(--text-color);
-    opacity: 0.7;
     margin: 0;
     font-size: 0.875rem;
 }
@@ -103,8 +103,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 .card-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 6px;
@@ -125,8 +123,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 .card-action-text {
-    color: var(--text-color);
-    opacity: 0.7;
     font-size: 0.875rem;
 }
 
@@ -674,13 +670,29 @@ body:not(.sb-expanded) .create-button .icon + span {
 /* === Preview Container === */
 .preview-container {
     width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
     background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+}
+
+/* Template card preview */
+.preview-container--template {
+    height: 150px;
+}
+
+/* Upload preview */
+.preview-container--upload {
+    height: 100px;
+    padding: 16px;
+}
+
+/* Detail preview */
+.preview-container--detail {
+    height: 100px;
 }
 
 .preview-container img {

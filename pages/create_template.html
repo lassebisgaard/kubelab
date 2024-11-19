@@ -31,7 +31,7 @@
                     </a>
                 </li>
                 <li>
-                    <button class="create-button">
+                    <button class="create-button flex-center">
                         <img src="../assets/Icons/plus.svg" alt="Plus tegn" class="icon">
                         <span>Create</span>
                     </button>
@@ -82,7 +82,7 @@
     <main>
         <div class="page-container">
             <h1 class="page-title">Create new template</h1>
-            <p class="page-subtitle">Configure your template settings.</p>
+            <p class="page-subtitle text-secondary">Configure your template settings.</p>
             
             <div class="content-wrapper">
                 <!-- Steps -->
@@ -126,7 +126,7 @@
 
                                 <div class="preview-section">
                                     <label>Template image</label>
-                                    <div class="preview-upload">
+                                    <div class="preview-container preview-container--upload">
                                         <input type="file" id="preview-image" hidden accept="image/*">
                                         <label for="preview-image" class="upload-area">
                                             <i class='bx bx-image-add'></i>
@@ -197,7 +197,7 @@
 
                                 <div class="preview-section">
                                     <label>Template image</label>
-                                    <div class="preview-container">
+                                    <div class="preview-container preview-container--detail">
                                         <!-- Preview image will be added by JavaScript -->
                                     </div>
                                 </div>
@@ -235,7 +235,7 @@
 
         <div class="success-overlay">
             <div class="success-content">
-                <div class="success-icon">
+                <div class="success-icon flex-center">
                     <i class='bx bx-check'></i>
                 </div>
                 <h2>Template Created!</h2>
@@ -259,7 +259,7 @@
                                 <i class='bx bxl-wordpress'></i>
                                 <h3>WordPress</h3>
                             </div>
-                            <p>Latest version of WordPress CMS</p>
+                            <p class="text-secondary">Latest version of WordPress CMS</p>
                             <button class="add-service">Add service</button>
                         </div>
                         <!-- Flere services her -->
