@@ -173,8 +173,28 @@ class BaseStepForm {
     }
 
     initServiceFunctionality() {
-        this.addServiceListeners();
+        // Tilføj event listeners til eksisterende services
+        const existingServices = document.querySelectorAll('.services-selection .service-tag');
+        existingServices.forEach(service => {
+            // Click event for at toggle active state
+            service.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('remove-service') && 
+                    !e.target.parentElement.classList.contains('remove-service')) {
+                    service.classList.toggle('active');
+                }
+            });
 
+            // Remove button event
+            const removeBtn = service.querySelector('.remove-service');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    service.remove();
+                });
+            }
+        });
+
+        // Modal functionality
         const createServiceModal = document.getElementById('createServiceModal');
         const createBtn = document.querySelector('.create-service-link');
         const closeBtn = createServiceModal?.querySelector('.close-modal');
@@ -185,13 +205,15 @@ class BaseStepForm {
 
         createBtn?.addEventListener('click', () => {
             createServiceModal?.classList.add('show');
-            nameInput.value = '';
+            // Reset form
+            if (nameInput) nameInput.value = '';
             iconOptions?.forEach(opt => opt.classList.remove('selected'));
         });
 
         closeBtn?.addEventListener('click', () => createServiceModal?.classList.remove('show'));
         cancelBtn?.addEventListener('click', () => createServiceModal?.classList.remove('show'));
         
+        // Icon selection
         iconOptions?.forEach(option => {
             option.addEventListener('click', () => {
                 iconOptions.forEach(opt => opt.classList.remove('selected'));
@@ -199,6 +221,7 @@ class BaseStepForm {
             });
         });
 
+        // Save new service
         saveBtn?.addEventListener('click', () => {
             const selectedIcon = createServiceModal.querySelector('.icon-option.selected');
             const nameValue = nameInput?.value?.trim();
@@ -235,30 +258,22 @@ class BaseStepForm {
             <i class='bx bx-x remove-service'></i>
         `;
 
-        this.addServiceTagListeners(newService);
-        servicesContainer?.appendChild(newService);
-    }
-
-    addServiceTagListeners(tag) {
-        const newTag = tag.cloneNode(true);
-        tag.parentNode?.replaceChild(newTag, tag);
-        
-        newTag.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('remove-service')) {
-                newTag.classList.toggle('active');
+        newService.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('remove-service') && 
+                !e.target.parentElement.classList.contains('remove-service')) {
+                newService.classList.toggle('active');
             }
         });
 
-        const removeBtn = newTag.querySelector('.remove-service');
-        removeBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            newTag.remove();
-        });
-    }
+        const removeBtn = newService.querySelector('.remove-service');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                newService.remove();
+            });
+        }
 
-    addServiceListeners() {
-        const serviceTags = document.querySelectorAll('.services-selection .service-tag');
-        serviceTags.forEach(tag => this.addServiceTagListeners(tag));
+        servicesContainer?.appendChild(newService);
     }
 
     // Project-specifikke metoder
@@ -465,18 +480,5 @@ class BaseStepForm {
         loadingOverlay?.classList.remove('show');
     }
 }
-
-// Initialize forms when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    const templateConfigGrid = document.querySelector('.template-config-grid');
-    const configGrid = document.querySelector('.config-grid');
-    const projectStep = document.querySelector('.project-step');
-    
-    if (templateConfigGrid || configGrid) {
-        new BaseStepForm('template');
-    } else if (projectStep) {
-        new BaseStepForm('project');
-    }
-});
 
 
