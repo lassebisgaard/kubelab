@@ -12,7 +12,7 @@ body {
     color: var(--text-color);
     margin: 0;
     padding: 0;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: Poppins,system-ui, -apple-system, sans-serif;
 }
 
 body.sb-expanded {
@@ -40,3 +40,18 @@ p {
     font-size: 14px;
     margin-bottom: 48px;  /* Øget spacing før content */
 }
+
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+

@@ -11,7 +11,26 @@
 }
 
 /* === Buttons === */
-/* Primary action button used in navigation */
+.button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button.secondary {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.button.primary {
+    background-color: var(--accent-color);
+    border: none;
+    color: var(--background-color);
+}
+
 .create-button {
     width: 206px;
     height: 41px;
@@ -34,7 +53,6 @@
     margin-right: 16px;
 }
 
-/* Button state when sidebar is collapsed */
 body:not(.sb-expanded) .create-button {
     width: 38px;
     height: 35px;
@@ -51,7 +69,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Theme Toggle === */
-/* Theme toggle button in sidebar */
 .theme-toggle {
     background: none;
     border: none;
@@ -72,7 +89,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Cards === */
-/* Base card component used across the application */
 .card {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
@@ -83,7 +99,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     height: 100%;
 }
 
-/* Card hover states and interactions */
 .card:hover {
     border-color: var(--accent-color);
 }
@@ -99,7 +114,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     font-size: 0.875rem;
 }
 
-/* Card content wrapper for centered content */
 .card-content {
     display: flex;
     flex-direction: column;
@@ -111,7 +125,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     transition: border-color 0.2s ease;
 }
 
-/* Card hover states and interactions */
 .card:hover .card-content {
     border-color: var(--accent-color);
 }
@@ -133,7 +146,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Step Indicators === */
-/* Step progress bar container */
 .steps {
     display: flex;
     align-items: center;
@@ -143,7 +155,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-left: 0;
 }
 
-/* Individual step item */
 .step {
     display: flex;
     align-items: center;
@@ -154,18 +165,11 @@ body:not(.sb-expanded) .create-button .icon + span {
     transition: all 0.3s ease;
 }
 
-/* Step states: active, completed */
-.step.active {
+.step.active, .step.completed {
     opacity: 1;
     color: var(--accent-color);
 }
 
-.step.completed {
-    opacity: 1;
-    color: var(--accent-color);
-}
-
-/* Circular number indicator */
 .step-number {
     width: 24px;
     height: 24px;
@@ -183,7 +187,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--background-color);
 }
 
-/* Divider line between steps */
 .step-divider {
     flex: 1;
     height: 1px;
@@ -194,9 +197,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     background-color: var(--accent-color);
 }
 
-/* Mobile optimization for steps */
 @media (max-width: 768px) {
-    /* Hide step labels on mobile, keep only numbers */
     .steps {
         gap: 8px;
         margin: 16px 0;
@@ -219,7 +220,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-top: 24px;
 }
 
-/* Opdaterer project template card styling */
 .project-template-card {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
@@ -270,13 +270,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     object-fit: cover;
 }
 
-.project-template-card .author {
-    font-size: 12px;
-    color: var(--text-color);
-    opacity: 0.7;
-    margin-bottom: 8px;
-}
-
+.project-template-card .author,
 .project-template-card .included-services {
     font-size: 12px;
     color: var(--text-color);
@@ -284,15 +278,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-bottom: 8px;
 }
 
-/* Bevar eksisterende service tag styling */
-.project-template-card .services {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
 /* === Form Components === */
-/* Form group wrapper for input fields */
 .form-group {
     margin-bottom: 24px;
 }
@@ -320,25 +306,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     resize: none;
 }
 
-/* Custom domain input with suffix */
-.domain-input {
-    display: flex;
-    align-items: center;
-}
-
-.domain-input input {
-    flex: 1;
-}
-
-.domain-suffix {
-    margin-left: 8px;
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-/* Form input placeholders */
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: var(--text-color);
@@ -346,7 +313,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Flow Navigation === */
-/* Bottom navigation bar for multi-step forms */
 .flow-navigation {
     display: flex;
     justify-content: flex-end;
@@ -362,7 +328,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     z-index: 100;
 }
 
-/* Back button is left-aligned */
 .back-button {
     display: flex;
     align-items: center;
@@ -376,7 +341,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-right: auto;
 }
 
-/* Next/create button stays right-aligned */
 .next-button,
 .create-project-button {
     display: inline-flex;
@@ -404,14 +368,6 @@ body:not(.sb-expanded) .create-button .icon + span {
         left: 0;
         padding: 16px;
     }
-}
-
-/* === Page Subtitle === */
-.page-subtitle {
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 14px;
-    margin-bottom: 32px;
 }
 
 /* === Search Bar === */
@@ -448,7 +404,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-bottom: 8px;
 }
 
-/* Form card responsive styles */
 @media (max-width: 768px) {
     .form-card {
         padding: 16px;
@@ -467,96 +422,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     display: block;
     opacity: 1;
     transform: translateY(0);
-}
-
-/* === Modal === */
-/* Modal overlay and container */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal.show {
-    display: flex;
-}
-
-/* Modal sizes and variations */
-.modal-content {
-    background-color: var(--card-background);
-    border-radius: 8px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.modal-content.small {
-    max-width: 400px;
-}
-
-/* Modal sections: header, body, footer */
-.modal-header {
-    padding: 24px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 500;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 24px;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.modal-body {
-    padding: 24px;
-}
-
-.modal-footer {
-    padding: 24px;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-}
-
-/* === Modal Buttons === */
-.button {
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.button.secondary {
-    background: none;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-}
-
-.button.primary {
-    background-color: var(--accent-color);
-    border: none;
-    color: var(--background-color);
 }
 
 /* === Icon Grid === */
@@ -597,48 +462,11 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === File Upload Areas === */
-/* Upload area containers */
 .yaml-upload,
 .preview-upload {
     position: relative;
     height: 150px;
     width: 100%;
-}
-
-.upload-area {
-    width: 100%;
-    height: 100%;
-    border: 1px dashed var(--border-color);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: var(--card-background);
-    padding: 16px;
-}
-
-/* Upload area states and interactions */
-.upload-area:hover {
-    border-color: var(--accent-color);
-}
-
-.upload-area i {
-    font-size: 16px;
-    color: var(--accent-color);
-    margin-bottom: 0;
-    opacity: 0.7;
-}
-
-.upload-area span {
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 13px;
-    text-align: center;
-    line-height: 1.4;
 }
 
 /* === File Display === */
@@ -679,18 +507,15 @@ body:not(.sb-expanded) .create-button .icon + span {
     justify-content: flex-start;
 }
 
-/* Template card preview */
 .preview-container--template {
     height: 150px;
 }
 
-/* Upload preview */
 .preview-container--upload {
     height: 100px;
     padding: 16px;
 }
 
-/* Detail preview */
 .preview-container--detail {
     height: 100px;
 }
@@ -799,7 +624,6 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Loading & Success Overlays === */
-/* Overlay containers and animations */
 .loading-overlay,
 .success-overlay {
     position: fixed;
@@ -878,227 +702,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     }
 }
 
-/* === Responsive Design === */
-@media (max-width: 768px) {
-    .flow-navigation {
-        padding: 16px 24px;
-    }
-    
-    .steps {
-        margin: 24px 0;
-    }
-}
-
-/* === Project Template Cards === */
-.project-template-card {
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.project-template-card.selected {
-    border-color: var(--accent-color);
-}
-
-/* === Form Steps === */
-.project-step {
-    display: none;
-}
-
-.project-step.active {
-    display: block;
-}
-
-/* === Details Styling === */
-.detail-group {
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.detail-group:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.detail-group label {
-    display: block;
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-}
-
-.detail-value {
-    color: var(--text-color);
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-/* Confirmation page title */
-.confirm-title {
-    font-size: 20px;
-    margin-bottom: 4px;
-}
-
-.confirm-subtitle {
-    margin-bottom: 24px;
-}
-
-/* Chosen template section */
-.chosen-template {
-    margin-bottom: 24px;
-}
-
-.chosen-template label {
-    margin-bottom: 4px;
-}
-
-/* Project/Template details grid */
-.details-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-@media (max-width: 768px) {
-    .details-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* === File Uploads === */
-.yaml-upload,
-.preview-upload {
-    border: none;
-    padding: 0;
-}
-
-/* === Services Selection === */
-.services-selection {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 16px;
-}
-
-/* === Modals === */
-.modal {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-content {
-    background-color: var(--background-color);
-    border-radius: 8px;
-    padding: 24px;
-    max-width: 600px;
-    width: 100%;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-    margin-top: 24px;
-}
-
-
-/* === Upload Grid === */
-.config-grid {
-    display: flex;
-    gap: 24px;
-    margin-top: 24px;
-}
-
-.yaml-section,
-.preview-section {
-    flex: 1;
-    min-width: 0;
-}
-
-/* Opdaterer upload areas styling */
-.yaml-upload,
-.preview-upload {
-    height: 100px;
-    width: 100%;
-    position: relative;
-}
-
-.upload-area {
-    width: 100%;
-    height: 100%;
-    border: 1px dashed var(--border-color);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: var(--card-background);
-    padding: 16px;
-}
-
-/* Centrerer tekst og ikon */
-.upload-area i {
-    font-size: 16px;
-    color: var(--accent-color);
-    margin-bottom: 0;
-    opacity: 0.7;
-}
-
-.upload-area span {
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 13px;
-    text-align: center;
-    line-height: 1.4;
-}
-
-/* Fjerner ekstra border og padding */
-.yaml-upload,
-.preview-upload {
-    border: none;
-    padding: 0;
-}
-
-/* Filled checkmark for completed steps */
-.step.completed .step-number {
-    background-color: var(--accent-color);
-    border: none; /* Fjerner border for at få filled look */
-    color: var(--background-color);
-}
-
-.step.completed .step-number i {
-    color: var(--background-color);
-}
-
 /* === Project Details Page === */
 .project-details {
     background-color: var(--card-background);
@@ -1107,14 +710,12 @@ body:not(.sb-expanded) .create-button .icon + span {
     padding: 32px;
 }
 
-/* Details section */
 .details-section {
-    margin-bottom: 48px; /* Øget spacing før selected template */
+    margin-bottom: 48px;
 }
 
-/* Selected template - genbruger yaml-file-display styling */
 .selected-template {
-    margin-top: 48px; /* Øget spacing efter details */
+    margin-top: 48px;
 }
 
 .selected-template label {
@@ -1127,7 +728,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-bottom: 8px;
 }
 
-/* Genbruger yaml-file-display styling */
 .template-display {
     display: flex;
     align-items: center;
@@ -1168,46 +768,8 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Selected Template Display === */
-.selected-template {
-    margin-top: 24px;
-}
-
-.selected-template label {
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-    display: block;
-}
-
-/* Genbruger yaml-file-display styling men tilføjer specifik styling for template info */
 .selected-template .yaml-file-display {
     padding: 16px;
-}
-
-.selected-template .template-info {
-    flex: 1;
-}
-
-.selected-template .template-info h3 {
-    font-size: 14px;
-    color: var(--text-color);
-    margin-bottom: 4px;
-}
-
-.selected-template .template-info p {
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 13px;
-    margin-bottom: 12px;
-}
-
-.selected-template .service-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
 }
 
 /* === Selected Template Preview === */
@@ -1227,7 +789,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-bottom: 8px;
 }
 
-/* Genbruger yaml-file-display styling */
 .selected-template-preview .yaml-file-display {
     display: flex;
     align-items: flex-start;
@@ -1236,35 +797,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 4px;
-}
-
-.selected-template-preview .yaml-file-display i {
-    font-size: 20px;
-    color: var(--accent-color);
-    flex-shrink: 0;
-}
-
-.selected-template-preview .template-info {
-    flex: 1;
-}
-
-.selected-template-preview .template-info h3 {
-    font-size: 14px;
-    color: var(--text-color);
-    margin-bottom: 4px;
-}
-
-.selected-template-preview .template-info p {
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 13px;
-    margin-bottom: 12px;
-}
-
-.selected-template-preview .service-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
 }
 
 .selected-template-preview .service-tag {
@@ -1306,31 +838,28 @@ body:not(.sb-expanded) .create-button .icon + span {
     letter-spacing: 0.5px;
 }
 
-/* Opdateret højde på containerne */
 .detail-group.upload-grid .yaml-file-display,
 .detail-group.upload-grid .preview-container {
-    height: 100px; /* Reduceret fra 150px */
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    overflow: hidden; /* Tilføjet for at sikre at billeder ikke går ud over containeren */
+    overflow: hidden;
     padding: 16px;
 }
 
-/* Tilføjet styling for preview billeder */
 .detail-group.upload-grid .preview-container img {
-    width: auto; /* Ændret fra 100% */
-    height: auto; /* Ændret fra 100% */
-    max-width: 90%; /* Tilføjet max-width */
-    max-height: 90%; /* Tilføjet max-height */
+    width: auto;
+    height: auto;
+    max-width: 90%;
+    max-height: 90%;
     object-fit: contain;
     object-position: left center;
 }
 
-/* No preview message styling */
 .no-preview {
     display: flex;
     align-items: center;
@@ -1339,37 +868,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--text-color);
     opacity: 0.7;
     font-size: 14px;
-}
-
-/* === Confirmation Dialog === */
-.confirmation-dialog .modal-content {
-    max-width: 400px;
-    padding: 24px;
-}
-
-.confirmation-dialog .modal-body {
-    text-align: center;
-    padding: 24px 0;
-}
-
-.confirmation-dialog .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding-top: 24px;
-}
-
-/* Danger button */
-.button.danger {
-    background-color: var(--accent-color);
-    border: none;
-    color: var(--background-color);
-}
-
-/* Make remove button always visible on hover */
-.service-tag:hover .remove-service {
-    opacity: 1;
-    color: var(--accent-color);
 }
 
 /* === Delete Service Dialog === */
@@ -1411,7 +909,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     border-color: var(--border-color);
 }
 
-/* Warning message styling */
 .delete-service-dialog .warning-message {
     display: flex;
     gap: 12px;
@@ -1448,22 +945,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     gap: 12px;
 }
 
-/* Buttons */
-.delete-service-dialog .button {
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.delete-service-dialog .button.secondary {
-    background: none;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-}
-
 .delete-service-dialog .button.delete {
     background-color: #ff4757;
     border: none;
@@ -1474,4 +955,247 @@ body:not(.sb-expanded) .create-button .icon + span {
 .delete-service-dialog .button.delete:hover {
     background-color: #ff6b81;
 }
+
+/* === Modal === */
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 600px;
+    width: 100%;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.modal-content.small {
+    max-width: 400px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+/* === Confirmation Page Styles === */
+.confirmation-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px;
+}
+
+.confirmation-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.confirmation-header h1 {
+    font-size: 32px;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.confirmation-header p {
+    font-size: 16px;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.confirmation-details {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 48px;
+}
+
+.confirmation-section {
+    margin-bottom: 32px;
+}
+
+.confirmation-section:last-child {
+    margin-bottom: 0;
+}
+
+.confirmation-section h2 {
+    font-size: 20px;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.confirmation-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.confirmation-item:last-child {
+    margin-bottom: 0;
+}
+
+.confirmation-item-label {
+    flex: 0 0 120px;
+    font-size: 14px;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.confirmation-item-value {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.confirmation-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.confirmation-service-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--text-color);
+}
+
+.confirmation-service-tag i {
+    color: var(--accent-color);
+    font-size: 14px;
+}
+
+.confirmation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.confirmation-button {
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.confirmation-button.primary {
+    background-color: var(--accent-color);
+    color: var(--background-color);
+    border: none;
+}
+
+.confirmation-button.secondary {
+    background-color: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.confirmation-button:hover {
+    opacity: 0.9;
+}
+
+/* Responsive adjustments for confirmation page */
+@media (max-width: 768px) {
+    .confirmation-page {
+        padding: 16px;
+    }
+
+    .confirmation-header h1 {
+        font-size: 24px;
+    }
+
+    .confirmation-details {
+        padding: 24px;
+    }
+
+    .confirmation-item {
+        flex-direction: column;
+    }
+
+    .confirmation-item-label {
+        margin-bottom: 4px;
+    }
+
+    .confirmation-actions {
+        flex-direction: column;
+    }
+
+    .confirmation-button {
+        width: 100%;
+    }
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+    .project-template-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card {
+        padding: 16px;
+    }
+
+    .flow-navigation {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .back-button {
+        order: 2;
+        margin-right: 0;
+    }
+
+    .next-button,
+    .create-project-button {
+        order: 1;
+        width: 100%;
+    }
+}
+
 
