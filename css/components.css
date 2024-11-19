@@ -1,4 +1,5 @@
 /* === Buttons === */
+/* Primary action button used in navigation */
 .create-button {
     display: flex;
     align-items: center;
@@ -24,6 +25,7 @@
     margin-right: 16px;
 }
 
+/* Button state when sidebar is collapsed */
 body:not(.sb-expanded) .create-button {
     width: 38px;
     height: 35px;
@@ -40,6 +42,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Theme Toggle === */
+/* Theme toggle button in sidebar */
 .theme-toggle {
     background: none;
     border: none;
@@ -60,6 +63,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Cards === */
+/* Base card component used across the application */
 .card {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
@@ -70,6 +74,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     height: 100%;
 }
 
+/* Card hover states and interactions */
 .card:hover {
     border-color: var(--accent-color);
 }
@@ -87,6 +92,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     font-size: 0.875rem;
 }
 
+/* Card content wrapper for centered content */
 .card-content {
     display: flex;
     flex-direction: column;
@@ -100,6 +106,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     transition: border-color 0.2s ease;
 }
 
+/* Card hover states and interactions */
 .card:hover .card-content {
     border-color: var(--accent-color);
 }
@@ -123,6 +130,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Step Indicators === */
+/* Step progress bar container */
 .steps {
     display: flex;
     align-items: center;
@@ -132,6 +140,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-left: 0;
 }
 
+/* Individual step item */
 .step {
     display: flex;
     align-items: center;
@@ -142,6 +151,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     transition: all 0.3s ease;
 }
 
+/* Step states: active, completed */
 .step.active {
     opacity: 1;
     color: var(--accent-color);
@@ -152,6 +162,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--accent-color);
 }
 
+/* Circular number indicator */
 .step-number {
     width: 24px;
     height: 24px;
@@ -169,6 +180,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--background-color);
 }
 
+/* Divider line between steps */
 .step-divider {
     flex: 1;
     height: 1px;
@@ -179,8 +191,9 @@ body:not(.sb-expanded) .create-button .icon + span {
     background-color: var(--accent-color);
 }
 
-/* Step responsive styles */
+/* Mobile optimization for steps */
 @media (max-width: 768px) {
+    /* Hide step labels on mobile, keep only numbers */
     .steps {
         gap: 8px;
         margin: 16px 0;
@@ -276,6 +289,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Form Components === */
+/* Form group wrapper for input fields */
 .form-group {
     margin-bottom: 24px;
 }
@@ -303,6 +317,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     resize: none;
 }
 
+/* Custom domain input with suffix */
 .domain-input {
     display: flex;
     align-items: center;
@@ -320,7 +335,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     white-space: nowrap;
 }
 
-/* Placeholder styling */
+/* Form input placeholders */
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: var(--text-color);
@@ -328,6 +343,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Flow Navigation === */
+/* Bottom navigation bar for multi-step forms */
 .flow-navigation {
     display: flex;
     justify-content: flex-end;
@@ -343,14 +359,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     z-index: 100;
 }
 
-/* Flow navigation responsive styles */
-@media (max-width: 768px) {
-    .flow-navigation {
-        left: 0;
-        padding: 16px;
-    }
-}
-
+/* Back button is left-aligned */
 .back-button {
     display: flex;
     align-items: center;
@@ -364,12 +373,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-right: auto;
 }
 
-.back-button i {
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-}
-
+/* Next/create button stays right-aligned */
 .next-button,
 .create-project-button {
     display: inline-flex;
@@ -390,6 +394,13 @@ body:not(.sb-expanded) .create-button .icon + span {
     font-size: 18px;
     display: flex;
     align-items: center;
+}
+
+@media (max-width: 768px) {
+    .flow-navigation {
+        left: 0;
+        padding: 16px;
+    }
 }
 
 /* === Page Subtitle === */
@@ -456,6 +467,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Modal === */
+/* Modal overlay and container */
 .modal {
     position: fixed;
     top: 0;
@@ -473,6 +485,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     display: flex;
 }
 
+/* Modal sizes and variations */
 .modal-content {
     background-color: var(--card-background);
     border-radius: 8px;
@@ -486,6 +499,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     max-width: 400px;
 }
 
+/* Modal sections: header, body, footer */
 .modal-header {
     padding: 24px;
     border-bottom: 1px solid var(--border-color);
@@ -580,6 +594,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === File Upload Areas === */
+/* Upload area containers */
 .yaml-upload,
 .preview-upload {
     position: relative;
@@ -603,6 +618,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     padding: 16px;
 }
 
+/* Upload area states and interactions */
 .upload-area:hover {
     border-color: var(--accent-color);
 }
@@ -695,6 +711,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     z-index: 2;
 }
 
+/* Service tag container and layout */
 .services-selection {
     display: flex;
     flex-wrap: wrap;
@@ -778,6 +795,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* === Loading & Success Overlays === */
+/* Overlay containers and animations */
 .loading-overlay,
 .success-overlay {
     position: fixed;
@@ -831,7 +849,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--background-color);
 }
 
-/* === Animations === */
+/* Animation keyframes */
 @keyframes slideIn {
     to { transform: translateX(0); }
 }
