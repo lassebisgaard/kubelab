@@ -1,3 +1,5 @@
+/* components.css */
+
 /* === Utility Classes === */
 .flex-center {
     display: flex;
@@ -278,38 +280,75 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-bottom: 8px;
 }
 
-/* === Form Components === */
+/* === Labels & Form Controls === */
+label,
+.label {
+    display: block;
+    color: var(--text-color);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    opacity: 0.7;
+}
+
 .form-group {
     margin-bottom: 24px;
 }
 
-.form-group label {
-    display: block;
-    color: var(--text-color);
-    font-size: 14px;
-    margin-bottom: 8px;
+.form-group:last-child {
+    margin-bottom: 0;
 }
 
-.form-group input,
-.form-group textarea {
+.form-control {
     width: 100%;
-    padding: 12px 16px;
-    background-color: var(--card-background);
+    padding: 12px;
+    background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     color: var(--text-color);
     font-size: 14px;
+    font-family: inherit;
 }
 
-.form-group textarea {
-    min-height: 60px;
-    resize: none;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
+.form-control::placeholder {
     color: var(--text-color);
     opacity: 0.5;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+/* Specifikt for textarea */
+textarea.form-control {
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+/* === Domain Input === */
+.domain-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.domain-input input {
+    width: 100%;
+    padding-right: 90px;
+}
+
+.domain-suffix {
+    position: absolute;
+    right: 12px;
+    color: var(--text-color);
+    opacity: 0.7;
+    pointer-events: none;
+    user-select: none;
 }
 
 /* === Flow Navigation === */
@@ -395,13 +434,14 @@ body:not(.sb-expanded) .create-button .icon + span {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 32px;
+    padding: 24px;
+    max-width: 800px;
 }
 
 .form-card h2 {
     font-size: 20px;
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -461,12 +501,110 @@ body:not(.sb-expanded) .create-button .icon + span {
     font-size: 24px;
 }
 
-/* === File Upload Areas === */
-.yaml-upload,
-.preview-upload {
-    position: relative;
-    height: 150px;
+/* === Preview Container === */
+.preview-container {
     width: 100%;
+    background-color: var(--card-background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Preview container variants */
+.preview-container--template {
+    height: 150px;
+}
+
+.preview-container--upload {
+    height: 120px;
+    width: 100%;
+    border: 2px dashed var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--card-background-dark);
+    position: relative;
+}
+
+.preview-container--upload:hover {
+    border-color: var(--accent-color);
+}
+
+.preview-container--upload img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.preview-container--upload .remove-file {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--card-background-dark);
+    border: none;
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.preview-container--upload .remove-file:hover {
+    opacity: 1;
+}
+
+.preview-container--detail {
+    height: 100px;
+}
+
+/* Preview container content */
+.preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* === Upload Areas === */
+.yaml-upload {
+    height: 120px;
+    width: 100%;
+    border: 2px dashed var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--card-background-dark);
+}
+
+.yaml-upload:hover {
+    border-color: var(--accent-color);
+}
+
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-area i {
+    font-size: 24px;
+    color: var(--accent-color);
+}
+
+.upload-area span {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
 }
 
 /* === File Display === */
@@ -493,39 +631,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-/* === Preview Container === */
-.preview-container {
-    width: 100%;
-    background-color: var(--card-background-dark);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.preview-container--template {
-    height: 150px;
-}
-
-.preview-container--upload {
-    height: 100px;
-    padding: 16px;
-}
-
-.preview-container--detail {
-    height: 100px;
-}
-
-.preview-container img {
-    height: 100%;
-    width: auto;
-    max-width: 100%;
-    object-fit: contain;
-    object-position: left center;
 }
 
 /* === Remove Button === */
@@ -576,51 +681,31 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 .service-tag {
-    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 12px;
-    padding-right: 32px;
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 100px;
-    color: var(--text-color);
     font-size: 12px;
-    cursor: pointer;
+    color: var(--text-color);
     transition: all 0.2s ease;
 }
 
-.service-tag i:first-child {
-    color: var(--accent-color);
-    font-size: 14px;
-}
-
-.service-tag .remove-service {
-    position: absolute;
-    right: 10px;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-color);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.service-tag:hover .remove-service {
-    opacity: 0.7;
-}
-
-.service-tag:hover .remove-service:hover {
-    opacity: 1;
-    color: var(--accent-color);
+.service-tag.active,
+.service-tag:hover {
+    cursor: pointer;
+    border-color: var(--accent-color);
 }
 
 .service-tag.active {
     background-color: var(--background-color);
-    border-color: var(--accent-color);
+}
+
+.service-tag i {
+    color: var(--accent-color);
+    font-size: 14px;
 }
 
 /* === Loading & Success Overlays === */
@@ -669,7 +754,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     justify-content: center;
     margin: 0 auto 20px;
     transform: scale(0);
-    animation: popIn 0.5s ease-out forwards;
+    animation: pop-in 0.5s ease-out forwards;
 }
 
 .success-icon i {
@@ -678,7 +763,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 }
 
 /* Animation keyframes */
-@keyframes slideIn {
+@keyframes slide-in {
     to { transform: translateX(0); }
 }
 
@@ -686,12 +771,12 @@ body:not(.sb-expanded) .create-button .icon + span {
     to { transform: rotate(360deg); }
 }
 
-@keyframes popIn {
+@keyframes pop-in {
     from { transform: scale(0); }
     to { transform: scale(1); }
 }
 
-@keyframes cardAppear {
+@keyframes card-appear {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -815,59 +900,33 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--accent-color);
 }
 
-/* === Upload Grid i confirmation step === */
-.detail-group.upload-grid {
-    display: flex;
-    gap: 24px;
+/* === Detail Groups === */
+.detail-group {
     margin-bottom: 24px;
 }
 
-.detail-group.upload-grid .yaml-section,
-.detail-group.upload-grid .preview-section {
-    flex: 1;
-    min-width: 0;
+.detail-group:last-child {
+    margin-bottom: 0;
 }
 
-.detail-group.upload-grid label {
-    display: block;
-    margin-bottom: 8px;
+.detail-group .detail-value {
     color: var(--text-color);
-    opacity: 0.7;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.detail-group.upload-grid .yaml-file-display,
-.detail-group.upload-grid .preview-container {
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    font-size: 14px;
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    overflow: hidden;
-    padding: 16px;
+    padding: 12px 16px;
 }
 
-.detail-group.upload-grid .preview-container img {
-    width: auto;
-    height: auto;
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-    object-position: left center;
-}
-
-.no-preview {
+/* Modifier for grid layout */
+.detail-group--grid {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 14px;
+    gap: 24px;
+}
+
+.detail-group--grid > * {
+    flex: 1;
+    min-width: 0;
 }
 
 /* === Delete Service Dialog === */
@@ -1091,23 +1150,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     gap: 8px;
 }
 
-.confirmation-service-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background-color: var(--card-background-dark);
-    border: 1px solid var(--border-color);
-    border-radius: 100px;
-    font-size: 12px;
-    color: var(--text-color);
-}
-
-.confirmation-service-tag i {
-    color: var(--accent-color);
-    font-size: 14px;
-}
-
 .confirmation-actions {
     display: flex;
     justify-content: center;
@@ -1170,6 +1212,25 @@ body:not(.sb-expanded) .create-button .icon + span {
     }
 }
 
+/* === Animations === */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
 /* === Responsive Design === */
 @media (max-width: 768px) {
     .project-template-grid {
@@ -1181,21 +1242,89 @@ body:not(.sb-expanded) .create-button .icon + span {
     }
 
     .flow-navigation {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
         gap: 16px;
+        padding: 16px;
     }
 
     .back-button {
-        order: 2;
         margin-right: 0;
     }
 
     .next-button,
     .create-project-button {
-        order: 1;
         width: 100%;
     }
 }
 
+/* === Accessibility === */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
 
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+
+}
+
+/* === Upload Areas === */
+.yaml-upload,
+.preview-container--upload {
+    height: 150px;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.yaml-upload:hover,
+.preview-container--upload:hover {
+    border-color: var(--accent-color);
+    background-color: var(--card-background-dark);
+}
+
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.upload-area i {
+    font-size: 32px;
+    color: var(--accent-color);
+}
+
+.upload-area span {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+/* Adjust config grid spacing */
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin: 24px 0;
+}
+
+.yaml-section,
+.preview-section {
+    width: 100%;
+}

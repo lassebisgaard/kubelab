@@ -552,21 +552,18 @@ class BaseStepForm {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this service?</p>
                     <div class="service-preview">
                         ${serviceTag.outerHTML}
                     </div>
-                    <div class="warning-message">
-                        <i class='bx bx-error-circle'></i>
-                        <div>
-                            <p class="warning-title">Warning</p>
-                            <p class="warning-text">This will remove the service from all projects and templates that use it.</p>
-                        </div>
-                    </div>
+                    <p>Are you sure you want to delete this service?</p>
+                    <p class="warning-text">
+                        <i class='bx bx-error'></i>
+                        This will remove the service from all projects and templates that use it.
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button class="button secondary" id="cancelDelete">Cancel</button>
-                    <button class="button delete" id="confirmDelete">Delete Service</button>
+                    <button class="button delete" id="confirmDelete">Delete</button>
                 </div>
             </div>
         `;

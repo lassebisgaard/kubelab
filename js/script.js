@@ -1,3 +1,6 @@
+// Tilføj i toppen af filen
+console.log('script.js loaded');
+
 // Services data - dette vil senere komme fra MySQL
 const SERVICES = {
     wordpress: {
@@ -34,6 +37,9 @@ const SERVICES = {
 
 // Vent på at DOM er loaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded');
+    console.log('Handlebars available:', typeof Handlebars !== 'undefined');
+    
     // Site-wide initialization
     initNavigation();
     initThemeToggle();
@@ -41,16 +47,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Vent på at Handlebars er loaded før vi initialiserer services
     if (typeof Handlebars !== 'undefined') {
         const templateSource = document.getElementById('service-tag-template');
+        console.log('Template source found:', templateSource !== null);
+        
         if (templateSource) {
             // Compile Handlebars template
             const serviceTagTemplate = Handlebars.compile(templateSource.innerHTML);
+            console.log('Template compiled');
 
             // Gør services og render funktion tilgængelig globalt
             window.SERVICES = SERVICES;
             window.renderServiceTags = function(serviceIds, isRemovable = false) {
+                console.log('Rendering services:', serviceIds);
                 return serviceIds.map(id => {
                     const service = SERVICES[id];
-                    if (!service) return '';
+                    if (!service) {
+                        console.warn('Service not found:', id);
+                        return '';
+                    }
                     return serviceTagTemplate({
                         ...service,
                         isRemovable

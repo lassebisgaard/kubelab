@@ -1,20 +1,19 @@
 /* === Page Layout === */
 main {
     margin-left: var(--sb-width);
-    padding: 3rem 3rem;
+    padding: 3rem;
     transition: margin-left 0.5s ease-in-out;
     padding-bottom: 100px;
 }
 
-@media (max-width: 768px) {
-    main {
-        margin-left: 0;
-        padding: 1rem;
-        padding-bottom: 80px;
-    }
+/* === Content Wrapper === */
+.content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
 }
 
-/* === Grid System === */
+/* === Grid Systems === */
 .grid {
     display: grid;
     gap: 2rem;
@@ -25,21 +24,21 @@ main {
     grid-template-columns: repeat(2, 1fr);
 }
 
-@media (max-width: 768px) {
-    .grid-2x2 {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
 }
 
-/* === Content Wrapper === */
-.content-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 24px;
+.project-template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
 }
 
-/* === Upload Grid === */
+/* === Config and Details Grids === */
 .config-grid {
     display: flex;
     gap: 24px;
@@ -52,15 +51,6 @@ main {
     min-width: 0;
 }
 
-/* === Project Template Grid === */
-.project-template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    margin-top: 24px;
-}
-
-/* === Details Grid === */
 .details-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -76,15 +66,9 @@ main {
 }
 
 @media (max-width: 768px) {
-    /* Page layout adjustments */
     main {
         margin-left: 0;
-        padding: 1rem;
-        padding-bottom: 80px;
-    }
-
-    .page-container {
-        padding: 0.5rem;
+        padding: 1rem 1rem 80px;
     }
 
     .content-wrapper {
@@ -92,85 +76,16 @@ main {
         padding: 0 8px;
     }
 
-    /* Grid adjustments */
     .grid-2x2,
-    .grid-3x3 {
+    .details-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
     }
 
-    /* Config grid adjustment */
     .config-grid {
         flex-direction: column;
         gap: 16px;
     }
 
-    /* Details grid adjustment */
-    .details-grid {
-        grid-template-columns: 1fr;
-    }
-
-    /* Title adjustments */
-    .page-container .page-title {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        padding: 0 0.5rem;
-    }
-
-    /* Project template grid adjustment */
-    .project-template-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        margin-top: 16px;
-        padding: 0 0.5rem;
-    }
-
-    /* Flow navigation adjustment */
-    .flow-navigation {
-        left: 0;
-        padding: 16px;
-    }
-
-    .page-container .page-subtitle {
-        font-size: 0.9rem;
-        margin-bottom: 24px;
-        padding: 0 0.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    main {
-        padding: 0.5rem;
-        padding-bottom: 80px;
-    }
-
-    .page-container {
-        padding: 1.5rem 1rem ;
-    }
-
-    .content-wrapper {
-        padding: 0 4px;
-    }
-}
-
-/* === Grid Systems === */
-/* Icon grid for service selection */
-.icon-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    gap: 8px;
-    margin-top: 8px;
-}
-
-/* Grid for project templates */
-.project-template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    margin-top: 24px;
-}
-
-@media (max-width: 768px) {
     .icon-grid {
         grid-template-columns: repeat(4, 1fr);
     }
@@ -178,5 +93,38 @@ main {
     .project-template-grid {
         grid-template-columns: 1fr;
         gap: 16px;
+    }
+
+    .page-container {
+        padding: 0.5rem;
+    }
+
+    .page-container .page-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-container .page-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+    }
+
+    .flow-navigation {
+        left: 0;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 0.5rem 0.5rem 80px;
+    }
+
+    .page-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .content-wrapper {
+        padding: 0 4px;
     }
 }

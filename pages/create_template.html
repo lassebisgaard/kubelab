@@ -123,10 +123,10 @@
 
                                 <div class="preview-section">
                                     <label>Template image</label>
-                                    <div class="preview-container preview-container--upload">
+                                    <div class="preview-container--upload">
                                         <input type="file" id="preview-image" hidden accept="image/*">
                                         <label for="preview-image" class="upload-area">
-                                            <i class='bx bx-image-add'></i>
+                                            <i class='bx bx-image'></i>
                                             <span>Click to upload preview image</span>
                                         </label>
                                     </div>
@@ -304,7 +304,7 @@
 
     <!-- Service tag template -->
     <script id="service-tag-template" type="text/x-handlebars-template">
-        <div class="service-tag" data-service="{{id}}">
+        <div class="service-tag {{#if isSelectable}}service-tag--selectable{{/if}} {{#if isRemovable}}service-tag--removable{{/if}}" data-service="{{id}}">
             <i class='bx {{icon}}'></i>
             <span>{{name}}</span>
             {{#if isRemovable}}
