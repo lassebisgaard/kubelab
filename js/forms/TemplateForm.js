@@ -99,12 +99,17 @@ class TemplateForm extends BaseStepForm {
         const createServiceModal = document.getElementById('createServiceModal');
         const createBtn = document.querySelector('.create-service-link');
         const closeBtn = createServiceModal?.querySelector('.close-modal');
-        const cancelBtn = createServiceModal?.querySelector('#cancelCreateService');
-        const saveBtn = createServiceModal?.querySelector('#saveCreateService');
+        const cancelBtn = document.getElementById('cancelCreateService');
+        const saveBtn = document.getElementById('saveCreateService');
         const iconOptions = createServiceModal?.querySelectorAll('.icon-option');
+        const nameInput = document.getElementById('service-name-input');
 
+        // Modal visibility handlers
         createBtn?.addEventListener('click', () => {
             createServiceModal?.classList.add('show');
+            // Reset form når modal åbnes
+            nameInput.value = '';
+            iconOptions?.forEach(opt => opt.classList.remove('selected'));
         });
 
         closeBtn?.addEventListener('click', () => createServiceModal?.classList.remove('show'));
@@ -120,25 +125,29 @@ class TemplateForm extends BaseStepForm {
 
         // Save new service
         saveBtn?.addEventListener('click', () => {
-            const nameInput = createServiceModal.querySelector('input[type="text"]');
             const selectedIcon = createServiceModal.querySelector('.icon-option.selected');
+            const nameValue = nameInput?.value?.trim();
             
-            if (!nameInput?.value.trim()) {
-                alert('Please enter a service name');
-                return;
+            let hasError = false;
+            
+            if (!nameValue) {
+                console.log('Name missing');
+                hasError = true;
             }
             
             if (!selectedIcon) {
-                alert('Please select an icon');
+                console.log('Icon missing');
+                hasError = true;
+            }
+            
+            if (hasError) {
+                alert('Please fill in all required fields');
                 return;
             }
 
-            this.createNewService(nameInput.value.trim(), selectedIcon.dataset.icon);
+            // Hvis vi når hertil er både navn og ikon valgt
+            this.createNewService(nameValue, selectedIcon.dataset.icon);
             createServiceModal.classList.remove('show');
-            
-            // Reset form
-            nameInput.value = '';
-            document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
         });
     }
 
@@ -194,16 +203,15 @@ class TemplateForm extends BaseStepForm {
             this.templateData.name = nameInput.value;
             this.templateData.description = descriptionInput?.value || '';
             
-            // Gem aktive services
-            this.templateData.services = Array.from(document.querySelectorAll('.services-selection .service-tag.active'))
-                .map(tag => ({
-                    icon: tag.querySelector('i').className,
-                    name: tag.querySelector('span').textContent
-                }));
+            // Ændret til kun at gemme de aktive services
+            const activeServices = document.querySelectorAll('.services-selection .service-tag.active');
+            this.templateData.services = Array.from(activeServices).map(tag => ({
+                icon: tag.querySelector('i:not(.remove-service)').className, // Ignorer remove-ikonet
+                name: tag.querySelector('span').textContent.trim()
+            }));
 
-            // Opdater step 2 med de indtastede værdier
+            console.log('Saved active services:', this.templateData.services); // Debug log
             this.updateConfirmationStep();
-                
             return true;
         }
         return true;
@@ -217,10 +225,14 @@ class TemplateForm extends BaseStepForm {
         if (nameConfirm) nameConfirm.textContent = this.templateData.name;
         if (descriptionConfirm) descriptionConfirm.textContent = this.templateData.description || 'Not specified';
 
+        // Debug log
+        console.log('Updating confirmation step with services:', this.templateData.services);
+
         // Opdater services
-        const servicesContainer = document.querySelector('#template-step2 .service-tags');
+        const servicesContainer = document.querySelector('#template-step2 .detail-group .service-tags');
         if (servicesContainer) {
-            if (this.templateData.services.length > 0) {
+            console.log('Found services container:', servicesContainer); // Debug log
+            if (this.templateData.services && this.templateData.services.length > 0) {
                 servicesContainer.innerHTML = this.templateData.services.map(service => `
                     <span class="service-tag">
                         <i class='${service.icon}'></i>
@@ -230,6 +242,8 @@ class TemplateForm extends BaseStepForm {
             } else {
                 servicesContainer.innerHTML = '<div class="detail-value">No services selected</div>';
             }
+        } else {
+            console.log('Services container not found!'); // Debug log
         }
 
         // Opdater YAML fil visning

@@ -186,18 +186,20 @@
                                 <div class="detail-value" id="template-description-confirm"></div>
                             </div>
 
-                            <div class="detail-group">
-                                <label>YAML Configuration</label>
-                                <div class="yaml-file-display">
-                                    <i class='bx bx-file'></i>
-                                    <span class="filename">docker-compose.yml</span>
+                            <div class="detail-group upload-grid">
+                                <div class="yaml-section">
+                                    <label>YAML Configuration</label>
+                                    <div class="yaml-file-display">
+                                        <i class='bx bx-file'></i>
+                                        <span class="filename">docker-compose.yml</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="detail-group">
-                                <label>Template image</label>
-                                <div class="preview-container">
-                                    <!-- Preview image will be added by JavaScript -->
+                                <div class="preview-section">
+                                    <label>Template image</label>
+                                    <div class="preview-container">
+                                        <!-- Preview image will be added by JavaScript -->
+                                    </div>
                                 </div>
                             </div>
 
@@ -282,7 +284,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Service Name</label>
-                        <input type="text" class="form-control" placeholder="Enter service name">
+                        <input type="text" id="service-name-input" class="form-control" placeholder="Enter service name">
                     </div>
                     <div class="form-group">
                         <label>Choose Icon</label>
