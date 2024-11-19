@@ -4,12 +4,12 @@
     --text-color-light: #0F172A;
     --primary-color-light: #00875A;
     --secondary-color-light: #475569;
-    --accent-color-light: #02be86;
+    --accent-color-light: #059669;
     --border-color-light: #CBD5E1;
     --card-background-light: #FFFFFF;
     --hover-background-light: #F1F5F9;
-    --link-color-light: #249c76;
-    --active-color-light: #21a47f;
+    --link-color-light: #059669;
+    --active-color-light: #047857;
   
     /* Dark Mode Colors */
     --background-color-dark: #001B2E;

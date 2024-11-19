@@ -53,6 +53,8 @@ class BaseStepForm {
             this.initServiceFunctionality();
         } else if (this.type === 'project') {
             this.initTemplateSelection();
+        } else if (this.type === 'team') {
+            this.initDatePicker();
         }
         
         this.updateSteps();
@@ -286,8 +288,10 @@ class BaseStepForm {
     validateCurrentStep() {
         if (this.type === 'template') {
             return this.validateTemplateStep();
-        } else {
+        } else if (this.type === 'project') {
             return this.validateProjectStep();
+        } else if (this.type === 'team') {
+            return this.validateTeamStep();
         }
     }
 
@@ -355,6 +359,41 @@ class BaseStepForm {
                 this.formData.description = descriptionInput?.value || '';
 
                 this.updateProjectConfirmation();
+                return true;
+                
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Validerer team-specifikke felter
+     */
+    validateTeamStep() {
+        switch (this.currentStep) {
+            case 1:
+                const nameInput = document.getElementById('team-name-input');
+                const expirationInput = document.getElementById('team-expiration-input');
+                
+                if (!nameInput?.value) {
+                    alert('Please enter a team name');
+                    return false;
+                }
+                
+                if (!expirationInput?.value) {
+                    alert('Please select an expiration date');
+                    return false;
+                }
+
+                this.formData.name = nameInput.value;
+                this.formData.expiration = expirationInput.value;
+                this.formData.description = document.getElementById('team-description-input')?.value || '';
+
+                this.updateTeamConfirmation();
+                return true;
+                
+            case 2:
+                // Validering af team members kunne tilføjes her
                 return true;
                 
             default:
@@ -438,6 +477,20 @@ class BaseStepForm {
                 </div>
             `;
         }
+    }
+
+    /**
+     * Opdaterer confirmation step for teams
+     */
+    updateTeamConfirmation() {
+        const nameConfirm = document.getElementById('team-name-confirm');
+        const expirationConfirm = document.getElementById('team-expiration-confirm');
+        const descriptionConfirm = document.getElementById('team-description-confirm');
+
+        // Opdater navn og beskrivelse
+        if (nameConfirm) nameConfirm.textContent = this.formData.name;
+        if (expirationConfirm) expirationConfirm.textContent = this.formData.expiration;
+        if (descriptionConfirm) descriptionConfirm.textContent = this.formData.description || 'Not specified';
     }
 
     // === Overlay Handling ===
@@ -605,6 +658,24 @@ class BaseStepForm {
             this.updateSelectedServices();
             closeDialog();
         });
+    }
+
+    // === Date Picker Methods ===
+    
+    /**
+     * Initialiserer date picker funktionalitet
+     */
+    initDatePicker() {
+        const dateInput = document.getElementById('team-expiration-input');
+        if (dateInput) {
+            flatpickr(dateInput, {
+                dateFormat: "d.m.Y",
+                minDate: "today",
+                defaultDate: "today",
+                theme: "dark",
+                allowInput: true
+            });
+        }
     }
 }
 

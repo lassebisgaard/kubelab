@@ -430,7 +430,7 @@ textarea.form-control {
     background-color: var(--accent-color);
     color: var(--background-color);
     border: none;
-    padding: 12px 24px;
+    padding: 12px 34px;
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
@@ -447,7 +447,6 @@ textarea.form-control {
 @media (max-width: 768px) {
     .flow-navigation {
         left: 0;
-        padding: 16px;
     }
 }
 
@@ -477,7 +476,6 @@ textarea.form-control {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 24px;
-    max-width: 800px;
 }
 
 .form-card h2 {
@@ -1342,18 +1340,17 @@ textarea.form-control {
     }
 
     .flow-navigation {
-        flex-direction: column;
-        gap: 16px;
+        flex-direction: row;
         padding: 16px;
     }
 
     .back-button {
-        margin-right: 0;
+        margin-right: auto;
     }
 
     .next-button,
     .create-project-button {
-        width: 100%;
+        width: 40%;
     }
 }
 
@@ -1434,4 +1431,72 @@ textarea.form-control {
     height: 120px;
     width: 100%;
     margin-bottom: 1rem;
+}
+
+/* === Date Input Styling === */
+.date-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.date-input-wrapper i {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Flatpickr styling med vores design system */
+.flatpickr-calendar {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+    width: 250px !important;
+    padding: 8px !important;
+}
+
+.flatpickr-months,
+.flatpickr-month,
+.flatpickr-current-month,
+.flatpickr-monthDropdown-months,
+.flatpickr-weekdays,
+.flatpickr-weekday {
+    background: var(--card-background) !important;
+    color: var(--text-color) !important;
+}
+
+.flatpickr-day {
+    height: 28px !important;
+    line-height: 28px !important;
+    border-radius: 4px !important;
+    margin: 1px !important;
+    font-size: 12px !important;
+    color: var(--text-color) !important;
+    background: transparent !important;
+}
+
+.flatpickr-day.selected {
+    background: var(--hover-background) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--accent-color) !important;
+}
+
+.flatpickr-day.today {
+    border: 1px solid var(--border-color) !important;
+    background: var(--hover-background) !important;
+}
+
+.flatpickr-day:hover {
+    background: var(--hover-background) !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: var(--text-color) !important;
+    opacity: 0.1 !important;
 }
