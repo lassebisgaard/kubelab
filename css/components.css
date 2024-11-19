@@ -1500,3 +1500,65 @@ textarea.form-control {
     color: var(--text-color) !important;
     opacity: 0.1 !important;
 }
+
+/* === Custom Select === */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.select-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.select-header i {
+    opacity: 0.5;
+    transition: transform 0.2s ease;
+}
+
+.custom-select.open .select-header i {
+    transform: rotate(180deg);
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-top: 4px;
+    display: none;
+    z-index: 100;
+}
+
+.custom-select.open .select-options {
+    display: block;
+}
+
+.option {
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.option:hover {
+    background-color: var(--hover-background);
+}
+
+.selected-option {
+    opacity: 0.5;
+}
+
+.custom-select.has-value .selected-option {
+    opacity: 1;
+}

@@ -79,6 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tilføj initialisering af template filtering
     initProjectTemplateFiltering();
+
+    // Tilføj denne funktion til script.js
+    initCustomSelects();
 });
 
 function initializePageServices() {
@@ -154,6 +157,36 @@ function initProjectTemplateFiltering() {
                     cardServices.includes(filter)
                 );
                 card.style.display = hasAllServices ? '' : 'none';
+            }
+        });
+    });
+}
+
+// Tilføj denne funktion til script.js
+function initCustomSelects() {
+    document.querySelectorAll('.custom-select').forEach(select => {
+        const header = select.querySelector('.select-header');
+        const options = select.querySelector('.select-options');
+        const selectedText = select.querySelector('.selected-option');
+
+        header.addEventListener('click', () => {
+            select.classList.toggle('open');
+        });
+
+        select.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', () => {
+                selectedText.textContent = option.textContent;
+                select.classList.remove('open');
+                select.classList.add('has-value');
+                // Gem den valgte værdi
+                select.dataset.value = option.dataset.value;
+            });
+        });
+
+        // Luk dropdown når der klikkes udenfor
+        document.addEventListener('click', (e) => {
+            if (!select.contains(e.target)) {
+                select.classList.remove('open');
             }
         });
     });

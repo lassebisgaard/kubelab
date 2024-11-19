@@ -53,7 +53,7 @@ class BaseStepForm {
             this.initServiceFunctionality();
         } else if (this.type === 'project') {
             this.initTemplateSelection();
-        } else if (this.type === 'team') {
+        } else if (this.type === 'team' || this.type === 'user') {
             this.initDatePicker();
         }
         
@@ -292,6 +292,8 @@ class BaseStepForm {
             return this.validateProjectStep();
         } else if (this.type === 'team') {
             return this.validateTeamStep();
+        } else if (this.type === 'user') {
+            return this.validateUserForm();
         }
     }
 
@@ -399,6 +401,52 @@ class BaseStepForm {
             default:
                 return true;
         }
+    }
+
+    /**
+     * Validerer user-specifikke felter
+     */
+    validateUserForm() {
+        const nameInput = document.getElementById('user-name-input');
+        const emailInput = document.getElementById('user-email-input');
+        const teamSelect = document.getElementById('user-team-select');
+        const roleSelect = document.getElementById('user-role-select');
+        const expirationInput = document.getElementById('user-expiration-input');
+        
+        if (!nameInput?.value) {
+            alert('Please enter a name');
+            return false;
+        }
+        
+        if (!emailInput?.value || !emailInput.value.includes('@')) {
+            alert('Please enter a valid email');
+            return false;
+        }
+        
+        if (!teamSelect?.value) {
+            alert('Please select a team');
+            return false;
+        }
+        
+        if (!roleSelect?.value) {
+            alert('Please select a role');
+            return false;
+        }
+        
+        if (!expirationInput?.value) {
+            alert('Please select an expiration date');
+            return false;
+        }
+
+        this.formData = {
+            name: nameInput.value,
+            email: emailInput.value,
+            team: teamSelect.value,
+            role: roleSelect.value,
+            expiration: expirationInput.value
+        };
+
+        return true;
     }
 
     // === Confirmation Step Methods ===
@@ -666,13 +714,13 @@ class BaseStepForm {
      * Initialiserer date picker funktionalitet
      */
     initDatePicker() {
-        const dateInput = document.getElementById('team-expiration-input');
+        const dateInput = document.getElementById('team-expiration-input') || 
+                         document.getElementById('user-expiration-input');
         if (dateInput) {
             flatpickr(dateInput, {
                 dateFormat: "d.m.Y",
                 minDate: "today",
                 defaultDate: "today",
-                theme: "dark",
                 allowInput: true
             });
         }
