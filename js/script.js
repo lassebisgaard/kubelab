@@ -82,6 +82,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tilføj denne funktion til script.js
     initCustomSelects();
+
+    // Initialize service tags in templates page
+    const serviceTagsContainer = document.querySelector('.service-tags-container');
+    if (serviceTagsContainer) {
+        serviceTagsContainer.addEventListener('click', (e) => {
+            const serviceTag = e.target.closest('.service-tag');
+            if (!serviceTag) return;
+            
+            serviceTag.classList.toggle('active');
+            
+            // Find alle aktive filters
+            const activeFilters = Array.from(serviceTagsContainer.querySelectorAll('.service-tag.active'))
+                .map(tag => tag.dataset.service);
+            
+            // Filtrer templates
+            const templateCards = document.querySelectorAll('.project-template-card');
+            templateCards.forEach(card => {
+                const cardServices = card.dataset.services?.split(',') || [];
+                
+                if (activeFilters.length === 0) {
+                    card.style.display = '';
+                } else {
+                    const hasAllServices = activeFilters.every(filter => 
+                        cardServices.includes(filter)
+                    );
+                    card.style.display = hasAllServices ? '' : 'none';
+                }
+            });
+        });
+    }
+
+    initTemplateActions();
 });
 
 function initializePageServices() {
@@ -91,7 +123,7 @@ function initializePageServices() {
         servicesSelection.innerHTML = window.renderServiceTags(Object.keys(SERVICES), true);
     }
 
-    // Project creation page
+    // Project creation page og templates page
     const templateCards = document.querySelectorAll('.project-template-card');
     templateCards.forEach(card => {
         const services = card.dataset.services?.split(',') || [];
@@ -149,10 +181,8 @@ function initProjectTemplateFiltering() {
             const cardServices = card.dataset.services?.split(',') || [];
             
             if (activeFilters.length === 0) {
-                // Hvis ingen filtre er valgt, vis alle templates
                 card.style.display = '';
             } else {
-                // Tjek om template indeholder ALLE valgte services
                 const hasAllServices = activeFilters.every(filter => 
                     cardServices.includes(filter)
                 );
@@ -189,5 +219,73 @@ function initCustomSelects() {
                 select.classList.remove('open');
             }
         });
+    });
+}
+
+function initTemplateActions() {
+    document.querySelectorAll('.project-template-card').forEach(card => {
+        const deleteBtn = card.querySelector('.delete-button');
+        const editBtn = card.querySelector('.edit-button');
+        
+        deleteBtn?.addEventListener('click', () => {
+            showDeleteConfirmation(card);
+        });
+        
+        editBtn?.addEventListener('click', () => {
+            const templateId = card.dataset.id;
+            const templateData = {
+                name: card.querySelector('h2').textContent,
+                description: card.querySelector('p').textContent,
+                services: Array.from(card.querySelectorAll('.service-tag')).map(tag => tag.dataset.service),
+                author: card.querySelector('.author').textContent.replace('By: ', ''),
+                previewImage: card.querySelector('.preview-container img').src
+            };
+            // Gem template data i sessionStorage så vi kan hente det på edit siden
+            sessionStorage.setItem('editTemplate', JSON.stringify(templateData));
+            window.location.href = `create_template.html?edit=${templateId}`;
+        });
+    });
+}
+
+function showDeleteConfirmation(templateCard) {
+    const dialog = document.createElement('div');
+    dialog.className = 'modal delete-confirmation-dialog show';
+    dialog.innerHTML = `
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>Delete Template</h3>
+                <button class="close-modal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this template?</p>
+                <div class="warning-message">
+                    <i class='bx bx-error'></i>
+                    <div>
+                        <div class="warning-title">Warning</div>
+                        <div class="warning-text">This action cannot be undone. All projects using this template will be affected.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="button secondary" id="cancelDelete">Cancel</button>
+                <button class="button delete" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(dialog);
+
+    const closeDialog = () => {
+        dialog.classList.remove('show');
+        setTimeout(() => dialog.remove(), 300);
+    };
+
+    dialog.querySelector('.close-modal')?.addEventListener('click', closeDialog);
+    dialog.querySelector('#cancelDelete')?.addEventListener('click', closeDialog);
+    dialog.querySelector('#confirmDelete')?.addEventListener('click', () => {
+        templateCard.remove();
+        closeDialog();
     });
 }

@@ -1562,3 +1562,192 @@ textarea.form-control {
 .custom-select.has-value .selected-option {
     opacity: 1;
 }
+
+/* === Template Header === */
+.page-header {
+    margin-bottom: 24px;
+}
+
+.title-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.title-section .button {
+    padding: 8px;
+    border-radius: 8px;
+    background-color: var(--accent-color);
+    border: none;
+    color: var(--background-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title-section .button i {
+    font-size: 24px;
+}
+
+/* === Template Card Header === */
+.template-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.template-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 4px;
+    transition: opacity 0.2s ease;
+}
+
+.icon-button:hover {
+    opacity: 1;
+}
+
+/* === Template Footer === */
+.template-footer {
+    margin-top: 12px;
+}
+
+.template-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-size: 12px;
+}
+
+/* === Service Tags Container === */
+.service-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.service-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 40px;
+    font-size: 12px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.service-tag i {
+    font-size: 14px;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.service-tag:hover {
+    border-color: var(--accent-color);
+}
+
+.service-tag.active {
+    background-color: var(--hover-background);
+    border-color: var(--accent-color);
+}
+
+.service-tag.active i {
+    color: var(--accent-color);
+    opacity: 1;
+}
+
+/* === Template Actions === */
+.template-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--card-background);
+    color: var(--text-color);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-button i {
+    font-size: 14px;
+}
+
+.action-button:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.action-button.delete-button:hover {
+    border-color: #ff4757;
+    color: #ff4757;
+}
+
+/* Delete confirmation dialog */
+.delete-confirmation-dialog {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.delete-confirmation-dialog.show {
+    display: flex;
+}
+
+.delete-confirmation-dialog .modal-content {
+    background: var(--card-background);
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.delete-confirmation-dialog .warning-message {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: rgba(255, 71, 87, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    margin: 16px 0;
+}
+
+.delete-confirmation-dialog .warning-message i {
+    color: #ff4757;
+    font-size: 20px;
+}
+
+.delete-confirmation-dialog .button.delete {
+    background-color: #ff4757;
+    color: white;
+}
+
+.delete-confirmation-dialog .button.delete:hover {
+    background-color: #ff6b81;
+}

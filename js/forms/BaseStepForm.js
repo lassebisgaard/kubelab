@@ -36,7 +36,56 @@ class BaseStepForm {
             this.formData.template = null;
         }
 
+        // Check om vi er i edit mode
+        this.isEditMode = new URLSearchParams(window.location.search).has('edit');
+        if (this.isEditMode && type === 'template') {
+            this.loadEditData();
+        }
+
         this.init();
+    }
+
+    loadEditData() {
+        const editData = JSON.parse(sessionStorage.getItem('editTemplate'));
+        if (!editData) return;
+
+        // Præudfyld form felter
+        const nameInput = document.getElementById('template-name-input');
+        const descriptionInput = document.getElementById('template-description-input');
+        
+        if (nameInput) nameInput.value = editData.name;
+        if (descriptionInput) descriptionInput.value = editData.description;
+
+        // Marker de valgte services
+        editData.services.forEach(serviceId => {
+            const serviceTag = document.querySelector(`.service-tag[data-service="${serviceId}"]`);
+            if (serviceTag) serviceTag.classList.add('active');
+        });
+
+        // Vis det eksisterende preview billede
+        if (editData.previewImage) {
+            const previewContainer = document.querySelector('.preview-container--upload');
+            if (previewContainer) {
+                previewContainer.innerHTML = `
+                    <img src="${editData.previewImage}" alt="Preview">
+                    <button class="remove-file">
+                        <i class='bx bx-x'></i>
+                    </button>
+                `;
+            }
+        }
+
+        // Opdater knap tekst
+        const submitButton = document.querySelector('.create-template-button');
+        if (submitButton) {
+            submitButton.innerHTML = 'Save changes <i class="bx bx-check"></i>';
+        }
+
+        // Opdater side titel
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.textContent = 'Edit template';
+        }
     }
 
     // === Core Initialization & Navigation ===
