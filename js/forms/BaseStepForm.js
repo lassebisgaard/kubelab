@@ -420,18 +420,20 @@ class BaseStepForm {
 
         // Opdater template visning med services
         if (templateDisplay && this.formData.template) {
+            const servicesHtml = this.formData.template.services.map(service => `
+                <span class="service-tag">
+                    <i class='bx ${service.icon}'></i>
+                    <span>${service.name}</span>
+                </span>
+            `).join('');
+
             templateDisplay.innerHTML = `
                 <i class='bx bx-code-block'></i>
                 <div class="template-info">
                     <h3>${this.formData.template.name}</h3>
                     <p>${this.formData.template.description}</p>
-                    <div class="service-tags">
-                        ${this.formData.template.services.map(service => `
-                            <span class="service-tag">
-                                <i class='bx ${service.icon}'></i>
-                                <span>${service.name}</span>
-                            </span>
-                        `).join('')}
+                    <div class="services">
+                        ${servicesHtml}
                     </div>
                 </div>
             `;
@@ -451,7 +453,8 @@ class BaseStepForm {
             this.showSuccessOverlay();
             
             setTimeout(() => {
-                window.location.href = `${this.type}s.html`;
+                // Redirect til project.html uanset om det er template eller project
+                window.location.href = 'project.html';
             }, 2000);
         }, 1500);
     }

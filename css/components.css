@@ -164,12 +164,13 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--text-color);
     opacity: 0.5;
     font-size: 14px;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
 }
 
 .step.active, .step.completed {
     opacity: 1;
     color: var(--accent-color);
+    transform: scale(1.05);
 }
 
 .step-number {
@@ -179,24 +180,55 @@ body:not(.sb-expanded) .create-button .icon + span {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid currentColor;
+    position: relative;
+    overflow: hidden;
 }
 
 .step.completed .step-number {
     background-color: var(--accent-color);
     border: none;
     color: var(--background-color);
+    transform: rotate(360deg);
+}
+
+.step.completed .step-number i {
+    animation: checkmark 0.5s ease-out forwards;
 }
 
 .step-divider {
     flex: 1;
     height: 1px;
     background-color: var(--border-color);
+    position: relative;
+    overflow: hidden;
 }
 
-.step-divider.completed {
+.step-divider::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
     background-color: var(--accent-color);
+    transition: width 0.5s ease-in-out;
+}
+
+.step-divider.completed::after {
+    width: 100%;
+}
+
+@keyframes checkmark {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
 }
 
 @media (max-width: 768px) {
@@ -310,6 +342,7 @@ label,
     color: var(--text-color);
     font-size: 14px;
     font-family: inherit;
+    transition: border-color 0.2s ease;
 }
 
 .form-control::placeholder {
@@ -328,6 +361,16 @@ textarea.form-control {
 .form-control:focus {
     border-color: var(--accent-color);
     outline: none;
+    background-color: var(--card-background-dark);
+}
+
+/* Fjern browser's default hvide baggrund på autofill */
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-color);
+    -webkit-box-shadow: 0 0 0px 1000px var(--card-background-dark) inset;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 /* === Domain Input === */
@@ -462,6 +505,7 @@ textarea.form-control {
     display: block;
     opacity: 1;
     transform: translateY(0);
+    animation: slideIn 0.3s ease-out;
 }
 
 /* === Icon Grid === */
@@ -691,25 +735,51 @@ textarea.form-control {
     padding: 6px 12px;
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
-    border-radius: 100px;
-    font-size: 12px;
+    border-radius: 4px;
+    font-size: 14px;
     color: var(--text-color);
-    transition: all 0.2s ease;
-}
-
-.service-tag.active,
-.service-tag:hover {
-    cursor: pointer;
-    border-color: var(--accent-color);
-}
-
-.service-tag.active {
-    background-color: var(--background-color);
 }
 
 .service-tag i {
+    font-size: 16px;
     color: var(--accent-color);
-    font-size: 14px;
+}
+
+/* Service tags container */
+.services,
+.services-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Template page specific styles */
+.services-selection .service-tag {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.services-selection .service-tag.active {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.services-selection .service-tag.active i,
+.services-selection .service-tag.active span {
+    color: var(--background-color);
+}
+
+/* Remove button styling */
+.service-tag .remove-service {
+    margin-left: 4px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.service-tag .remove-service:hover {
+    opacity: 1;
 }
 
 /* === Loading & Success Overlays === */
@@ -886,17 +956,6 @@ textarea.form-control {
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 4px;
-}
-
-.selected-template-preview .service-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background-color: var(--background-color);
-    border-radius: 100px;
-    font-size: 12px;
-    color: var(--text-color);
 }
 
 .selected-template-preview .service-tag i {
@@ -1223,8 +1282,14 @@ textarea.form-control {
 }
 
 @keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .fade-in {
@@ -1317,7 +1382,7 @@ textarea.form-control {
 .upload-area span {
     color: var(--text-color);
     opacity: 0.7;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 /* === Upload Grid === */
@@ -1337,4 +1402,5 @@ textarea.form-control {
 .preview-container--upload {
     height: 120px;
     width: 100%;
+    margin-bottom: 1rem;
 }

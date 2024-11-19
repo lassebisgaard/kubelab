@@ -119,7 +119,18 @@
                             <div class="author text-secondary">By Kenneth</div>
                             <div class="included-services text-secondary">Included services:</div>
                             <div class="services">
-                                <!-- Services will be rendered here by JavaScript -->
+                                <span class="service-tag">
+                                    <i class='bx bxl-wordpress'></i>
+                                    <span>WordPress</span>
+                                </span>
+                                <span class="service-tag">
+                                    <i class='bx bx-data'></i>
+                                    <span>MySQL</span>
+                                </span>
+                                <span class="service-tag">
+                                    <i class='bx bx-server'></i>
+                                    <span>phpMyAdmin</span>
+                                </span>
                             </div>
                         </div>
 
@@ -201,15 +212,15 @@
                                     <div class="services">
                                         <span class="service-tag">
                                             <i class='bx bxl-wordpress'></i>
-                                            wordpress
+                                            <span>WordPress</span>
                                         </span>
                                         <span class="service-tag">
                                             <i class='bx bx-data'></i>
-                                            mySQL
+                                            <span>MySQL</span>
                                         </span>
                                         <span class="service-tag">
                                             <i class='bx bx-server'></i>
-                                            phpMyAdmin
+                                            <span>phpMyAdmin</span>
                                         </span>
                                     </div>
                                 </div>
@@ -252,13 +263,13 @@
 
     <!-- Service tag template -->
     <script id="service-tag-template" type="text/x-handlebars-template">
-        <div class="service-tag" data-service="{{id}}">
+        <span class="service-tag" data-service="{{id}}">
             <i class='bx {{icon}}'></i>
             <span>{{name}}</span>
             {{#if isRemovable}}
                 <i class='bx bx-x remove-service'></i>
             {{/if}}
-        </div>
+        </span>
     </script>
 
     <!-- Scripts -->

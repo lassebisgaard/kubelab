@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     return serviceTagTemplate({
                         ...service,
+                        name: service.name,
                         isRemovable
                     });
                 }).join('');
