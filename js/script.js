@@ -1,3 +1,5 @@
+//<!-- Navigation and Theme Toggle -->//
+
 document.addEventListener('DOMContentLoaded', () => {
     const resizeBtn = document.querySelector('[data-resize-btn]');
     const themeToggle = document.querySelector('.theme-toggle');

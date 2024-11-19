@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/navigation.css">
     <link rel="stylesheet" href="../css/components.css">
-    <link rel="stylesheet" href="../css/stepFormular.css">
-    <link rel="stylesheet" href="../css/createProject.css">
     <script src="../js/forms/BaseStepForm.js" defer></script>
     <script src="../js/forms/ProjectForm.js" defer></script>
     <script src="../js/script.js" defer></script>
@@ -106,7 +104,7 @@
                 </div>
 
                 <!-- Step 1: Choose template -->
-                <div class="step-content project-step active" id="step1">
+                <div class="step-content project-step active" id="project-step1">
                     <div class="search-bar">
                         <input type="text" placeholder="Search templates..." class="form-control">
                     </div>
@@ -157,49 +155,49 @@
                 </div>
 
                 <!-- Step 2: Project Info -->
-                <div class="step-content project-step" id="step2">
+                <div class="step-content project-step" id="project-step2">
                     <div class="form-card">
                         <h2>Configure project</h2>
                         
                         <div class="form-group">
                             <label>Project name</label>
-                            <input type="text" class="form-control" placeholder="My awesome project">
+                            <input type="text" class="form-control" id="project-name-input" placeholder="My awesome project">
                         </div>
 
                         <div class="form-group">
                             <label>Domain</label>
                             <div class="domain-input">
-                                <input type="text" class="form-control" placeholder="minside">
+                                <input type="text" class="form-control" id="project-domain-input" placeholder="minside">
                                 <span class="domain-suffix">.kubelab.dk</span>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label>Description</label>
-                            <textarea class="form-control" placeholder="Describe your project..." rows="4"></textarea>
+                            <textarea class="form-control" id="project-description-input" placeholder="Describe your project..." rows="4"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 3: Confirmation -->
-                <div class="step-content project-step" id="step3">
+                <div class="step-content project-step" id="project-step3">
                     <div class="form-card">
                         <div class="project-summary">
                             <h2>Project details</h2>
                             
                             <div class="detail-group">
                                 <label>Project name</label>
-                                <div class="detail-value">Semesterprojekt</div>
+                                <div class="detail-value" id="project-name-confirm">Not specified</div>
                             </div>
 
                             <div class="detail-group">
                                 <label>Domain</label>
-                                <div class="detail-value">minside.kubelab.dk</div>
+                                <div class="detail-value" id="project-domain-confirm">Not specified</div>
                             </div>
 
                             <div class="detail-group">
                                 <label>Description</label>
-                                <div class="detail-value">Dette er mit afsluttende projekt for 2. Semester.</div>
+                                <div class="detail-value" id="project-description-confirm">Not specified</div>
                             </div>
                         </div>
 

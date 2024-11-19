@@ -1,82 +1,106 @@
 class ProjectForm extends BaseStepForm {
     constructor() {
         super();
-        this.maxSteps = 3;
-        this.templateData = {
-            selectedTemplate: null,
-            projectName: '',
-            projectDomain: '',
-            description: ''
+        this.selectedTemplate = null;
+        this.projectData = {
+            name: '',
+            domain: '',
+            description: '',
+            template: null
         };
+        this.initTemplateSelection();
+    }
+
+    initTemplateSelection() {
+        const templateCards = document.querySelectorAll('.project-template-card');
+        templateCards.forEach(card => {
+            card.addEventListener('click', () => {
+                templateCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                this.selectedTemplate = card;
+                this.projectData.template = {
+                    name: card.querySelector('h2').textContent,
+                    description: card.querySelector('p').textContent,
+                    services: Array.from(card.querySelectorAll('.service-tag')).map(tag => ({
+                        icon: tag.querySelector('i').className,
+                        name: tag.querySelector('span').textContent
+                    }))
+                };
+            });
+        });
     }
 
     validateCurrentStep() {
-        switch(this.currentStep) {
+        switch (this.currentStep) {
             case 1:
-                const selectedCard = document.querySelector('.project-template-card.selected');
-                if (!selectedCard) {
-                    alert('Please select a template');
-                    return false;
-                }
-                this.templateData.selectedTemplate = {
-                    name: selectedCard.querySelector('h2').textContent,
-                    description: selectedCard.querySelector('p').textContent,
-                    services: Array.from(selectedCard.querySelectorAll('.service-tag'))
-                        .map(tag => ({
-                            icon: tag.querySelector('i').className,
-                            name: tag.querySelector('span').textContent.trim()
-                        }))
-                };
-                return true;
+                return this.validateTemplateSelection();
             case 2:
-                const nameInput = document.querySelector('#step2 .form-card input[placeholder="My awesome project"]');
-                const domainInput = document.querySelector('#step2 .domain-input input');
-                const description = document.querySelector('#step2 textarea');
-                
-                if (!nameInput?.value || !domainInput?.value) {
-                    alert('Please fill in all required fields');
-                    return false;
-                }
-                
-                this.templateData.projectName = nameInput.value;
-                this.templateData.projectDomain = domainInput.value;
-                this.templateData.description = description?.value || '';
+                return this.validateProjectInfo();
+            case 3:
                 return true;
             default:
                 return true;
         }
     }
 
-    updateSteps() {
-        super.updateSteps();
-        
-        if (this.currentStep === 3) {
-            this.updateConfirmationStep();
+    validateTemplateSelection() {
+        if (!this.selectedTemplate) {
+            alert('Please select a template');
+            return false;
         }
+        return true;
+    }
+
+    validateProjectInfo() {
+        const nameInput = document.getElementById('project-name-input');
+        const domainInput = document.getElementById('project-domain-input');
+        const descriptionInput = document.getElementById('project-description-input');
+
+        if (!nameInput?.value) {
+            alert('Please enter a project name');
+            return false;
+        }
+
+        if (!domainInput?.value) {
+            alert('Please enter a domain');
+            return false;
+        }
+
+        this.projectData.name = nameInput.value;
+        this.projectData.domain = domainInput.value;
+        this.projectData.description = descriptionInput?.value || '';
+
+        this.updateConfirmationStep();
+        return true;
     }
 
     updateConfirmationStep() {
-        const projectSummary = document.querySelector('#step3 .project-summary');
-        if (projectSummary) {
-            const detailGroups = projectSummary.querySelectorAll('.detail-group');
-            detailGroups[0].querySelector('.detail-value').textContent = this.templateData.projectName;
-            detailGroups[1].querySelector('.detail-value').textContent = `${this.templateData.projectDomain}.kubelab.dk`;
-            detailGroups[2].querySelector('.detail-value').textContent = this.templateData.description;
-        }
+        // Update project details
+        const nameConfirm = document.getElementById('project-name-confirm');
+        const domainConfirm = document.getElementById('project-domain-confirm');
+        const descriptionConfirm = document.getElementById('project-description-confirm');
 
-        const selectedTemplate = document.querySelector('#step3 .selected-template-preview');
-        if (selectedTemplate) {
-            selectedTemplate.querySelector('h3').textContent = this.templateData.selectedTemplate.name;
-            selectedTemplate.querySelector('p').textContent = this.templateData.selectedTemplate.description;
-            
-            const servicesContainer = selectedTemplate.querySelector('.services');
-            servicesContainer.innerHTML = this.templateData.selectedTemplate.services
-                .map(service => `
-                    <span class="service-tag">
-                        <i class="${service.icon}"></i>
-                        ${service.name}
-                    </span>
-                `).join('');
+        if (nameConfirm) nameConfirm.textContent = this.projectData.name;
+        if (domainConfirm) domainConfirm.textContent = `${this.projectData.domain}.kubelab.dk`;
+        if (descriptionConfirm) descriptionConfirm.textContent = this.projectData.description || 'Not specified';
+
+        // Update selected template preview
+        const templatePreview = document.querySelector('.selected-template-preview .template-info');
+        if (templatePreview && this.projectData.template) {
+            templatePreview.innerHTML = `
+                <div>
+                    <h3>${this.projectData.template.name}</h3>
+                    <p>${this.projectData.template.description}</p>
+                    <div class="services">
+                        ${this.projectData.template.services.map(service => `
+                            <span class="service-tag">
+                                <i class='${service.icon}'></i>
+                                ${service.name}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
         }
     }
 
@@ -91,47 +115,22 @@ class ProjectForm extends BaseStepForm {
     }
 
     handleSubmission() {
-        // Find overlays
-        const loadingOverlay = document.querySelector('.loading-overlay');
-        const successOverlay = document.querySelector('.success-overlay');
+        this.showLoadingOverlay();
         
-        // Vis loading overlay
-        loadingOverlay.classList.add('show');
-        
-        // Simuler API kald
         setTimeout(() => {
-            // Skjul loading og vis success
-            loadingOverlay.classList.remove('show');
-            successOverlay.classList.add('show');
+            this.hideLoadingOverlay();
+            this.showSuccessOverlay();
             
-            // Redirect efter success animation
             setTimeout(() => {
                 window.location.href = 'projects.html';
             }, 2000);
         }, 1500);
     }
+}
 
-    init() {
-        super.init();
-        this.initTemplateSelection();
+// Initialize the form when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('.project-step')) {
+        new ProjectForm();
     }
-
-    initTemplateSelection() {
-        const templateCards = document.querySelectorAll('.project-template-card');
-        const selectedPreview = document.querySelector('.selected-template-preview');
-        
-        templateCards.forEach(card => {
-            card.addEventListener('click', () => {
-                templateCards.forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                
-                if (selectedPreview) {
-                    selectedPreview.querySelector('h3').textContent = card.querySelector('h2').textContent;
-                    selectedPreview.querySelector('p').textContent = card.querySelector('p').textContent;
-                    selectedPreview.querySelector('.services').innerHTML = card.querySelector('.services').innerHTML;
-                    selectedPreview.classList.add('show');
-                }
-            });
-        });
-    }
-} 
+}); 

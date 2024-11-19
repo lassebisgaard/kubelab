@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/navigation.css">
     <link rel="stylesheet" href="../css/components.css">
-    <link rel="stylesheet" href="../css/stepFormular.css">
-    <link rel="stylesheet" href="../css/createTemplate.css">
     <script src="../js/forms/BaseStepForm.js" defer></script>
     <script src="../js/forms/TemplateForm.js" defer></script>
     <script src="../js/script.js" defer></script>
@@ -101,16 +99,16 @@
                 </div>
 
                 <!-- Step 1: Configuration -->
-                <div class="step-content active" id="step1">
+                <div class="step-content active" id="template-step1">
                     <div class="form-card">
                         <div class="form-group">
                             <label>Template name</label>
-                            <input type="text" class="form-control" placeholder="My awesome template">
+                            <input type="text" class="form-control" id="template-name-input" placeholder="My awesome template">
                         </div>
 
                         <div class="form-group">
                             <label>Description</label>
-                            <textarea class="form-control" placeholder="Describe your template..." rows="2"></textarea>
+                            <textarea class="form-control" id="template-description-input" placeholder="Describe your template..." rows="2"></textarea>
                         </div>
 
                         <div class="form-group">
@@ -174,41 +172,39 @@
                 </div>
 
                 <!-- Step 2: Confirmation -->
-                <div class="step-content" id="step2">
+                <div class="step-content" id="template-step2">
                     <div class="form-card">
-                        <h2>Confirm template</h2>
-                        <p class="subtitle">Review information before creating the template.</p>
-                        
-                        <div class="form-group">
-                            <label>Template name</label>
-                            <div class="detail-value">Not specified</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Description</label>
-                            <div class="detail-value">Not specified</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Services</label>
-                            <div class="services">
-                                <!-- Services will be populated by JavaScript -->
+                        <h2>Template details</h2>
+                        <div class="template-info">
+                            <div class="detail-group">
+                                <label>Template name</label>
+                                <div class="detail-value" id="template-name-confirm"></div>
                             </div>
-                        </div>
 
-                        <div class="config-grid">
-                            <div class="yaml-section">
+                            <div class="detail-group">
+                                <label>Description</label>
+                                <div class="detail-value" id="template-description-confirm"></div>
+                            </div>
+
+                            <div class="detail-group">
                                 <label>YAML Configuration</label>
                                 <div class="yaml-file-display">
                                     <i class='bx bx-file'></i>
-                                    <span class="filename">No file uploaded</span>
+                                    <span class="filename">docker-compose.yml</span>
                                 </div>
                             </div>
 
-                            <div class="preview-section">
+                            <div class="detail-group">
                                 <label>Template image</label>
                                 <div class="preview-container">
                                     <!-- Preview image will be added by JavaScript -->
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <label>Services</label>
+                                <div class="service-tags">
+                                    <!-- Services will be populated by JavaScript -->
                                 </div>
                             </div>
                         </div>

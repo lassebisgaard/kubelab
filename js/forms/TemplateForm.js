@@ -96,61 +96,95 @@ class TemplateForm extends BaseStepForm {
         this.addServiceListeners();
 
         // Initialize create service button and modal
-        const modal = document.getElementById('createServiceModal');
+        const createServiceModal = document.getElementById('createServiceModal');
         const createBtn = document.querySelector('.create-service-link');
-        const closeBtn = modal?.querySelector('.close-modal');
-        const cancelBtn = modal?.querySelector('#cancelCreateService');
-        const saveBtn = modal?.querySelector('#saveCreateService');
-        const iconOptions = modal?.querySelectorAll('.icon-option');
+        const closeBtn = createServiceModal?.querySelector('.close-modal');
+        const cancelBtn = createServiceModal?.querySelector('#cancelCreateService');
+        const saveBtn = createServiceModal?.querySelector('#saveCreateService');
+        const iconOptions = createServiceModal?.querySelectorAll('.icon-option');
 
-        console.log('Found create service button:', createBtn);
         createBtn?.addEventListener('click', () => {
-            console.log('Create service button clicked');
-            modal?.classList.add('show');
+            createServiceModal?.classList.add('show');
         });
 
-        closeBtn?.addEventListener('click', () => modal?.classList.remove('show'));
-        cancelBtn?.addEventListener('click', () => modal?.classList.remove('show'));
-        saveBtn?.addEventListener('click', () => this.createNewService());
-
+        closeBtn?.addEventListener('click', () => createServiceModal?.classList.remove('show'));
+        cancelBtn?.addEventListener('click', () => createServiceModal?.classList.remove('show'));
+        
+        // Icon selection
         iconOptions?.forEach(option => {
             option.addEventListener('click', () => {
                 iconOptions.forEach(opt => opt.classList.remove('selected'));
                 option.classList.add('selected');
             });
         });
+
+        // Save new service
+        saveBtn?.addEventListener('click', () => {
+            const nameInput = createServiceModal.querySelector('input[type="text"]');
+            const selectedIcon = createServiceModal.querySelector('.icon-option.selected');
+            
+            if (!nameInput?.value.trim()) {
+                alert('Please enter a service name');
+                return;
+            }
+            
+            if (!selectedIcon) {
+                alert('Please select an icon');
+                return;
+            }
+
+            this.createNewService(nameInput.value.trim(), selectedIcon.dataset.icon);
+            createServiceModal.classList.remove('show');
+            
+            // Reset form
+            nameInput.value = '';
+            document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+        });
     }
 
-    // Ny metode til at tilføje event listeners til services
-    addServiceListeners() {
-        const serviceTags = document.querySelectorAll('.services-selection .service-tag');
-        console.log('Found service tags:', serviceTags.length);
-        
-        serviceTags.forEach(tag => {
-            // Toggle active state
-            tag.addEventListener('click', (e) => {
-                console.log('Tag clicked');
-                if (!e.target.classList.contains('remove-service')) {
-                    tag.classList.toggle('active');
-                }
-            });
+    createNewService(name, iconClass) {
+        const servicesContainer = document.querySelector('.services-selection');
+        const newService = document.createElement('button');
+        newService.className = 'service-tag';
+        newService.innerHTML = `
+            <i class='bx ${iconClass}'></i>
+            <span>${name}</span>
+            <i class='bx bx-x remove-service'></i>
+        `;
 
-            // Handle remove functionality
-            const removeBtn = tag.querySelector('.remove-service');
-            if (removeBtn) {  // Tjek om remove-knappen findes
-                removeBtn.addEventListener('click', (e) => {
-                    console.log('Remove button clicked');
-                    e.stopPropagation();
-                    tag.remove();
-                });
+        this.addServiceTagListeners(newService);
+        servicesContainer?.appendChild(newService);
+    }
+
+    addServiceTagListeners(tag) {
+        // Fjern eksisterende event listeners hvis de findes
+        const newTag = tag.cloneNode(true);
+        tag.parentNode?.replaceChild(newTag, tag);
+        
+        // Toggle active state
+        newTag.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('remove-service')) {
+                newTag.classList.toggle('active');
             }
         });
+
+        // Handle remove functionality
+        const removeBtn = newTag.querySelector('.remove-service');
+        removeBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            newTag.remove();
+        });
+    }
+
+    addServiceListeners() {
+        const serviceTags = document.querySelectorAll('.services-selection .service-tag');
+        serviceTags.forEach(tag => this.addServiceTagListeners(tag));
     }
 
     validateCurrentStep() {
         if (this.currentStep === 1) {
-            const nameInput = document.querySelector('input[placeholder="My awesome template"]');
-            const yamlFile = this.templateData.yamlFile;
+            const nameInput = document.getElementById('template-name-input');
+            const descriptionInput = document.getElementById('template-description-input');
             
             if (!nameInput?.value) {
                 alert('Please enter a template name');
@@ -158,7 +192,7 @@ class TemplateForm extends BaseStepForm {
             }
             
             this.templateData.name = nameInput.value;
-            this.templateData.description = document.querySelector('textarea')?.value || '';
+            this.templateData.description = descriptionInput?.value || '';
             
             // Gem aktive services
             this.templateData.services = Array.from(document.querySelectorAll('.services-selection .service-tag.active'))
@@ -166,10 +200,63 @@ class TemplateForm extends BaseStepForm {
                     icon: tag.querySelector('i').className,
                     name: tag.querySelector('span').textContent
                 }));
+
+            // Opdater step 2 med de indtastede værdier
+            this.updateConfirmationStep();
                 
             return true;
         }
         return true;
+    }
+
+    updateConfirmationStep() {
+        // Opdater template navn og beskrivelse
+        const nameConfirm = document.getElementById('template-name-confirm');
+        const descriptionConfirm = document.getElementById('template-description-confirm');
+        
+        if (nameConfirm) nameConfirm.textContent = this.templateData.name;
+        if (descriptionConfirm) descriptionConfirm.textContent = this.templateData.description || 'Not specified';
+
+        // Opdater services
+        const servicesContainer = document.querySelector('#template-step2 .service-tags');
+        if (servicesContainer) {
+            if (this.templateData.services.length > 0) {
+                servicesContainer.innerHTML = this.templateData.services.map(service => `
+                    <span class="service-tag">
+                        <i class='${service.icon}'></i>
+                        <span>${service.name}</span>
+                    </span>
+                `).join('');
+            } else {
+                servicesContainer.innerHTML = '<div class="detail-value">No services selected</div>';
+            }
+        }
+
+        // Opdater YAML fil visning
+        const yamlDisplay = document.querySelector('#template-step2 .yaml-file-display');
+        if (yamlDisplay) {
+            if (this.templateData.yamlFile) {
+                yamlDisplay.innerHTML = `
+                    <i class='bx bx-file'></i>
+                    <span class="filename">${this.templateData.yamlFile.name}</span>
+                `;
+            } else {
+                yamlDisplay.innerHTML = `
+                    <i class='bx bx-file'></i>
+                    <span class="filename">No file uploaded</span>
+                `;
+            }
+        }
+
+        // Opdater preview image
+        const previewContainer = document.querySelector('#template-step2 .preview-container');
+        if (previewContainer) {
+            if (this.templateData.previewImage) {
+                previewContainer.innerHTML = `<img src="${this.templateData.previewImage}" alt="Preview">`;
+            } else {
+                previewContainer.innerHTML = `<div class="no-preview">No preview image uploaded</div>`;
+            }
+        }
     }
 
     updateNextButton() {
@@ -193,47 +280,5 @@ class TemplateForm extends BaseStepForm {
                 window.location.href = 'templates.html';
             }, 2000);
         }, 1500);
-    }
-
-    createNewService() {
-        const modal = document.getElementById('createServiceModal');
-        const nameInput = modal?.querySelector('input[type="text"]');
-        const selectedIcon = modal?.querySelector('.icon-option.selected');
-        
-        if (!nameInput?.value || !selectedIcon) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        const iconClass = selectedIcon.dataset.icon;
-        const newService = document.createElement('button');
-        newService.className = 'service-tag';
-        newService.innerHTML = `
-            <i class='bx ${iconClass}'></i>
-            <span>${nameInput.value}</span>
-            <i class='bx bx-x remove-service'></i>
-        `;
-
-        // Tilføj event listeners til den nye service
-        newService.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('remove-service')) {
-                newService.classList.toggle('active');
-            }
-        });
-
-        const removeBtn = newService.querySelector('.remove-service');
-        if (removeBtn) {
-            removeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                newService.remove();
-            });
-        }
-
-        document.querySelector('.services-selection')?.appendChild(newService);
-        
-        // Reset modal
-        nameInput.value = '';
-        selectedIcon.classList.remove('selected');
-        modal.classList.remove('show');
     }
 } 
