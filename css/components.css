@@ -520,6 +520,7 @@ body:not(.sb-expanded) .create-button .icon + span {
 .preview-upload {
     position: relative;
     height: 150px;
+    width: 100%;
 }
 
 .upload-area {
@@ -586,19 +587,21 @@ body:not(.sb-expanded) .create-button .icon + span {
 /* === Preview Container === */
 .preview-container {
     width: 100%;
-    max-height: 150px;
-    border-radius: 4px;
-    margin: 16px 0;
+    height: 100%;
+    position: relative;
     overflow: hidden;
     background-color: var(--card-background-dark);
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.preview-image {
-    width: 100%;
+.preview-container img {
     height: 100%;
-    object-fit: cover;
-    display: block;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
 }
 
 /* === Remove Button === */
@@ -1259,15 +1262,38 @@ body:not(.sb-expanded) .create-button .icon + span {
     letter-spacing: 0.5px;
 }
 
-/* Juster højden på containerne */
+/* Opdateret højde på containerne */
 .detail-group.upload-grid .yaml-file-display,
 .detail-group.upload-grid .preview-container {
-    height: 150px;
+    height: 100px; /* Reduceret fra 150px */
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     background-color: var(--card-background-dark);
     border: 1px solid var(--border-color);
     border-radius: 4px;
+    overflow: hidden; /* Tilføjet for at sikre at billeder ikke går ud over containeren */
+    padding: 16px;
+}
+
+/* Tilføjet styling for preview billeder */
+.detail-group.upload-grid .preview-container img {
+    width: auto; /* Ændret fra 100% */
+    height: auto; /* Ændret fra 100% */
+    max-width: 90%; /* Tilføjet max-width */
+    max-height: 90%; /* Tilføjet max-height */
+    object-fit: contain;
+    object-position: left center;
+}
+
+/* No preview message styling */
+.no-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
 }
   
