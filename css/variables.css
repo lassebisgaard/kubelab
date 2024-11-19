@@ -1,15 +1,15 @@
 :root {
     /* Light Mode Colors */
-    --background-color-light: #FFFFFF;
-    --text-color-light: #1a1a1a;
-    --primary-color-light: #4a90e2;
-    --secondary-color-light: #e94e77;
-    --accent-color-light: #50e3c2;
-    --border-color-light: #e0e0e0;
-    --card-background-light: #f8f8f8;
-    --hover-background-light: #f0f0f0;
-    --link-color-light: #4a90e2;
-    --active-color-light: #FF5733;
+    --background-color-light: #F8FAFC;
+    --text-color-light: #0F172A;
+    --primary-color-light: #00875A;
+    --secondary-color-light: #475569;
+    --accent-color-light: #1da87c;
+    --border-color-light: #CBD5E1;
+    --card-background-light: #FFFFFF;
+    --hover-background-light: #F1F5F9;
+    --link-color-light: #249c76;
+    --active-color-light: #21a47f;
   
     /* Dark Mode Colors */
     --background-color-dark: #001B2E;
