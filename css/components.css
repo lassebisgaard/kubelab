@@ -181,42 +181,54 @@ body:not(.sb-expanded) .create-button .icon + span {
 
 /* === Template/Project Grid === */
 .project-template-grid {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 24px;
     margin-top: 24px;
 }
 
 /* Opdaterer project template card styling */
 .project-template-card {
-    display: flex;
-    flex-direction: column;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
-    flex: 1;
-    min-width: 0;
+    position: relative;
+}
+
+.project-template-card:hover {
+    border-color: var(--accent-color);
 }
 
 .project-template-card.selected {
     border: 2px solid var(--accent-color);
 }
 
-/* Tilføjer hover effekt */
-.project-template-card:hover {
-    border-color: var(--accent-color);
+.project-template-card h2 {
+    font-size: 20px;
+    margin: 0 0 4px 0;
+    color: var(--text-color);
 }
 
-/* Styling til preview billedet */
+.project-template-card p {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+}
+
 .project-template-card .preview-container {
     width: 100%;
-    height: 200px;
+    height: 150px;
     background-color: var(--card-background-dark);
     border-radius: 4px;
-    margin: 16px 0;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
@@ -224,6 +236,27 @@ body:not(.sb-expanded) .create-button .icon + span {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.project-template-card .author {
+    font-size: 12px;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 8px;
+}
+
+.project-template-card .included-services {
+    font-size: 12px;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 8px;
+}
+
+/* Bevar eksisterende service tag styling */
+.project-template-card .services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 /* === Form Components === */
@@ -811,7 +844,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     padding: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
-    height: 100%;
+    position: relative;
 }
 
 .project-template-card.selected {
