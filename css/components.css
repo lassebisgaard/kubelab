@@ -1,3 +1,10 @@
+/* === Utility Classes === */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* === Buttons === */
 /* Primary action button used in navigation */
 .create-button {
@@ -1023,48 +1030,6 @@ body:not(.sb-expanded) .create-button .icon + span {
     margin-top: 24px;
 }
 
-/* === Content Wrapper === */
-.content-wrapper {
-    max-width: 900px;  /* Mindre bredde end page-container */
-    margin: 0 auto;    /* Centrerer content */
-    padding: 0 24px;   /* Giver lidt padding på siderne */
-}
-
-/* === Page Container === */
-.page-container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.page-title {
-    font-size: 32px;
-    margin-bottom: 8px;
-}
-
-.page-subtitle {
-    color: var(--text-color);
-    opacity: 0.7;
-    font-size: 14px;
-    margin-bottom: 48px;  /* Øget spacing før content */
-}
-
-/* === Responsive Design === */
-@media (max-width: 1200px) {
-    .content-wrapper {
-        max-width: 800px;
-    }
-}
-
-@media (max-width: 768px) {
-    .content-wrapper {
-        max-width: 100%;
-        padding: 0 16px;
-    }
-    
-    .page-container {
-        padding: 32px 16px;
-    }
-}
 
 /* === Upload Grid === */
 .config-grid {

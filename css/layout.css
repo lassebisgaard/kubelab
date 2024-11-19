@@ -145,11 +145,38 @@ main {
     }
 
     .page-container {
-        padding: 0.25rem;
+        padding: 1.5rem 1rem ;
     }
 
     .content-wrapper {
         padding: 0 4px;
     }
 }
- 
+
+/* === Grid Systems === */
+/* Icon grid for service selection */
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Grid for project templates */
+.project-template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+    .icon-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .project-template-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}

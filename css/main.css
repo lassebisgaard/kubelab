@@ -28,3 +28,15 @@ main {
 p {
     line-height: 1.5;
 } 
+
+.page-title {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.page-subtitle {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+    margin-bottom: 48px;  /* Øget spacing før content */
+}
