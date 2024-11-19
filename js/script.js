@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
             initializePageServices();
         }
     }
+
+    // Tilføj initialisering af template filtering
+    initProjectTemplateFiltering();
 });
 
 function initializePageServices() {
@@ -114,4 +117,44 @@ function initThemeToggle() {
             document.body.classList.toggle('light-mode');
         });
     }
+}
+
+// Tilføj denne funktion til at håndtere filtrering
+function initProjectTemplateFiltering() {
+    const servicesFilterContainer = document.querySelector('.services-filter');
+    const templateGrid = document.querySelector('.project-template-grid');
+    const templateCards = document.querySelectorAll('.project-template-card');
+    
+    if (!servicesFilterContainer || !templateGrid) return;
+
+    // Render alle services som filter tags
+    servicesFilterContainer.innerHTML = window.renderServiceTags(Object.keys(SERVICES), false);
+    
+    // Tilføj click handlers til service tags
+    servicesFilterContainer.addEventListener('click', (e) => {
+        const serviceTag = e.target.closest('.service-tag');
+        if (!serviceTag) return;
+        
+        serviceTag.classList.toggle('active');
+        
+        // Find alle aktive filters
+        const activeFilters = Array.from(servicesFilterContainer.querySelectorAll('.service-tag.active'))
+            .map(tag => tag.dataset.service);
+        
+        // Filtrer templates
+        templateCards.forEach(card => {
+            const cardServices = card.dataset.services?.split(',') || [];
+            
+            if (activeFilters.length === 0) {
+                // Hvis ingen filtre er valgt, vis alle templates
+                card.style.display = '';
+            } else {
+                // Tjek om template indeholder ALLE valgte services
+                const hasAllServices = activeFilters.every(filter => 
+                    cardServices.includes(filter)
+                );
+                card.style.display = hasAllServices ? '' : 'none';
+            }
+        });
+    });
 }

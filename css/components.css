@@ -181,6 +181,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     border: 2px solid currentColor;
     position: relative;
     overflow: hidden;
+    background-color:var(--card-background);
 }
 
 .step.completed .step-number {
@@ -246,9 +247,10 @@ body:not(.sb-expanded) .create-button .icon + span {
 /* === Template/Project Grid === */
 .project-template-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
     margin-top: 24px;
+    max-width: 1200px;
 }
 
 .project-template-card {
@@ -701,6 +703,38 @@ textarea.form-control {
     margin-bottom: 12px;
 }
 
+.services-filter-section {
+    margin-bottom: 24px;
+}
+
+.services-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.services-filter .service-tag {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+}
+
+.services-filter .service-tag:hover {
+    opacity: 1;
+}
+
+.services-filter .service-tag.active {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    opacity: 1;
+}
+
+.services-filter .service-tag.active i,
+.services-filter .service-tag.active span {
+    color: var(--background-color);
+}
+
 .create-service-link {
     display: inline-flex;
     align-items: center;
@@ -732,13 +766,13 @@ textarea.form-control {
     padding: 6px 12px;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 14px;
+    border-radius: 40px;
+    font-size: 12px;
     color: var(--text-color);
 }
 
 .service-tag i {
-    font-size: 16px;
+    font-size: 12px;
     color: var(--accent-color);
 }
 
