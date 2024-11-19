@@ -1,7 +1,17 @@
 console.log('BaseStepForm.js loaded');
+
+/**
+ * BaseStepForm - Håndterer formular flow for både templates og projects
+ * Styrer step navigation, validering og form submission
+ */
 class BaseStepForm {
+    /**
+     * Initialiserer en ny formular
+     * @param {string} type - Enten 'template' eller 'project'
+     */
     constructor(type) {
-        this.type = type; // 'template' eller 'project'
+        // === DOM Elements ===
+        this.type = type;
         this.steps = document.querySelectorAll('.step');
         this.stepContents = document.querySelectorAll('.step-content');
         this.stepDividers = document.querySelectorAll('.step-divider');
@@ -10,13 +20,14 @@ class BaseStepForm {
         this.currentStep = 1;
         this.maxSteps = this.steps.length;
         
-        // Form data
+        // === Form Data Storage ===
         this.formData = {
             name: '',
             description: '',
             services: []
         };
 
+        // Type-specifik data initialisering
         if (this.type === 'template') {
             this.formData.yamlFile = null;
             this.formData.previewImage = null;
@@ -28,6 +39,11 @@ class BaseStepForm {
         this.init();
     }
 
+    // === Core Initialization & Navigation ===
+    
+    /**
+     * Initialiserer form funktionalitet baseret på type
+     */
     init() {
         this.backButton?.addEventListener('click', () => this.handleBack());
         this.nextButton?.addEventListener('click', () => this.handleNext());
@@ -42,7 +58,9 @@ class BaseStepForm {
         this.updateSteps();
     }
 
-    // Fælles form funktionalitet
+    /**
+     * Håndterer navigation til forrige step
+     */
     handleBack() {
         if (this.currentStep > 1) {
             this.currentStep--;
@@ -50,6 +68,9 @@ class BaseStepForm {
         }
     }
 
+    /**
+     * Håndterer navigation til næste step eller submission
+     */
     handleNext() {
         if (this.currentStep < this.maxSteps) {
             if (this.validateCurrentStep()) {
@@ -61,6 +82,11 @@ class BaseStepForm {
         }
     }
 
+    // === UI Update Methods ===
+    
+    /**
+     * Opdaterer UI elementer baseret på nuværende step
+     */
     updateSteps() {
         this.steps.forEach((step, index) => {
             const stepNumber = index + 1;
@@ -89,6 +115,9 @@ class BaseStepForm {
         this.updateNextButton();
     }
 
+    /**
+     * Opdaterer next button tekst og styling
+     */
     updateNextButton() {
         if (this.currentStep === this.maxSteps) {
             const text = this.type === 'template' ? 'Create template' : 'Create project';
@@ -100,7 +129,11 @@ class BaseStepForm {
         }
     }
 
-    // Template-specifikke metoder
+    // === Template-Specific Methods ===
+    
+    /**
+     * Initialiserer file upload funktionalitet for templates
+     */
     initFileUploads() {
         // YAML Upload
         const yamlInput = document.querySelector('#yaml-file');
@@ -172,6 +205,9 @@ class BaseStepForm {
         });
     }
 
+    /**
+     * Håndterer service tilføjelse og redigering
+     */
     initServiceFunctionality() {
         // Tilføj event listeners til eksisterende services
         const existingServices = document.querySelectorAll('.services-selection .service-tag');
@@ -248,6 +284,9 @@ class BaseStepForm {
         });
     }
 
+    /**
+     * Opretter en ny service tag med given navn og ikon
+     */
     createNewService(name, iconClass) {
         const servicesContainer = document.querySelector('.services-selection');
         const newService = document.createElement('button');
@@ -276,7 +315,11 @@ class BaseStepForm {
         servicesContainer?.appendChild(newService);
     }
 
-    // Project-specifikke metoder
+    // === Project-Specific Methods ===
+    
+    /**
+     * Initialiserer template selection funktionalitet
+     */
     initTemplateSelection() {
         console.log('Initializing template selection');
         const templateCards = document.querySelectorAll('.project-template-grid .project-template-card');
@@ -312,6 +355,11 @@ class BaseStepForm {
         });
     }
 
+    // === Validation Methods ===
+    
+    /**
+     * Validerer det nuværende step baseret på form type
+     */
     validateCurrentStep() {
         if (this.type === 'template') {
             return this.validateTemplateStep();
@@ -320,6 +368,9 @@ class BaseStepForm {
         }
     }
 
+    /**
+     * Validerer template-specifikke felter
+     */
     validateTemplateStep() {
         if (this.currentStep === 1) {
             const nameInput = document.getElementById('template-name-input');
@@ -345,6 +396,9 @@ class BaseStepForm {
         return true;
     }
 
+    /**
+     * Validerer project-specifikke felter
+     */
     validateProjectStep() {
         console.log('Validating project step:', this.currentStep);
         console.log('Current form data:', this.formData);
@@ -387,6 +441,11 @@ class BaseStepForm {
         }
     }
 
+    // === Confirmation Step Methods ===
+    
+    /**
+     * Opdaterer confirmation step for templates
+     */
     updateTemplateConfirmation() {
         const nameConfirm = document.getElementById('template-name-confirm');
         const descriptionConfirm = document.getElementById('template-description-confirm');
@@ -423,6 +482,9 @@ class BaseStepForm {
         }
     }
 
+    /**
+     * Opdaterer confirmation step for projects
+     */
     updateProjectConfirmation() {
         const nameConfirm = document.getElementById('project-name-confirm');
         const domainConfirm = document.getElementById('project-domain-confirm');
@@ -452,6 +514,11 @@ class BaseStepForm {
         }
     }
 
+    // === Overlay Handling ===
+    
+    /**
+     * Håndterer form submission og success/error states
+     */
     handleSubmission() {
         this.showLoadingOverlay();
         
@@ -465,16 +532,25 @@ class BaseStepForm {
         }, 1500);
     }
 
+    /**
+     * Viser loading overlay under submission
+     */
     showLoadingOverlay() {
         const loadingOverlay = document.querySelector('.loading-overlay');
         loadingOverlay?.classList.add('show');
     }
 
+    /**
+     * Viser success overlay efter vellykket submission
+     */
     showSuccessOverlay() {
         const successOverlay = document.querySelector('.success-overlay');
         successOverlay?.classList.add('show');
     }
 
+    /**
+     * Skjuler loading overlay
+     */
     hideLoadingOverlay() {
         const loadingOverlay = document.querySelector('.loading-overlay');
         loadingOverlay?.classList.remove('show');

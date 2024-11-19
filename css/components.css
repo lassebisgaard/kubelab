@@ -179,6 +179,22 @@ body:not(.sb-expanded) .create-button .icon + span {
     background-color: var(--accent-color);
 }
 
+/* Step responsive styles */
+@media (max-width: 768px) {
+    .steps {
+        gap: 8px;
+        margin: 16px 0;
+    }
+
+    .step {
+        gap: 0;
+    }
+
+    .step span:not(.step-number) {
+        display: none;
+    }
+}
+
 /* === Template/Project Grid === */
 .project-template-grid {
     display: grid;
@@ -327,6 +343,14 @@ body:not(.sb-expanded) .create-button .icon + span {
     z-index: 100;
 }
 
+/* Flow navigation responsive styles */
+@media (max-width: 768px) {
+    .flow-navigation {
+        left: 0;
+        padding: 16px;
+    }
+}
+
 .back-button {
     display: flex;
     align-items: center;
@@ -408,6 +432,13 @@ body:not(.sb-expanded) .create-button .icon + span {
     font-size: 20px;
     font-weight: 500;
     margin-bottom: 8px;
+}
+
+/* Form card responsive styles */
+@media (max-width: 768px) {
+    .form-card {
+        padding: 16px;
+    }
 }
 
 /* === Step Content === */

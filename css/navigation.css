@@ -5,7 +5,16 @@ aside {
     width: var(--sb-width);
     background-color: var(--card-background);
     transition: width 0.5s ease-in-out;
+    
 }
+
+/* Tilføj denne media query for mobile enheder KUN TIL TESTNING INDITL LASSE HAR NAV KLAR */
+@media screen and (max-width: 768px) {
+    aside {
+        display: none;
+    }
+}
+
 
 nav {
     height: 100%;
