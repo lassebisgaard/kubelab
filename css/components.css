@@ -13,7 +13,7 @@
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: 
+    transition:
         background-color 0.3s,
         width 0.3s,
         padding 0.3s;
@@ -35,8 +35,70 @@ body:not(.sb-expanded) .create-button .icon {
     margin-right: 0px !important;
 }
 
-body:not(.sb-expanded) .create-button .icon + span {
+body:not(.sb-expanded) .create-button .icon+span {
     display: none;
+}
+
+.loginButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 370px;
+    height: 40px;
+    margin-top: 51px;
+    background-color: var(--accent-color-dark);
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-size: 20px;
+    font-weight: regular;
+    cursor: pointer;
+    transition:
+        background-color 0.3s,
+        width 0.3s,
+        padding 0.3s;
+}
+
+.createAccount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 370px;
+    height: 40px;
+    margin-top: 34px;
+    background-color: transparent;
+    border: solid;
+    border-width: 1px;
+    border-radius: 8px;
+    color: var(--text-color-dark);
+    border-color: var(--accent-color-dark);
+    font-size: 20px;
+    font-weight: regular;
+    cursor: pointer;
+    transition:
+        background-color 0.3s,
+        width 0.3s,
+        padding 0.3s;
+}
+
+#submitBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 370px;
+    height: 41px;
+    margin-top: 35px;
+    background-color: #00FFBB;
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition:
+        background-color 0.3s,
+        width 0.3s,
+        padding 0.3s;
 }
 
 /* === Theme Toggle === */
@@ -54,7 +116,7 @@ body:not(.sb-expanded) .create-button .icon + span {
     color: var(--text-color);
     text-decoration: none;
     border-radius: 0.375rem;
-    transition: 
+    transition:
         background-color 0.5s ease-in-out,
         color 0.5s ease-in-out;
 }
@@ -120,4 +182,47 @@ body:not(.sb-expanded) .create-button .icon + span {
 .icons {
     width: 27px;
     height: 27px;
-} 
+}
+
+/* === Form === */
+
+.formular input {
+    margin-top: 32px;
+    width: 370px;
+    height: 40px;
+    background-color: var(--border-color-dark);
+    color: var(--text-color-dark);
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+input::placeholder {
+    color: var(--text-color-dark);
+}
+
+input[type="button"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 370px;
+    height: 40px;
+    margin-top: 64px;
+    background-color: #00FFBB;
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition:
+        background-color 0.3s,
+        width 0.3s,
+        padding 0.3s;
+}
+
+#rememberMe {
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+}

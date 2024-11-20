@@ -15,7 +15,26 @@ main {
     color: var(--text-color);
     margin-bottom: var(--spacing-xl);
     font-size: 2rem;
+    font-weight: bold;
 }
+
+.page-subtitle {
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xl);
+    font-size: 1.5rem;
+    font-weight: regular;
+}
+
+#index {
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+
+
 
 /* === Grid System === */
 .grid {
@@ -40,8 +59,9 @@ main {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+
     .grid-2x2,
     .grid-3x3 {
         grid-template-columns: 1fr;
     }
-} 
+}
