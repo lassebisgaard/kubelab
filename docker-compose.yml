@@ -1,0 +1,69 @@
+version: '3.9'
+
+networks:
+  kubelab-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
+
+services:
+  # Frontend Service
+  frontend:
+    image: node:16-alpine
+    container_name: kubelab-frontend
+    working_dir: /usr/src/app
+    volumes:
+      - ./frontend:/usr/src/app   # Map din frontend-mappe
+    command: sh -c "npm install && npm run start"
+    ports:
+      - "3000:3000"              # Frontend eksponeres på port 3000
+    networks:
+      - kubelab-net
+
+  # Backend Service
+  backend:
+    image: node:16-alpine
+    container_name: kubelab-backend
+    working_dir: /usr/src/app
+    volumes:
+      - ./backend:/usr/src/app   # Map din backend-mappe
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5000:5000"              # Backend eksponeres på port 5000
+    networks:
+      - kubelab-net
+    environment:
+      DATABASE_HOST: db          # MySQL-databasen
+      DATABASE_USER: Lasse2024
+      DATABASE_PASSWORD: Gulelefant7
+      DATABASE_NAME: kubelab_db
+
+  # Database Service
+  db:
+    image: mysql:8
+    container_name: kubelab-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root            # Root-adgangskode
+      MYSQL_DATABASE: kubelab_db           # Database navn
+      MYSQL_USER: Lasse2024                # Dit brugernavn
+      MYSQL_PASSWORD: Gulelefant7          # Dit kodeord
+    volumes:
+      - mysql-data:/var/lib/mysql          # Gem data persistente
+    ports:
+      - "3306:3306"                        # Eksponer database-port
+    networks:
+      - kubelab-net
+
+  # phpMyAdmin Service
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: kubelab-phpmyadmin
+    environment:
+      PMA_HOST: db                         # Navnet på MySQL-containeren
+      PMA_USER: Lasse2024                  # Brugernavn til databasen
+      PMA_PASSWORD: Gulelefant7            # Adgangskode til databasen
+    ports:
+      - "8080:80"                          # phpMyAdmin tilgængelig på port 8080
+    networks:
+      - kubelab-net
