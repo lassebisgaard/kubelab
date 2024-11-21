@@ -8,7 +8,6 @@ volumes:
   mysql-data:
 
 services:
-  # Frontend
   frontend:
     image: node:16-alpine
     working_dir: /usr/src/app
@@ -20,7 +19,6 @@ services:
     networks:
       - kubelab-net
 
-  # Backend
   backend:
     image: node:16-alpine
     working_dir: /usr/src/app
@@ -37,7 +35,6 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_NAME: ${DATABASE_NAME}
 
-  # MySQL Database
   db:
     image: mysql:8
     environment:
@@ -52,7 +49,6 @@ services:
     networks:
       - kubelab-net
 
-  # phpMyAdmin
   phpmyadmin:
     image: phpmyadmin:latest
     environment:
