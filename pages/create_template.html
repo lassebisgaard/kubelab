@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Template - Kubelab</title>
@@ -10,38 +15,11 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/navigation.css">
     <link rel="stylesheet" href="../css/components.css">
+    <script src="../js/script.js" defer></script>
+    <script src="../js/forms/BaseStepForm.js" defer></script>
 </head>
 <body class="dark-mode">
-    <script>
-        // Initialize services
-        window.SERVICES = {
-            wordpress: {
-                id: 'wordpress',
-                name: 'WordPress',
-                icon: 'bxl-wordpress'
-            },
-            mysql: {
-                id: 'mysql',
-                name: 'MySQL',
-                icon: 'bx-data'
-            },
-            phpmyadmin: {
-                id: 'phpmyadmin',
-                name: 'phpMyAdmin',
-                icon: 'bx-server'
-            },
-            nginx: {
-                id: 'nginx',
-                name: 'Nginx',
-                icon: 'bx-server'
-            },
-            php: {
-                id: 'php',
-                name: 'PHP',
-                icon: 'bxl-php'
-            }
-        };
-    </script>
+
     <aside>
         <nav>
             <ul>
@@ -370,8 +348,6 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
-    <script src="../js/forms/BaseStepForm.js"></script>
-    <script src="../js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             new BaseStepForm('template');

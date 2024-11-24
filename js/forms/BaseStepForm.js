@@ -209,6 +209,7 @@ window.BaseStepForm = class BaseStepForm {
                         <div class="services">
                             ${template.services.map(serviceId => {
                                 const service = window.SERVICES[serviceId];
+                                if (!service) return '';
                                 return `
                                     <div class="service-tag service-tag--static">
                                         <i class='bx ${service.icon}'></i>
@@ -245,8 +246,11 @@ window.BaseStepForm = class BaseStepForm {
                     id: card.dataset.id,
                     name: card.querySelector('h2').textContent,
                     description: card.querySelector('p').textContent,
-                    services: card.dataset.services.split(',')
+                    services: card.dataset.services.split(','),
+                    author: card.querySelector('.author').textContent.replace('By ', '')
                 };
+
+                console.log('Selected template:', this.formData.template); // Debug log
 
                 // Enable next button
                 if (this.nextButton) {
@@ -392,6 +396,11 @@ window.BaseStepForm = class BaseStepForm {
                 this.formData.name = nameInput.value;
                 this.formData.domain = domainInput.value;
                 this.formData.description = descriptionInput?.value || '';
+
+                // Update confirmation step
+                document.getElementById('project-name-confirm').textContent = this.formData.name;
+                document.getElementById('project-domain-confirm').textContent = `${this.formData.domain}.kubelab.dk`;
+                document.getElementById('project-description-confirm').textContent = this.formData.description || 'Not specified';
             }
         }
 
@@ -532,8 +541,14 @@ window.BaseStepForm = class BaseStepForm {
                     name: this.formData.name,
                     domain: this.formData.domain,
                     description: this.formData.description,
-                    template: this.formData.template
+                    template: {
+                        id: this.formData.template.id,
+                        name: this.formData.template.name,
+                        services: this.formData.template.services
+                    }
                 };
+
+                console.log('Sending project data:', projectData); // Debug log
 
                 const response = await fetch('/api/projects', {
                     method: 'POST',

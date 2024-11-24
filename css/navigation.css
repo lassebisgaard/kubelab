@@ -73,21 +73,33 @@ nav a img,
 
 /* Create Button */
 .create-button {
-    width: 100%;
+    width: 206px;
     height: 41px;
+    margin-bottom: 24px;
     background-color: var(--accent-color);
     border: none;
     border-radius: 12px;
     color: var(--background-color);
     cursor: pointer;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    transition: width 0.3s ease;
+    gap: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    padding: 0;
 }
 
 .create-button img {
     width: 18px;
     height: 18px;
     min-width: 18px;
+}
+
+.create-button span {
+    color: var(--background-color);
+    font-size: 16px;
+    white-space: nowrap;
 }
 
 /* Bottom Navigation */
@@ -99,36 +111,40 @@ nav a img,
 }
 
 /* Collapsed State */
-body:not(.sb-expanded) aside {
+:root:not(.sb-expanded) aside {
     width: 89px;
 }
 
-body:not(.sb-expanded) nav {
+:root:not(.sb-expanded) nav {
+    align-items: center;
+    padding: 16px 12px;
+}
+
+:root:not(.sb-expanded) nav ul {
     align-items: center;
 }
 
-body:not(.sb-expanded) nav ul {
-    align-items: center;
-}
-
-body:not(.sb-expanded) nav a,
-body:not(.sb-expanded) .nav-bottom a {
-    justify-content: flex-start;
+:root:not(.sb-expanded) nav a,
+:root:not(.sb-expanded) .nav-bottom a {
+    justify-content: center;
     width: 38px;
-    padding-left: 7px;
+    padding: 0;
 }
 
-body:not(.sb-expanded) nav a span,
-body:not(.sb-expanded) .nav-bottom a span,
-body:not(.sb-expanded) .create-button span,
-body:not(.sb-expanded) nav ul li:first-child span {
+:root:not(.sb-expanded) nav a span,
+:root:not(.sb-expanded) .nav-bottom a span,
+:root:not(.sb-expanded) nav ul li:first-child span {
     display: none;
 }
 
-body:not(.sb-expanded) .create-button {
+:root:not(.sb-expanded) .create-button {
     width: 38px;
     padding: 0;
     justify-content: center;
+}
+
+:root:not(.sb-expanded) .create-button span {
+    display: none;
 }
 
 /* Profile Image Styling */
@@ -157,4 +173,10 @@ nav a span,
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Remove any conflicting styles */
+nav a.create-button {
+    padding: 0;
+    margin-bottom: 24px;
 }

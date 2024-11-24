@@ -6,17 +6,20 @@
     box-sizing: border-box;
 }
 
-body {
+:root {
     --sb-width: 102px;
+}
+
+:root.sb-expanded {
+    --sb-width: 284px;
+}
+
+body {
     background-color: var(--background-color);
     color: var(--text-color);
     margin: 0;
     padding: 0;
     font-family: Poppins,system-ui, -apple-system, sans-serif;
-}
-
-body.sb-expanded {
-    --sb-width: 284px;
 }
 
 main {

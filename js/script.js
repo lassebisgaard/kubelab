@@ -1,20 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Check for saved sidebar state
-    const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
-    document.body.classList.toggle('sb-expanded', isSidebarExpanded);
-
-    // Handle sidebar toggle
-    const resizeBtn = document.querySelector('[data-resize-btn]');
-    if (resizeBtn) {
-        resizeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.body.classList.toggle('sb-expanded');
-            // Save state
-            localStorage.setItem('sidebarExpanded', document.body.classList.contains('sb-expanded'));
-        });
-    }
-});
-
+// Define services first
 window.SERVICES = {
     wordpress: {
         id: 'wordpress',
@@ -42,6 +26,19 @@ window.SERVICES = {
         icon: 'bxl-php'
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle sidebar toggle
+    const resizeBtn = document.querySelector('[data-resize-btn]');
+    if (resizeBtn) {
+        resizeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.documentElement.classList.toggle('sb-expanded');
+            // Save state
+            localStorage.setItem('sidebarExpanded', document.documentElement.classList.contains('sb-expanded'));
+        });
+    }
+});
 
 window.renderServiceTags = function(serviceIds, options = {}) {
     const defaults = {
