@@ -27,14 +27,13 @@
                 <li>
                     <a href="#" data-resize-btn>
                         <img src="../assets/Icons/Sidebar.svg" alt="Sidebar" class="icons">
-                        <span>Collapse sidebar</span>
                     </a>
                 </li>
                 <li>
-                    <button class="create-button flex-center">
+                    <a href="create.html" class="create-button flex-center">
                         <img src="../assets/Icons/plus.svg" alt="Plus tegn" class="icon">
                         <span>Create</span>
-                    </button>
+                    </a>
                 </li>
                 <li>
                     <a href="project.html">
@@ -65,15 +64,15 @@
             <ul class="nav-bottom">
                 <li>
                     <a href="#">
-                        <img src="../assets/Icons/settings.svg" alt="settings" class="icons">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
                         <span>Settings</span>
                     </a>
                 </li>
                 <li>
-                    <button class="theme-toggle">
-                        <i class="bx bx-moon"></i>
-                        <span>Skift tema</span>
-                    </button>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
                 </li>
             </ul>
         </nav>
@@ -118,13 +117,13 @@
 
                         <div class="form-group">
                             <label>Expiration date</label>
-                            <div class="date-input-wrapper">
+                            <div class="date-input-wrapper" data-wrap="true">
                                 <input type="text" 
                                        class="form-control" 
                                        id="team-expiration-input"
                                        placeholder="dd.mm.yyyy"
                                        data-input>
-                                <i class='bx bx-calendar'></i>
+                                <i class='bx bx-calendar' data-toggle></i>
                             </div>
                         </div>
 
@@ -244,6 +243,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             new BaseStepForm('team');
+            // Initialize flatpickr
+            flatpickr("#team-expiration-input", {
+                dateFormat: "d.m.Y",
+                minDate: "today",
+                static: true
+            });
+
+            // Add click handler for calendar icon
+            document.querySelector('.date-input-wrapper i').addEventListener('click', () => {
+                document.querySelector('#team-expiration-input').focus();
+            });
         });
     </script>
 </body>

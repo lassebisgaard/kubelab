@@ -1431,6 +1431,12 @@ textarea.form-control {
     width: 100%;
 }
 
+.date-input-wrapper input {
+    width: 100%;
+    padding: 12px;
+    padding-right: 40px; /* Make room for the icon */
+}
+
 .date-input-wrapper i {
     position: absolute;
     right: 12px;
@@ -1438,11 +1444,12 @@ textarea.form-control {
     transform: translateY(-50%);
     color: var(--text-color);
     opacity: 0.5;
-    pointer-events: none;
+    cursor: pointer; /* Make the icon clickable */
+    pointer-events: auto; /* Enable clicking on the icon */
     z-index: 1;
 }
 
-/* Flatpickr styling med vores design system */
+/* Flatpickr styling */
 .flatpickr-calendar {
     background: var(--card-background) !important;
     border: 1px solid var(--border-color) !important;

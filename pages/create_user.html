@@ -30,10 +30,10 @@
                     </a>
                 </li>
                 <li>
-                    <button class="create-button">
+                    <a href="create.html" class="create-button">
                         <img src="../assets/Icons/plus.svg" alt="Plus tegn">
                         <span>Create</span>
-                    </button>
+                    </a>
                 </li>
                 <li>
                     <a href="project.html">
@@ -69,10 +69,10 @@
                     </a>
                 </li>
                 <li>
-                    <button class="theme-toggle">
-                        <i class="bx bx-moon"></i>
-                        <span>Skift tema</span>
-                    </button>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
                 </li>
             </ul>
         </nav>
@@ -134,13 +134,13 @@
 
                     <div class="form-group">
                         <label>Expiration date</label>
-                        <div class="date-input-wrapper">
+                        <div class="date-input-wrapper" data-wrap="true">
                             <input type="text" 
                                    class="form-control" 
                                    id="user-expiration-input"
                                    placeholder="dd.mm.yyyy"
                                    data-input>
-                            <i class='bx bx-calendar'></i>
+                            <i class='bx bx-calendar' data-toggle></i>
                         </div>
                     </div>
 
@@ -176,6 +176,48 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             new BaseStepForm('user');
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize flatpickr
+            flatpickr("#user-expiration-input", {
+                dateFormat: "d.m.Y",
+                minDate: "today",
+                static: true
+            });
+
+            // Add click handler for calendar icon
+            document.querySelector('.date-input-wrapper i').addEventListener('click', () => {
+                document.querySelector('#user-expiration-input').focus();
+            });
+
+            // Initialize custom selects
+            document.querySelectorAll('.custom-select').forEach(select => {
+                const header = select.querySelector('.select-header');
+                const options = select.querySelector('.select-options');
+                const selectedText = header.querySelector('.selected-option');
+
+                // Toggle dropdown
+                header.addEventListener('click', () => {
+                    select.classList.toggle('open');
+                });
+
+                // Handle option selection
+                options.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        selectedText.textContent = option.textContent;
+                        select.classList.remove('open');
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!select.contains(e.target)) {
+                        select.classList.remove('open');
+                    }
+                });
+            });
         });
     </script>
 </body>
