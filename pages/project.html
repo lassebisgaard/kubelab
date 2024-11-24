@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="../css/navigation.css">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/layout.css">
-    <script src="../js/script.js" defer></script>
 </head>
 
 <body class="dark-mode">
@@ -90,39 +89,215 @@
                     </a>
                 </div>
             </div>
+
             <div class="search-bar">
-                <input type="text" placeholder="Søg ...">
+                <input type="text" 
+                       placeholder="Search projects..." 
+                       class="form-control"
+                       id="project-search">
             </div>
-            <div class="grid grid-2x2">
-                <div class="card">
-                    <div class="project-card-header">
-                      <h3>Semesterprojekt</h3>
-                      <span class="project-status-online">Online</span>
-                      <button class="menu-button">...</button>
-                    </div>
-                    <div class="card-body">
-                      <div class="detail-group">
-                        <span class="detail-label">Template</span>
-                        <span class="detail-value">Wordpress kenneth</span>
-                      </div>
-                      <div class="detail-group">
-                        <span class="detail-label">Domain name</span>
-                        <span class="detail-value">lasse@kubelab.dk</span>
-                      </div>
-                      <div class="card-actions">
-                        <button class="action-button power">
-                          <i class="icon-power"></i>
+
+            <div class="project-grid">
+                <!-- Loading state -->
+                <div class="loading-indicator">Loading projects...</div>
+
+                <!-- Projects will be inserted here dynamically -->
+            </div>
+        </div>
+
+        <!-- Project Action Modal -->
+        <div class="modal" id="projectActionModal">
+            <div class="modal-content small">
+                <div class="modal-header">
+                    <h3>Project Actions</h3>
+                    <button class="close-modal">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="action-list">
+                        <button class="action-item" data-action="start">
+                            <i class='bx bx-play'></i>
+                            <span>Start Project</span>
                         </button>
-                        <button class="action-button refresh">
-                          <i class="icon-refresh"></i>
+                        <button class="action-item" data-action="stop">
+                            <i class='bx bx-stop'></i>
+                            <span>Stop Project</span>
                         </button>
-                      </div>
+                        <button class="action-item" data-action="restart">
+                            <i class='bx bx-refresh'></i>
+                            <span>Restart Project</span>
+                        </button>
+                        <button class="action-item warning" data-action="delete">
+                            <i class='bx bx-trash'></i>
+                            <span>Delete Project</span>
+                        </button>
                     </div>
-                  </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal" id="deleteConfirmModal">
+            <div class="modal-content small">
+                <div class="modal-header">
+                    <h3>Delete Project</h3>
+                    <button class="close-modal">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this project?</p>
+                    <div class="warning-message">
+                        <i class='bx bx-error'></i>
+                        <div>
+                            <div class="warning-title">Warning</div>
+                            <div class="warning-text">This action cannot be undone. All project data will be permanently deleted.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" id="cancelDelete">Cancel</button>
+                    <button class="button delete" id="confirmDelete">Delete</button>
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- Project Card Template -->
+    <script id="project-card-template" type="text/x-handlebars-template">
+        <div class="project-card" data-project-id="{{id}}">
+            <div class="project-header">
+                <h3>{{name}}</h3>
+                <span class="status-badge {{statusClass}}">{{status}}</span>
+                <button class="menu-button" aria-label="Project actions">⋮</button>
+            </div>
+            <div class="project-info">
+                <div class="info-row">
+                    <span class="info-label">Template</span>
+                    <span class="info-value">{{template}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Domain name</span>
+                    <a href="https://{{domain}}" class="info-value domain-link" target="_blank">
+                        {{domain}}
+                        <i class='bx bx-link-external'></i>
+                    </a>
+                </div>
+            </div>
+            <div class="project-actions">
+                <button class="action-button {{#if isRunning}}active{{/if}}" title="Power">
+                    <i class='bx bx-power-off'></i>
+                </button>
+                <button class="action-button" title="Restart">
+                    <i class='bx bx-refresh'></i>
+                </button>
+            </div>
+        </div>
+    </script>
 
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Fetch projects
+                const response = await fetch('/api/projects');
+                if (!response.ok) throw new Error('Failed to fetch projects');
+                const projects = await response.json();
+                
+                // Get and compile template
+                const template = Handlebars.compile(
+                    document.getElementById('project-card-template').innerHTML
+                );
+                
+                // Update project grid
+                const projectGrid = document.querySelector('.project-grid');
+                if (projectGrid) {
+                    projectGrid.innerHTML = projects.map(project => {
+                        // Format project data for template
+                        const projectData = {
+                            ...project,
+                            statusClass: project.status.toLowerCase(),
+                            isRunning: project.status === 'Online',
+                            services: project.services.map(service => ({
+                                name: service.name,
+                                icon: service.icon
+                            }))
+                        };
+                        return template(projectData);
+                    }).join('');
+
+                    // Add event listeners to action buttons
+                    projectGrid.querySelectorAll('.project-card').forEach(card => {
+                        // Power button
+                        card.querySelector('.power')?.addEventListener('click', async () => {
+                            const isRunning = card.querySelector('.power').classList.contains('active');
+                            const status = card.querySelector('.project-status');
+                            
+                            if (isRunning) {
+                                status.textContent = 'Offline';
+                                status.className = 'project-status offline';
+                                card.querySelector('.power').classList.remove('active');
+                            } else {
+                                status.textContent = 'Online';
+                                status.className = 'project-status online';
+                                card.querySelector('.power').classList.add('active');
+                            }
+                        });
+
+                        // Menu button
+                        card.querySelector('.menu-button')?.addEventListener('click', () => {
+                            const modal = document.getElementById('projectActionModal');
+                            modal.classList.add('show');
+                            
+                            // Store current project ID
+                            modal.dataset.projectId = card.dataset.projectId;
+                        });
+                    });
+                }
+
+                // Initialize search functionality
+                const searchInput = document.getElementById('project-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        projectGrid.querySelectorAll('.project-card').forEach(card => {
+                            const text = card.textContent.toLowerCase();
+                            card.style.display = text.includes(searchTerm) ? '' : 'none';
+                        });
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                showErrorMessage('Failed to load projects. Please try again later.');
+            }
+        });
+
+        // Error message display
+        function showErrorMessage(message) {
+            const projectGrid = document.querySelector('.project-grid');
+            if (projectGrid) {
+                projectGrid.innerHTML = `
+                    <div class="error-message">
+                        <i class='bx bx-error'></i>
+                        <p>${message}</p>
+                        <button class="button secondary" onclick="location.reload()">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

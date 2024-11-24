@@ -12,6 +12,36 @@
     <link rel="stylesheet" href="../css/components.css">
 </head>
 <body class="dark-mode">
+    <script>
+        // Initialize services
+        window.SERVICES = {
+            wordpress: {
+                id: 'wordpress',
+                name: 'WordPress',
+                icon: 'bxl-wordpress'
+            },
+            mysql: {
+                id: 'mysql',
+                name: 'MySQL',
+                icon: 'bx-data'
+            },
+            phpmyadmin: {
+                id: 'phpmyadmin',
+                name: 'phpMyAdmin',
+                icon: 'bx-server'
+            },
+            nginx: {
+                id: 'nginx',
+                name: 'Nginx',
+                icon: 'bx-server'
+            },
+            php: {
+                id: 'php',
+                name: 'PHP',
+                icon: 'bxl-php'
+            }
+        };
+    </script>
     <aside>
         <nav>
             <ul>
@@ -100,31 +130,47 @@
                     <div class="form-card">
                         <div class="form-group">
                             <label>Template name</label>
-                            <input type="text" class="form-control" id="template-name-input" placeholder="My awesome template">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="template-name-input" 
+                                   placeholder="My awesome template"
+                                   required>
+                            <div class="error-message" id="name-error"></div>
                         </div>
 
                         <div class="form-group">
                             <label>Description</label>
-                            <textarea class="form-control" id="template-description-input" placeholder="Describe your template..." rows="2"></textarea>
+                            <textarea class="form-control" 
+                                      id="template-description-input" 
+                                      placeholder="Describe your template..." 
+                                      rows="2"></textarea>
                         </div>
 
                         <div class="form-group">
                             <div class="config-grid">
                                 <div class="yaml-section">
-                                    <label>YAML Configuration</label>
-                                    <div class="yaml-upload">
-                                        <input type="file" id="yaml-file" hidden accept=".yaml,.yml">
+                                    <label>YAML Configuration <span class="required">*</span></label>
+                                    <div class="yaml-upload" data-upload-area>
+                                        <input type="file" 
+                                               id="yaml-file" 
+                                               hidden 
+                                               accept=".yaml,.yml"
+                                               required>
                                         <label for="yaml-file" class="upload-area">
                                             <i class='bx bx-file'></i>
                                             <span>Drop your YAML file here or click to browse</span>
                                         </label>
+                                        <div class="error-message" id="yaml-error"></div>
                                     </div>
                                 </div>
 
                                 <div class="preview-section">
                                     <label>Template image</label>
-                                    <div class="preview-container--upload">
-                                        <input type="file" id="preview-image" hidden accept="image/*">
+                                    <div class="preview-container--upload" data-upload-area>
+                                        <input type="file" 
+                                               id="preview-image" 
+                                               hidden 
+                                               accept="image/*">
                                         <label for="preview-image" class="upload-area">
                                             <i class='bx bx-image'></i>
                                             <span>Click to upload preview image</span>
@@ -136,15 +182,17 @@
 
                         <div class="form-group">
                             <div class="services-header">
-                                <label>Services</label>
-                                <button class="create-service-link">
+                                <label>Services <span class="required">*</span></label>
+                                <button type="button" class="create-service-link">
                                     <i class='bx bx-plus'></i>
                                     Create service
                                 </button>
                             </div>
                             <div class="services-selection">
-                                <!-- Services will be rendered here by JavaScript -->
+                                <!-- Services will be loaded dynamically -->
+                                <div class="loading-indicator">Loading services...</div>
                             </div>
+                            <div class="error-message" id="services-error"></div>
                         </div>
                     </div>
                 </div>
@@ -168,15 +216,14 @@
                                 <div class="yaml-section">
                                     <label>YAML Configuration</label>
                                     <div class="yaml-file-display">
-                                        <i class='bx bx-file'></i>
-                                        <span class="filename">docker-compose.yml</span>
+                                        <!-- Will be populated by JavaScript -->
                                     </div>
                                 </div>
 
                                 <div class="preview-section">
                                     <label>Template image</label>
                                     <div class="preview-container preview-container--detail">
-                                        <!-- Preview image will be added by JavaScript -->
+                                        <!-- Will be populated by JavaScript -->
                                     </div>
                                 </div>
                             </div>
@@ -184,7 +231,7 @@
                             <div class="detail-group">
                                 <label>Services</label>
                                 <div class="service-tags">
-                                    <!-- Services will be populated by JavaScript -->
+                                    <!-- Will be populated by JavaScript -->
                                 </div>
                             </div>
                         </div>
@@ -255,19 +302,24 @@
             <div class="modal-content small">
                 <div class="modal-header">
                     <h3>Create New Service</h3>
-                    <button class="close-modal">
+                    <button type="button" class="close-modal" aria-label="Close modal">
                         <i class='bx bx-x'></i>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Service Name</label>
-                        <input type="text" id="service-name-input" class="form-control" placeholder="Enter service name">
+                        <label>Service Name <span class="required">*</span></label>
+                        <input type="text" 
+                               id="service-name-input" 
+                               class="form-control" 
+                               placeholder="Enter service name"
+                               required>
+                        <div class="error-message" id="service-name-error"></div>
                     </div>
                     <div class="form-group">
-                        <label>Choose Icon</label>
+                        <label>Choose Icon <span class="required">*</span></label>
                         <div class="icon-grid">
-                            <button class="icon-option" data-icon="bxl-wordpress">
+                            <button type="button" class="icon-option" data-icon="bxl-wordpress">
                                 <i class='bx bxl-wordpress'></i>
                             </button>
                             <button class="icon-option" data-icon="bx-data">
@@ -292,11 +344,12 @@
                                 <i class='bx bxl-nodejs'></i>
                             </button>
                         </div>
+                        <div class="error-message" id="icon-error"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="button secondary" id="cancelCreateService">Cancel</button>
-                    <button class="button primary" id="saveCreateService">Create</button>
+                    <button type="button" class="button secondary" id="cancelCreateService">Cancel</button>
+                    <button type="button" class="button primary" id="saveCreateService">Create</button>
                 </div>
             </div>
         </div>
@@ -304,11 +357,16 @@
 
     <!-- Service tag template -->
     <script id="service-tag-template" type="text/x-handlebars-template">
-        <div class="service-tag {{#if isSelectable}}service-tag--selectable{{/if}} {{#if isRemovable}}service-tag--removable{{/if}}" data-service="{{id}}">
+        <div class="service-tag {{#if isSelectable}}service-tag--selectable{{/if}} {{#if isRemovable}}service-tag--removable{{/if}}" 
+             data-service="{{id}}"
+             role="button"
+             tabindex="0">
             <i class='bx {{icon}}'></i>
             <span>{{name}}</span>
             {{#if isRemovable}}
-                <i class='bx bx-x remove-service'></i>
+                <button type="button" class="remove-service" aria-label="Remove service">
+                    <i class='bx bx-x'></i>
+                </button>
             {{/if}}
         </div>
     </script>

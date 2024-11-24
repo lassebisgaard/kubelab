@@ -1,270 +1,73 @@
-// Tilføj i toppen af filen
-console.log('script.js loaded');
-
-// Services data - dette vil senere komme fra MySQL
-const SERVICES = {
+window.SERVICES = {
     wordpress: {
         id: 'wordpress',
         name: 'WordPress',
-        icon: 'bxl-wordpress',
-        description: 'Latest version of WordPress CMS'
+        icon: 'bxl-wordpress'
     },
     mysql: {
         id: 'mysql',
         name: 'MySQL',
-        icon: 'bx-data',
-        description: 'MySQL Database Server'
+        icon: 'bx-data'
     },
     phpmyadmin: {
         id: 'phpmyadmin',
         name: 'phpMyAdmin',
-        icon: 'bx-server',
-        description: 'Database Management Tool'
+        icon: 'bx-server'
     },
     nginx: {
         id: 'nginx',
         name: 'Nginx',
-        icon: 'bx-server',
-        description: 'Web Server'
+        icon: 'bx-server'
     },
     php: {
         id: 'php',
         name: 'PHP',
-        icon: 'bxl-php',
-        description: 'PHP Runtime'
+        icon: 'bxl-php'
     }
 };
 
-// Vent på at DOM er loaded
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded');
-    console.log('Handlebars available:', typeof Handlebars !== 'undefined');
-    
-    // Site-wide initialization
-    initNavigation();
-    initThemeToggle();
+window.renderServiceTags = function(serviceIds, options = {}) {
+    const defaults = {
+        isSelectable: false,
+        isStatic: false,
+        isRemovable: false
+    };
+    options = { ...defaults, ...options };
 
-    // Vent på at Handlebars er loaded før vi initialiserer services
-    if (typeof Handlebars !== 'undefined') {
-        const templateSource = document.getElementById('service-tag-template');
-        console.log('Template source found:', templateSource !== null);
+    if (!serviceIds || !Array.isArray(serviceIds)) return '';
+
+    return serviceIds.map(id => {
+        const service = window.SERVICES[id];
+        if (!service) return '';
         
-        if (templateSource) {
-            // Compile Handlebars template
-            const serviceTagTemplate = Handlebars.compile(templateSource.innerHTML);
-            console.log('Template compiled');
+        return `
+            <span class="service-tag ${options.isSelectable ? 'service-tag--selectable' : ''} ${options.isStatic ? 'service-tag--static' : ''}"
+                  data-service="${service.id}">
+                <i class='bx ${service.icon}'></i>
+                <span>${service.name}</span>
+            </span>
+        `;
+    }).join('');
+};
 
-            // Gør services og render funktion tilgængelig globalt
-            window.SERVICES = SERVICES;
-            window.renderServiceTags = function(serviceIds, isRemovable = false) {
-                console.log('Rendering services:', serviceIds);
-                return serviceIds.map(id => {
-                    const service = SERVICES[id];
-                    if (!service) {
-                        console.warn('Service not found:', id);
-                        return '';
-                    }
-                    return serviceTagTemplate({
-                        ...service,
-                        name: service.name,
-                        isRemovable
-                    });
-                }).join('');
-            };
-
-            // Initialiser services på siden
-            initializePageServices();
-        }
-    }
-
-    // Tilføj initialisering af template filtering
-    initProjectTemplateFiltering();
-
-    // Tilføj denne funktion til script.js
-    initCustomSelects();
-
-    // Initialize service tags in templates page
-    const serviceTagsContainer = document.querySelector('.service-tags-container');
-    if (serviceTagsContainer) {
-        serviceTagsContainer.addEventListener('click', (e) => {
-            const serviceTag = e.target.closest('.service-tag');
-            if (!serviceTag) return;
-            
-            serviceTag.classList.toggle('active');
-            
-            // Find alle aktive filters
-            const activeFilters = Array.from(serviceTagsContainer.querySelectorAll('.service-tag.active'))
-                .map(tag => tag.dataset.service);
-            
-            // Filtrer templates
-            const templateCards = document.querySelectorAll('.project-template-card');
-            templateCards.forEach(card => {
-                const cardServices = card.dataset.services?.split(',') || [];
-                
-                if (activeFilters.length === 0) {
-                    card.style.display = '';
-                } else {
-                    const hasAllServices = activeFilters.every(filter => 
-                        cardServices.includes(filter)
-                    );
-                    card.style.display = hasAllServices ? '' : 'none';
-                }
-            });
-        });
-    }
-
-    initTemplateActions();
-});
-
-function initializePageServices() {
-    // Template creation page
-    const servicesSelection = document.querySelector('.services-selection');
-    if (servicesSelection) {
-        servicesSelection.innerHTML = window.renderServiceTags(Object.keys(SERVICES), true);
-    }
-
-    // Project creation page og templates page
-    const templateCards = document.querySelectorAll('.project-template-card');
-    templateCards.forEach(card => {
-        const services = card.dataset.services?.split(',') || [];
-        const servicesContainer = card.querySelector('.services');
-        if (servicesContainer) {
-            servicesContainer.innerHTML = window.renderServiceTags(services, false);
-        }
-    });
-}
-
-function initNavigation() {
-    const resizeBtn = document.querySelector('[data-resize-btn]');
-    if (resizeBtn) {
-        resizeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.body.classList.toggle('sb-expanded');
-        });
-    }
-}
-
-function initThemeToggle() {
-    const themeToggle = document.querySelector('.theme-toggle');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            document.body.classList.toggle('light-mode');
-        });
-    }
-}
-
-// Tilføj denne funktion til at håndtere filtrering
-function initProjectTemplateFiltering() {
-    const servicesFilterContainer = document.querySelector('.services-filter');
-    const templateGrid = document.querySelector('.project-template-grid');
-    const templateCards = document.querySelectorAll('.project-template-card');
-    
-    if (!servicesFilterContainer || !templateGrid) return;
-
-    // Render alle services som filter tags
-    servicesFilterContainer.innerHTML = window.renderServiceTags(Object.keys(SERVICES), false);
-    
-    // Tilføj click handlers til service tags
-    servicesFilterContainer.addEventListener('click', (e) => {
-        const serviceTag = e.target.closest('.service-tag');
-        if (!serviceTag) return;
-        
-        serviceTag.classList.toggle('active');
-        
-        // Find alle aktive filters
-        const activeFilters = Array.from(servicesFilterContainer.querySelectorAll('.service-tag.active'))
-            .map(tag => tag.dataset.service);
-        
-        // Filtrer templates
-        templateCards.forEach(card => {
-            const cardServices = card.dataset.services?.split(',') || [];
-            
-            if (activeFilters.length === 0) {
-                card.style.display = '';
-            } else {
-                const hasAllServices = activeFilters.every(filter => 
-                    cardServices.includes(filter)
-                );
-                card.style.display = hasAllServices ? '' : 'none';
-            }
-        });
-    });
-}
-
-// Tilføj denne funktion til script.js
-function initCustomSelects() {
-    document.querySelectorAll('.custom-select').forEach(select => {
-        const header = select.querySelector('.select-header');
-        const options = select.querySelector('.select-options');
-        const selectedText = select.querySelector('.selected-option');
-
-        header.addEventListener('click', () => {
-            select.classList.toggle('open');
-        });
-
-        select.querySelectorAll('.option').forEach(option => {
-            option.addEventListener('click', () => {
-                selectedText.textContent = option.textContent;
-                select.classList.remove('open');
-                select.classList.add('has-value');
-                // Gem den valgte værdi
-                select.dataset.value = option.dataset.value;
-            });
-        });
-
-        // Luk dropdown når der klikkes udenfor
-        document.addEventListener('click', (e) => {
-            if (!select.contains(e.target)) {
-                select.classList.remove('open');
-            }
-        });
-    });
-}
-
-function initTemplateActions() {
-    document.querySelectorAll('.project-template-card').forEach(card => {
-        const deleteBtn = card.querySelector('.delete-button');
-        const editBtn = card.querySelector('.edit-button');
-        
-        deleteBtn?.addEventListener('click', () => {
-            showDeleteConfirmation(card);
-        });
-        
-        editBtn?.addEventListener('click', () => {
-            const templateId = card.dataset.id;
-            const templateData = {
-                name: card.querySelector('h2').textContent,
-                description: card.querySelector('p').textContent,
-                services: Array.from(card.querySelectorAll('.service-tag')).map(tag => tag.dataset.service),
-                author: card.querySelector('.author').textContent.replace('By: ', ''),
-                previewImage: card.querySelector('.preview-container img').src
-            };
-            // Gem template data i sessionStorage så vi kan hente det på edit siden
-            sessionStorage.setItem('editTemplate', JSON.stringify(templateData));
-            window.location.href = `create_template.html?edit=${templateId}`;
-        });
-    });
-}
-
-function showDeleteConfirmation(templateCard) {
+function showDeleteConfirmation(title, message, onConfirm) {
     const dialog = document.createElement('div');
     dialog.className = 'modal delete-confirmation-dialog show';
     dialog.innerHTML = `
         <div class="modal-content small">
             <div class="modal-header">
-                <h3>Delete Template</h3>
+                <h3>${title}</h3>
                 <button class="close-modal">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this template?</p>
+                <p>${message}</p>
                 <div class="warning-message">
                     <i class='bx bx-error'></i>
                     <div>
                         <div class="warning-title">Warning</div>
-                        <div class="warning-text">This action cannot be undone. All projects using this template will be affected.</div>
+                        <div class="warning-text">This action cannot be undone.</div>
                     </div>
                 </div>
             </div>
@@ -284,8 +87,46 @@ function showDeleteConfirmation(templateCard) {
 
     dialog.querySelector('.close-modal')?.addEventListener('click', closeDialog);
     dialog.querySelector('#cancelDelete')?.addEventListener('click', closeDialog);
-    dialog.querySelector('#confirmDelete')?.addEventListener('click', () => {
-        templateCard.remove();
+    dialog.querySelector('#confirmDelete')?.addEventListener('click', async () => {
+        await onConfirm();
         closeDialog();
     });
 }
+
+function initServiceFilters() {
+    const filterContainer = document.querySelector('.services-filter');
+    const templateGrid = document.querySelector('.project-template-grid');
+    
+    if (filterContainer && templateGrid) {
+        filterContainer.innerHTML = window.renderServiceTags(
+            Object.keys(window.SERVICES),
+            { isSelectable: true }
+        );
+
+        const filterTags = filterContainer.querySelectorAll('.service-tag');
+        filterTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.toggle('active');
+                
+                const activeFilters = Array.from(filterTags)
+                    .filter(t => t.classList.contains('active'))
+                    .map(t => t.dataset.service);
+
+                templateGrid.querySelectorAll('.project-template-card').forEach(card => {
+                    const cardServices = Array.from(card.querySelectorAll('.service-tag'))
+                        .map(t => t.dataset.service);
+                    
+                    if (activeFilters.length === 0 || 
+                        activeFilters.some(filter => cardServices.includes(filter))) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initServiceFilters);
+
