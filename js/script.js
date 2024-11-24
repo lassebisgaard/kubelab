@@ -1,13 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Set initial state
-    document.body.classList.add('sb-expanded');
+    // Check for saved sidebar state
+    const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+    document.body.classList.toggle('sb-expanded', isSidebarExpanded);
 
-    // Add click handler for sidebar toggle
+    // Handle sidebar toggle
     const resizeBtn = document.querySelector('[data-resize-btn]');
-    resizeBtn?.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.body.classList.toggle('sb-expanded');
-    });
+    if (resizeBtn) {
+        resizeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.body.classList.toggle('sb-expanded');
+            // Save state
+            localStorage.setItem('sidebarExpanded', document.body.classList.contains('sb-expanded'));
+        });
+    }
 });
 
 window.SERVICES = {
