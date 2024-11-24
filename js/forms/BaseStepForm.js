@@ -674,26 +674,43 @@ window.BaseStepForm = class BaseStepForm {
             
             const servicesSelection = document.querySelector('.services-selection');
             if (servicesSelection) {
-                servicesSelection.innerHTML = Object.keys(services).map(id => {
-                    const service = services[id];
-                    const isSelected = this.formData.services.includes(id);
-                    return `
-                        <div class="service-tag service-tag--selectable ${isSelected ? 'active' : ''}" 
-                             data-service="${service.id}">
-                            <i class='bx ${service.icon}'></i>
-                            <span>${service.name}</span>
-                        </div>
-                    `;
-                }).join('');
+                servicesSelection.innerHTML = window.renderServiceTags(Object.keys(services), {
+                    isSelectable: true,
+                    isRemovable: this.type === 'template'
+                });
 
                 // Add click handlers
                 servicesSelection.querySelectorAll('.service-tag').forEach(tag => {
-                    tag.addEventListener('click', () => {
-                        tag.classList.toggle('active');
-                        this.formData.services = Array.from(
-                            servicesSelection.querySelectorAll('.service-tag.active')
-                        ).map(t => t.dataset.service);
+                    // Toggle selection
+                    tag.addEventListener('click', (e) => {
+                        if (!e.target.closest('.service-tag--remove')) {
+                            tag.classList.toggle('active');
+                            this.formData.services = Array.from(
+                                servicesSelection.querySelectorAll('.service-tag.active')
+                            ).map(t => t.dataset.service);
+                        }
                     });
+
+                    // Handle delete
+                    const deleteBtn = tag.querySelector('.service-tag--remove');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const serviceId = tag.dataset.service;
+                            const serviceName = tag.querySelector('span').textContent;
+                            
+                            if (confirm(`Are you sure you want to delete the service "${serviceName}"?`)) {
+                                delete window.SERVICES[serviceId];
+                                localStorage.setItem('services', JSON.stringify(window.SERVICES));
+                                tag.remove();
+                                
+                                // Update formData
+                                this.formData.services = Array.from(
+                                    servicesSelection.querySelectorAll('.service-tag.active')
+                                ).map(t => t.dataset.service);
+                            }
+                        });
+                    }
                 });
             }
         } catch (error) {

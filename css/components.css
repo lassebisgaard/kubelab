@@ -1721,6 +1721,7 @@ textarea.form-control {
     border-radius: 40px;
     font-size: 12px;
     color: var(--text-color);
+    position: relative;
 }
 
 /* Selectable service tags */
@@ -1743,7 +1744,31 @@ textarea.form-control {
     color: var(--background-color);
 }
 
-/* Static service tags (bare visning) */
+/* Remove button styling */
+.service-tag--remove {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    font-size: 14px;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+/* Show remove button on hover */
+.service-tag:hover .service-tag--remove {
+    opacity: 0.6;
+}
+
+.service-tag--remove:hover {
+    opacity: 1 !important;
+}
+
+/* Static service tags */
 .service-tag--static {
     cursor: default;
     opacity: 0.8;
@@ -1902,5 +1927,3 @@ textarea.form-control {
     color: var(--text-color);
     font-size: 14px;
 }
-
-

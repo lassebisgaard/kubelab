@@ -65,6 +65,11 @@ window.renderServiceTags = function(serviceIds, options = {}) {
                   data-service="${service.id}">
                 <i class='bx ${service.icon}'></i>
                 <span>${service.name}</span>
+                ${options.isRemovable ? `
+                    <button class="service-tag--remove" title="Remove service">
+                        <i class='bx bx-x'></i>
+                    </button>
+                ` : ''}
             </span>
         `;
     }).join('');
