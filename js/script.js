@@ -1,3 +1,15 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Set initial state
+    document.body.classList.add('sb-expanded');
+
+    // Add click handler for sidebar toggle
+    const resizeBtn = document.querySelector('[data-resize-btn]');
+    resizeBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.body.classList.toggle('sb-expanded');
+    });
+});
+
 window.SERVICES = {
     wordpress: {
         id: 'wordpress',

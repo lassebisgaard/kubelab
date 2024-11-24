@@ -1794,15 +1794,13 @@ textarea.form-control {
 .project-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
     margin-bottom: 24px;
 }
 
 .project-header h3 {
-    margin: 0;
     font-size: 20px;
-    font-weight: 500;
-    color: var(--text-color);
+    margin: 0;
 }
 
 .status-badge {
@@ -1875,12 +1873,13 @@ textarea.form-control {
     color: var(--accent-color);
 }
 
-.project-actions {
+.project-controls {
     display: flex;
     gap: 8px;
 }
 
-.action-button {
+.power-button,
+.restart-button {
     width: 36px;
     height: 36px;
     border-radius: 6px;
@@ -1892,56 +1891,26 @@ textarea.form-control {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    opacity: 0.7;
 }
 
-.action-button:hover:not(:disabled) {
-    opacity: 1;
+.power-button:hover:not(:disabled),
+.restart-button:hover:not(:disabled) {
     border-color: var(--accent-color);
     color: var(--accent-color);
 }
 
-.action-button.active {
+.power-button.active {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
     color: var(--background-color);
-    opacity: 1;
 }
 
-.action-button:disabled {
+.restart-button:disabled {
     opacity: 0.3;
     cursor: not-allowed;
 }
 
-/* Rotating animation for restart button */
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.action-button.rotating i {
-    animation: rotate 1s linear;
-}
-
-/* Status badges */
-.status-badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.status-badge.online {
-    background-color: rgba(0, 255, 187, 0.1);
-    color: #00FFBB;
-}
-
-.status-badge.offline {
-    background-color: rgba(255, 71, 87, 0.1);
-    color: #FF4757;
-}
-
-/* Project Grid Layout */
+/* Project Grid */
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -1962,47 +1931,6 @@ textarea.form-control {
     border-radius: 8px;
     color: var(--text-color);
     font-size: 14px;
-}
-
-/* Add these styles for the icon buttons */
-.icon-button {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    opacity: 0.5;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.icon-button:hover {
-    opacity: 1;
-    background-color: var(--card-background);
-}
-
-.icon-button i {
-    font-size: 18px;
-}
-
-.template-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-}
-
-.template-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.icon-button.delete-button:hover {
-    color: #ff4757;
-}
-
-.icon-button.edit-button:hover {
-    color: var(--accent-color);
 }
 
 

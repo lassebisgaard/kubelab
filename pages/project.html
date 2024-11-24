@@ -18,62 +18,58 @@
         <nav>
             <ul>
                 <li>
-                    <a href="#">
-                        <img src="../assets/images/Logo.png" alt="Logo">
-                        <span>Kubelab</span>
-                    </a>
+                    <img src="../assets/images/Logo.png" alt="Logo">
+                    <span>Kubelab</span>
                 </li>
                 <li>
                     <a href="#" data-resize-btn>
-                        <img src="../assets/Icons/Sidebar.svg" alt="Sidebar" class="icons">
-                        <span>Collapse sidebar</span>
+                        <img src="../assets/Icons/Sidebar.svg" alt="Sidebar">
                     </a>
                 </li>
                 <li>
                     <button class="create-button">
-                        <img src="../assets/Icons/plus.svg" alt="Plus tegn" class="icon">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
                         <span>Create</span>
                     </button>
                 </li>
                 <li>
-                    <a href="#" class="active">
-                        <img src="../assets/Icons/Projects.svg" alt="Project" class="icons">
-                        <span>Project</span>
+                    <a href="project.html" class="active">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <img src="../assets/Icons/Template.svg" alt="Templates" class="icons">
+                    <a href="templates.html">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
                         <span>Templates</span>
                     </a>
                 </li>
                 <li>
                     <a href="#">
-                        <img src="../assets/Icons/Teams.svg" alt="Teams" class="icons">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
                         <span>Teams</span>
                     </a>
                 </li>
                 <li>
                     <a href="#">
-                        <img src="../assets/Icons/Users.svg" alt="Users" class="icons">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
                         <span>Users</span>
                     </a>
                 </li>
-                
             </ul>
 
             <ul class="nav-bottom">
                 <li>
                     <a href="#">
-                        <img src="../assets/Icons/settings.svg" alt="settings" class="icons">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
                         <span>Settings</span>
                     </a>
                 </li>
                 <li>
-                    <button class="theme-toggle">
-                        <i class="bx bx-moon"></i>
-                        <span>Skift tema</span>
-                    </button>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
                 </li>
             </ul>
         </nav>
@@ -90,75 +86,17 @@
                 </div>
             </div>
 
-            <div class="search-bar">
-                <input type="text" 
-                       placeholder="Search projects..." 
-                       class="form-control"
-                       id="project-search">
-            </div>
-
-            <div class="project-grid">
-                <!-- Loading state -->
-                <div class="loading-indicator">Loading projects...</div>
-
-                <!-- Projects will be inserted here dynamically -->
-            </div>
-        </div>
-
-        <!-- Project Action Modal -->
-        <div class="modal" id="projectActionModal">
-            <div class="modal-content small">
-                <div class="modal-header">
-                    <h3>Project Actions</h3>
-                    <button class="close-modal">
-                        <i class='bx bx-x'></i>
-                    </button>
+            <div class="content-wrapper">
+                <div class="search-bar">
+                    <input type="text" 
+                           placeholder="Search projects..." 
+                           class="form-control"
+                           id="project-search">
                 </div>
-                <div class="modal-body">
-                    <div class="action-list">
-                        <button class="action-item" data-action="start">
-                            <i class='bx bx-play'></i>
-                            <span>Start Project</span>
-                        </button>
-                        <button class="action-item" data-action="stop">
-                            <i class='bx bx-stop'></i>
-                            <span>Stop Project</span>
-                        </button>
-                        <button class="action-item" data-action="restart">
-                            <i class='bx bx-refresh'></i>
-                            <span>Restart Project</span>
-                        </button>
-                        <button class="action-item warning" data-action="delete">
-                            <i class='bx bx-trash'></i>
-                            <span>Delete Project</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Delete Confirmation Modal -->
-        <div class="modal" id="deleteConfirmModal">
-            <div class="modal-content small">
-                <div class="modal-header">
-                    <h3>Delete Project</h3>
-                    <button class="close-modal">
-                        <i class='bx bx-x'></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this project?</p>
-                    <div class="warning-message">
-                        <i class='bx bx-error'></i>
-                        <div>
-                            <div class="warning-title">Warning</div>
-                            <div class="warning-text">This action cannot be undone. All project data will be permanently deleted.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="button secondary" id="cancelDelete">Cancel</button>
-                    <button class="button delete" id="confirmDelete">Delete</button>
+                <!-- Project Grid -->
+                <div class="project-grid">
+                    <!-- Projects will be inserted here -->
                 </div>
             </div>
         </div>
@@ -170,7 +108,6 @@
             <div class="project-header">
                 <h3>{{name}}</h3>
                 <span class="status-badge {{statusClass}}">{{status}}</span>
-                <button class="menu-button" aria-label="Project actions">⋮</button>
             </div>
             <div class="project-info">
                 <div class="info-row">
@@ -179,18 +116,18 @@
                 </div>
                 <div class="info-row">
                     <span class="info-label">Domain name</span>
-                    <a href="https://{{domain}}" class="info-value domain-link" target="_blank">
+                    <a href="https://{{domain}}" class="domain-link" target="_blank">
                         {{domain}}
                         <i class='bx bx-link-external'></i>
                     </a>
                 </div>
             </div>
-            <div class="project-actions">
-                <button class="action-button power-button {{#if isRunning}}active{{/if}}" 
+            <div class="project-controls">
+                <button class="power-button {{#if isRunning}}active{{/if}}" 
                         title="{{#if isRunning}}Stop{{else}}Start{{/if}} project">
                     <i class='bx bx-power-off'></i>
                 </button>
-                <button class="action-button restart-button" title="Restart project"
+                <button class="restart-button" title="Restart project"
                         {{#unless isRunning}}disabled{{/unless}}>
                     <i class='bx bx-refresh'></i>
                 </button>
