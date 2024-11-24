@@ -155,8 +155,8 @@ window.BaseStepForm = class BaseStepForm {
                     icon: selectedIcon.dataset.icon
                 };
 
-                // Add to services
-                window.SERVICES[newService.id] = newService;
+                // Save service globally
+                window.saveService(newService);
 
                 // Add to services selection
                 const servicesSelection = document.querySelector('.services-selection');

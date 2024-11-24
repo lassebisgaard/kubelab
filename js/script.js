@@ -1,5 +1,5 @@
 // Define services first
-window.SERVICES = {
+window.SERVICES = JSON.parse(localStorage.getItem('services')) || {
     wordpress: {
         id: 'wordpress',
         name: 'WordPress',
@@ -25,6 +25,12 @@ window.SERVICES = {
         name: 'PHP',
         icon: 'bxl-php'
     }
+};
+
+// Add function to save services
+window.saveService = function(service) {
+    window.SERVICES[service.id] = service;
+    localStorage.setItem('services', JSON.stringify(window.SERVICES));
 };
 
 document.addEventListener('DOMContentLoaded', () => {
