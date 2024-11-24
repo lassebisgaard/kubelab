@@ -1892,13 +1892,11 @@ textarea.form-control {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    opacity: 0.7;
 }
 
-.action-button i {
-    font-size: 18px;
-}
-
-.action-button:hover {
+.action-button:hover:not(:disabled) {
+    opacity: 1;
     border-color: var(--accent-color);
     color: var(--accent-color);
 }
@@ -1907,6 +1905,40 @@ textarea.form-control {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
     color: var(--background-color);
+    opacity: 1;
+}
+
+.action-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Rotating animation for restart button */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.action-button.rotating i {
+    animation: rotate 1s linear;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-badge.online {
+    background-color: rgba(0, 255, 187, 0.1);
+    color: #00FFBB;
+}
+
+.status-badge.offline {
+    background-color: rgba(255, 71, 87, 0.1);
+    color: #FF4757;
 }
 
 /* Project Grid Layout */

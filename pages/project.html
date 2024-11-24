@@ -186,10 +186,12 @@
                 </div>
             </div>
             <div class="project-actions">
-                <button class="action-button {{#if isRunning}}active{{/if}}" title="Power">
+                <button class="action-button power-button {{#if isRunning}}active{{/if}}" 
+                        title="{{#if isRunning}}Stop{{else}}Start{{/if}} project">
                     <i class='bx bx-power-off'></i>
                 </button>
-                <button class="action-button" title="Restart">
+                <button class="action-button restart-button" title="Restart project"
+                        {{#unless isRunning}}disabled{{/unless}}>
                     <i class='bx bx-refresh'></i>
                 </button>
             </div>
@@ -220,40 +222,68 @@
                         const projectData = {
                             ...project,
                             statusClass: project.status.toLowerCase(),
-                            isRunning: project.status === 'Online',
-                            services: project.services.map(service => ({
-                                name: service.name,
-                                icon: service.icon
-                            }))
+                            isRunning: project.status === 'Online'
                         };
                         return template(projectData);
                     }).join('');
 
                     // Add event listeners to action buttons
                     projectGrid.querySelectorAll('.project-card').forEach(card => {
-                        // Power button
-                        card.querySelector('.power')?.addEventListener('click', async () => {
-                            const isRunning = card.querySelector('.power').classList.contains('active');
-                            const status = card.querySelector('.project-status');
-                            
-                            if (isRunning) {
-                                status.textContent = 'Offline';
-                                status.className = 'project-status offline';
-                                card.querySelector('.power').classList.remove('active');
-                            } else {
-                                status.textContent = 'Online';
-                                status.className = 'project-status online';
-                                card.querySelector('.power').classList.add('active');
+                        const powerBtn = card.querySelector('.power-button');
+                        const restartBtn = card.querySelector('.restart-button');
+                        const statusBadge = card.querySelector('.status-badge');
+                        
+                        // Power button handler
+                        powerBtn?.addEventListener('click', async () => {
+                            const isRunning = powerBtn.classList.contains('active');
+                            try {
+                                // Toggle project status
+                                const action = isRunning ? 'stop' : 'start';
+                                const response = await fetch(`/api/projects/${card.dataset.projectId}/${action}`, {
+                                    method: 'POST'
+                                });
+
+                                if (response.ok) {
+                                    // Update UI
+                                    powerBtn.classList.toggle('active');
+                                    restartBtn.disabled = !powerBtn.classList.contains('active');
+                                    
+                                    if (isRunning) {
+                                        statusBadge.textContent = 'Offline';
+                                        statusBadge.className = 'status-badge offline';
+                                    } else {
+                                        statusBadge.textContent = 'Online';
+                                        statusBadge.className = 'status-badge online';
+                                    }
+                                } else {
+                                    throw new Error(`Failed to ${action} project`);
+                                }
+                            } catch (error) {
+                                console.error(`Error ${isRunning ? 'stopping' : 'starting'} project:`, error);
+                                alert(`Failed to ${isRunning ? 'stop' : 'start'} project. Please try again.`);
                             }
                         });
 
-                        // Menu button
-                        card.querySelector('.menu-button')?.addEventListener('click', () => {
-                            const modal = document.getElementById('projectActionModal');
-                            modal.classList.add('show');
-                            
-                            // Store current project ID
-                            modal.dataset.projectId = card.dataset.projectId;
+                        // Restart button handler
+                        restartBtn?.addEventListener('click', async () => {
+                            try {
+                                const response = await fetch(`/api/projects/${card.dataset.projectId}/restart`, {
+                                    method: 'POST'
+                                });
+
+                                if (response.ok) {
+                                    // Visual feedback
+                                    restartBtn.classList.add('rotating');
+                                    setTimeout(() => {
+                                        restartBtn.classList.remove('rotating');
+                                    }, 1000);
+                                } else {
+                                    throw new Error('Failed to restart project');
+                                }
+                            } catch (error) {
+                                console.error('Error restarting project:', error);
+                                alert('Failed to restart project. Please try again.');
+                            }
                         });
                     });
                 }

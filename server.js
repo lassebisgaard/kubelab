@@ -224,6 +224,81 @@ app.delete('/api/templates/:id', (req, res) => {
     }
 });
 
+// Project actions endpoints
+app.post('/api/projects/:id/start', (req, res) => {
+    try {
+        const projectId = parseInt(req.params.id);
+        const project = mockDatabase.projects.find(p => p.id === projectId);
+        
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        project.status = 'Online';
+        res.json({ message: 'Project started successfully', project });
+    } catch (error) {
+        console.error('Error starting project:', error);
+        res.status(500).json({ message: 'Failed to start project' });
+    }
+});
+
+app.post('/api/projects/:id/stop', (req, res) => {
+    try {
+        const projectId = parseInt(req.params.id);
+        const project = mockDatabase.projects.find(p => p.id === projectId);
+        
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        project.status = 'Offline';
+        res.json({ message: 'Project stopped successfully', project });
+    } catch (error) {
+        console.error('Error stopping project:', error);
+        res.status(500).json({ message: 'Failed to stop project' });
+    }
+});
+
+app.post('/api/projects/:id/restart', (req, res) => {
+    try {
+        const projectId = parseInt(req.params.id);
+        const project = mockDatabase.projects.find(p => p.id === projectId);
+        
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        // Simulate restart by briefly setting status to 'Restarting'
+        project.status = 'Restarting';
+        setTimeout(() => {
+            project.status = 'Online';
+        }, 1000);
+
+        res.json({ message: 'Project restarting', project });
+    } catch (error) {
+        console.error('Error restarting project:', error);
+        res.status(500).json({ message: 'Failed to restart project' });
+    }
+});
+
+// Delete project endpoint
+app.delete('/api/projects/:id', (req, res) => {
+    try {
+        const projectId = parseInt(req.params.id);
+        const projectIndex = mockDatabase.projects.findIndex(p => p.id === projectId);
+        
+        if (projectIndex === -1) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        mockDatabase.projects.splice(projectIndex, 1);
+        res.json({ message: 'Project deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        res.status(500).json({ message: 'Failed to delete project' });
+    }
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
