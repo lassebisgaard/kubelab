@@ -78,7 +78,7 @@ nav a img,
     margin-bottom: 24px;
     background-color: var(--accent-color);
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     color: var(--background-color);
     cursor: pointer;
     display: flex;

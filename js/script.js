@@ -32,6 +32,7 @@ window.saveService = function(service) {
     window.SERVICES[service.id] = service;
 };
 
+// Consolidate all DOMContentLoaded events
 document.addEventListener('DOMContentLoaded', () => {
     // Handle sidebar toggle
     const resizeBtn = document.querySelector('[data-resize-btn]');
@@ -42,6 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Save state
             localStorage.setItem('sidebarExpanded', document.documentElement.classList.contains('sb-expanded'));
         });
+    }
+
+    // Initialize form if we're on a form page
+    const formType = document.body.dataset.formType;
+    if (formType) {
+        new BaseStepForm(formType);
     }
 });
 
