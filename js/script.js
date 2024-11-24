@@ -1,5 +1,5 @@
-// Define services first
-window.SERVICES = JSON.parse(localStorage.getItem('services')) || {
+// Define services as a regular object (no localStorage)
+window.SERVICES = {
     wordpress: {
         id: 'wordpress',
         name: 'WordPress',
@@ -27,10 +27,9 @@ window.SERVICES = JSON.parse(localStorage.getItem('services')) || {
     }
 };
 
-// Add function to save services
+// Update saveService to not use localStorage
 window.saveService = function(service) {
     window.SERVICES[service.id] = service;
-    localStorage.setItem('services', JSON.stringify(window.SERVICES));
 };
 
 document.addEventListener('DOMContentLoaded', () => {
