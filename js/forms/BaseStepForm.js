@@ -1,4 +1,4 @@
-class BaseStepForm {
+window.BaseStepForm = class BaseStepForm {
     constructor(type) {
         // Basis setup
         this.type = type;
@@ -9,6 +9,10 @@ class BaseStepForm {
         this.nextButton = document.querySelector('.next-button');
         this.currentStep = 1;
         this.maxSteps = this.steps.length;
+        
+        // Check if we're editing
+        const urlParams = new URLSearchParams(window.location.search);
+        this.isEditing = urlParams.has('edit');
         
         // Form data
         this.formData = {
@@ -26,6 +30,11 @@ class BaseStepForm {
         this.backButton?.addEventListener('click', () => this.handleBack());
         this.nextButton?.addEventListener('click', () => this.handleNext());
         
+        // Load edit data if editing
+        if (this.isEditing) {
+            this.loadEditData();
+        }
+        
         // Fetch initial data
         if (this.type === 'project') {
             this.fetchTemplates();
@@ -38,6 +47,57 @@ class BaseStepForm {
 
         // Add service creation handlers
         this.initServiceCreation();
+    }
+
+    loadEditData() {
+        const editData = JSON.parse(sessionStorage.getItem('editTemplate'));
+        if (editData) {
+            // Update form data
+            this.formData = {
+                ...this.formData,
+                ...editData
+            };
+
+            // Update form fields
+            const nameInput = document.getElementById('template-name-input');
+            const descriptionInput = document.getElementById('template-description-input');
+            if (nameInput) nameInput.value = editData.name;
+            if (descriptionInput) descriptionInput.value = editData.description;
+
+            // Update preview image if exists
+            if (editData.previewImage) {
+                const previewContainer = document.querySelector('.preview-container--upload');
+                if (previewContainer) {
+                    previewContainer.innerHTML = `
+                        <img src="${editData.previewImage}" alt="Preview">
+                        <button class="remove-file">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    `;
+
+                    // Add remove button handler
+                    const removeBtn = previewContainer.querySelector('.remove-file');
+                    removeBtn?.addEventListener('click', () => {
+                        this.formData.previewImage = null;
+                        previewContainer.innerHTML = `
+                            <input type="file" id="preview-image" hidden accept="image/*">
+                            <label for="preview-image" class="upload-area">
+                                <i class='bx bx-image'></i>
+                                <span>Click to upload preview image</span>
+                            </label>
+                        `;
+                        this.initFileUploads();
+                    });
+                }
+            }
+
+            // Update page title and button text
+            const pageTitle = document.querySelector('.page-title');
+            if (pageTitle) pageTitle.textContent = 'Edit template';
+
+            // Clear session storage
+            sessionStorage.removeItem('editTemplate');
+        }
     }
 
     initServiceCreation() {
@@ -163,6 +223,9 @@ class BaseStepForm {
                 // Add click handlers
                 this.initTemplateSelection();
             }
+
+            // Initialize service filters
+            this.initServiceFilters();
         } catch (error) {
             console.error('Error fetching templates:', error);
         }
@@ -191,6 +254,47 @@ class BaseStepForm {
                 }
             });
         });
+    }
+
+    initServiceFilters() {
+        const filterContainer = document.querySelector('.services-filter');
+        const templateGrid = document.querySelector('.project-template-grid');
+        
+        if (filterContainer && templateGrid) {
+            // Add service filter tags
+            filterContainer.innerHTML = Object.keys(window.SERVICES).map(id => {
+                const service = window.SERVICES[id];
+                return `
+                    <div class="service-tag service-tag--selectable" data-service="${service.id}">
+                        <i class='bx ${service.icon}'></i>
+                        <span>${service.name}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers to filter tags
+            const filterTags = filterContainer.querySelectorAll('.service-tag');
+            filterTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    tag.classList.toggle('active');
+                    
+                    const activeFilters = Array.from(filterTags)
+                        .filter(t => t.classList.contains('active'))
+                        .map(t => t.dataset.service);
+
+                    templateGrid.querySelectorAll('.project-template-card').forEach(card => {
+                        const cardServices = card.dataset.services.split(',');
+                        
+                        if (activeFilters.length === 0 || 
+                            activeFilters.some(filter => cardServices.includes(filter))) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
     }
 
     handleBack() {
@@ -557,8 +661,10 @@ class BaseStepForm {
             if (servicesSelection) {
                 servicesSelection.innerHTML = Object.keys(services).map(id => {
                     const service = services[id];
+                    const isSelected = this.formData.services.includes(id);
                     return `
-                        <div class="service-tag service-tag--selectable" data-service="${service.id}">
+                        <div class="service-tag service-tag--selectable ${isSelected ? 'active' : ''}" 
+                             data-service="${service.id}">
                             <i class='bx ${service.icon}'></i>
                             <span>${service.name}</span>
                         </div>
@@ -572,20 +678,6 @@ class BaseStepForm {
                         this.formData.services = Array.from(
                             servicesSelection.querySelectorAll('.service-tag.active')
                         ).map(t => t.dataset.service);
-
-                        // Opdater confirmation step med det samme
-                        const serviceTagsContainer = document.querySelector('#template-step2 .service-tags');
-                        if (serviceTagsContainer) {
-                            serviceTagsContainer.innerHTML = this.formData.services.map(id => {
-                                const service = window.SERVICES[id];
-                                return `
-                                    <div class="service-tag service-tag--static">
-                                        <i class='bx ${service.icon}'></i>
-                                        <span>${service.name}</span>
-                                    </div>
-                                `;
-                            }).join('');
-                        }
                     });
                 });
             }

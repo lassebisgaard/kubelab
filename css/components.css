@@ -1932,4 +1932,45 @@ textarea.form-control {
     font-size: 14px;
 }
 
+/* Add these styles for the icon buttons */
+.icon-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.icon-button:hover {
+    opacity: 1;
+    background-color: var(--card-background);
+}
+
+.icon-button i {
+    font-size: 18px;
+}
+
+.template-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.template-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-button.delete-button:hover {
+    color: #ff4757;
+}
+
+.icon-button.edit-button:hover {
+    color: var(--accent-color);
+}
+
 
