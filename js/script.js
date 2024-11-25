@@ -58,6 +58,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize service filters if they exist
     initServiceFilters();
+
+    // Add transition container to body
+    const transitionDiv = document.createElement('div');
+    transitionDiv.className = 'transition-container';
+    document.body.appendChild(transitionDiv);
+
+    // Handle link clicks
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (!link || !link.href || link.target === '_blank') return;
+        
+        e.preventDefault();
+        handlePageTransition(link.href);
+    });
+
+    // Remove transition class when page loads
+    window.addEventListener('pageshow', () => {
+        document.body.classList.remove('transition-active');
+    });
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
@@ -168,4 +187,12 @@ function initServiceFilters() {
 }
 
 document.addEventListener('DOMContentLoaded', initServiceFilters);
+
+function handlePageTransition(url) {
+    document.body.classList.add('transition-active');
+    
+    setTimeout(() => {
+        window.location.href = url;
+    }, 300);
+}
 

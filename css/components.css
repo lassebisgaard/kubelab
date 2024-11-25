@@ -1542,7 +1542,7 @@ textarea.form-control {
 
 .title-section .button {
     padding: 8px;
-    border-radius: 8px;
+    border-radius: 4px;
     background-color: var(--accent-color);
     border: none;
     color: var(--background-color);
