@@ -32,24 +32,32 @@ window.saveService = function(service) {
     window.SERVICES[service.id] = service;
 };
 
-// Consolidate all DOMContentLoaded events
-document.addEventListener('DOMContentLoaded', () => {
-    // Handle sidebar toggle
+// Update the sidebar toggle initialization
+function initSidebarToggle() {
     const resizeBtn = document.querySelector('[data-resize-btn]');
     if (resizeBtn) {
         resizeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             document.documentElement.classList.toggle('sb-expanded');
-            // Save state
-            localStorage.setItem('sidebarExpanded', document.documentElement.classList.contains('sb-expanded'));
+            localStorage.setItem('sidebarExpanded', 
+                document.documentElement.classList.contains('sb-expanded'));
         });
     }
+}
+
+// Update the DOMContentLoaded event handler
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sidebar toggle
+    initSidebarToggle();
 
     // Initialize form if we're on a form page
     const formType = document.body.dataset.formType;
     if (formType) {
         new BaseStepForm(formType);
     }
+
+    // Initialize service filters if they exist
+    initServiceFilters();
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
