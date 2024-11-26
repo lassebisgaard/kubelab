@@ -1,0 +1,142 @@
+# Kubelab Docker Compose-fil
+# Denne fil opsætter flere databasesystemer og tilhørende webinterfaces til administration.
+
+version: '3.9'
+
+volumes:
+  mssql-data:
+  mysql-data:
+  pgsql-data:
+  mongo-data:
+  redis-data:
+
+services:
+  # MSSQL Service
+  mssql:
+    container_name: kubelab-mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    ports:
+      - 1433:1433
+    volumes:
+      - mssql-data:/var/opt/mssql/data
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: Ladida.12
+
+  # MySQL Service
+  mysql:
+    container_name: kubelab-mysql
+    image: mysql:8
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+  # PostgreSQL Service
+  pgsql:
+    container_name: kubelab-pgsql
+    image: postgres:14
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+
+  # MongoDB Service
+  mongo:
+    container_name: kubelab-mongo
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  # Redis Service
+  redis:
+    container_name: kubelab-redis
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+
+  # Adminer Web Interface
+  adminer:
+    container_name: kubelab-adminer
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8081:8080
+
+  # Mongo Express Web Interface
+  mongo-express:
+    container_name: kubelab-mongo-express
+    image: mongo-express
+    restart: unless-stopped
+    ports:
+      - 8082:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+
+  # Redis Insight Web Interface
+  redis-insight:
+    container_name: kubelab-redis-insight
+    image: redis/redisinsight:latest
+    restart: unless-stopped
+    ports:
+      - 8083:5540
+
+  # pgAdmin Web Interface
+  pgadmin:
+    container_name: kubelab-pgadmin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    ports:
+      - 8084:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@local.dk
+      PGADMIN_DEFAULT_PASSWORD: root
+
+  # phpMyAdmin Web Interface
+  phpmyadmin:
+    container_name: kubelab-phpmyadmin
+    image: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8085:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+
+# GUIDE:
+# 1. Sørg for, at Docker og Docker Compose er installeret.
+# 2. Gem denne fil som 'docker-compose.yml' i din projektmappe.
+# 3. Start alle services ved at køre følgende kommando i terminalen:
+#    docker-compose up -d
+# 4. Webinterfaces til administration:
+#    - Adminer: http://localhost:8081 (understøtter MSSQL, MySQL, PostgreSQL)
+#    - Mongo Express: http://localhost:8082 (administration af MongoDB)
+#    - Redis Insights: http://localhost:8083 (administration af Redis)
+#    - pgAdmin: http://localhost:8084 (administration af PostgreSQL)
+#    - phpMyAdmin: http://localhost:8085 (administration af MySQL)
+# 5. For at stoppe og fjerne alle services, kør:
+#    docker-compose down
