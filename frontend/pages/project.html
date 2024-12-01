@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Kubelab</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <script src="../assets/js/script.js" defer></script>
+</head>
+
+<body class="dark-mode">
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    <img src="../assets/images/logo.svg" alt="Logo">
+                    <span>Kubelab</span>
+                </li>
+                <li>
+                    <a href="#" data-resize-btn>
+                        <i class='bx bx-chevron-left'></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="create.html" class="create-button">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                        <span>Create</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="project.html">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="templates.html" class="active">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <span>Templates</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <span>Teams</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-bottom">
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-container">
+            <div class="page-header">
+                <div class="title-section">
+                    <h1 class="page-title">Projects</h1>
+                    <a href="create_project.html" class="button primary">
+                        <i class='bx bx-plus'></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <div class="search-bar">
+                    <input type="text" 
+                           placeholder="Search projects..." 
+                           class="form-control"
+                           id="project-search">
+                </div>
+
+                <!-- Project Grid -->
+                <div class="project-grid">
+                    <!-- Projects will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Project Card Template -->
+    <script id="project-card-template" type="text/x-handlebars-template">
+        <div class="project-card" data-project-id="{{id}}">
+            <div class="project-header">
+                <h3>{{name}}</h3>
+                <span class="status-badge {{statusClass}}">{{status}}</span>
+            </div>
+            <div class="project-info">
+                <div class="info-row">
+                    <span class="info-label">Template</span>
+                    <span class="info-value">{{template}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Domain name</span>
+                    <a href="https://{{domain}}" class="domain-link" target="_blank">
+                        {{domain}}
+                        <i class='bx bx-link-external'></i>
+                    </a>
+                </div>
+            </div>
+            <div class="project-controls">
+                <button class="power-button {{#if isRunning}}active{{/if}}" 
+                        title="{{#if isRunning}}Stop{{else}}Start{{/if}} project">
+                    <i class='bx bx-power-off'></i>
+                </button>
+                <button class="restart-button" title="Restart project"
+                        {{#unless isRunning}}disabled{{/unless}}>
+                    <i class='bx bx-refresh'></i>
+                </button>
+            </div>
+        </div>
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Fetch projects
+                const response = await fetch('/api/projects');
+                if (!response.ok) throw new Error('Failed to fetch projects');
+                const projects = await response.json();
+                
+                // Get and compile template
+                const template = Handlebars.compile(
+                    document.getElementById('project-card-template').innerHTML
+                );
+                
+                // Update project grid
+                const projectGrid = document.querySelector('.project-grid');
+                if (projectGrid) {
+                    projectGrid.innerHTML = projects.map(project => {
+                        // Format project data for template
+                        const projectData = {
+                            ...project,
+                            statusClass: project.status.toLowerCase(),
+                            isRunning: project.status === 'Online'
+                        };
+                        return template(projectData);
+                    }).join('');
+
+                    // Add event listeners to action buttons
+                    projectGrid.querySelectorAll('.project-card').forEach(card => {
+                        const powerBtn = card.querySelector('.power-button');
+                        const restartBtn = card.querySelector('.restart-button');
+                        const statusBadge = card.querySelector('.status-badge');
+                        
+                        // Power button handler
+                        powerBtn?.addEventListener('click', async () => {
+                            const isRunning = powerBtn.classList.contains('active');
+                            try {
+                                // Toggle project status
+                                const action = isRunning ? 'stop' : 'start';
+                                const response = await fetch(`/api/projects/${card.dataset.projectId}/${action}`, {
+                                    method: 'POST'
+                                });
+
+                                if (response.ok) {
+                                    // Update UI
+                                    powerBtn.classList.toggle('active');
+                                    restartBtn.disabled = !powerBtn.classList.contains('active');
+                                    
+                                    if (isRunning) {
+                                        statusBadge.textContent = 'Offline';
+                                        statusBadge.className = 'status-badge offline';
+                                    } else {
+                                        statusBadge.textContent = 'Online';
+                                        statusBadge.className = 'status-badge online';
+                                    }
+                                } else {
+                                    throw new Error(`Failed to ${action} project`);
+                                }
+                            } catch (error) {
+                                console.error(`Error ${isRunning ? 'stopping' : 'starting'} project:`, error);
+                                alert(`Failed to ${isRunning ? 'stop' : 'start'} project. Please try again.`);
+                            }
+                        });
+
+                        // Restart button handler
+                        restartBtn?.addEventListener('click', async () => {
+                            try {
+                                const response = await fetch(`/api/projects/${card.dataset.projectId}/restart`, {
+                                    method: 'POST'
+                                });
+
+                                if (response.ok) {
+                                    // Visual feedback
+                                    restartBtn.classList.add('rotating');
+                                    setTimeout(() => {
+                                        restartBtn.classList.remove('rotating');
+                                    }, 1000);
+                                } else {
+                                    throw new Error('Failed to restart project');
+                                }
+                            } catch (error) {
+                                console.error('Error restarting project:', error);
+                                alert('Failed to restart project. Please try again.');
+                            }
+                        });
+                    });
+                }
+
+                // Initialize search functionality
+                const searchInput = document.getElementById('project-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        projectGrid.querySelectorAll('.project-card').forEach(card => {
+                            const text = card.textContent.toLowerCase();
+                            card.style.display = text.includes(searchTerm) ? '' : 'none';
+                        });
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                showErrorMessage('Failed to load projects. Please try again later.');
+            }
+        });
+
+        // Error message display
+        function showErrorMessage(message) {
+            const projectGrid = document.querySelector('.project-grid');
+            if (projectGrid) {
+                projectGrid.innerHTML = `
+                    <div class="error-message">
+                        <i class='bx bx-error'></i>
+                        <p>${message}</p>
+                        <button class="button secondary" onclick="location.reload()">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

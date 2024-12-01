@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Template - Kubelab</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="../assets/js/script.js" defer></script>
+    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
+</head>
+<body class="dark-mode">
+
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    <img src="../assets/images/logo.svg" alt="Logo">
+                    <span>Kubelab</span>
+                </li>
+                <li>
+                    <a href="#" data-resize-btn>
+                        <i class='bx bx-chevron-left'></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="create.html" class="create-button">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                        <span>Create</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="project.html">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="templates.html" class="active">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <span>Templates</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <span>Teams</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-bottom">
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-container">
+            <h1 class="page-title">Create new template</h1>
+            <p class="page-subtitle text-secondary">Configure your template settings.</p>
+            
+            <div class="content-wrapper">
+                <!-- Steps -->
+                <div class="steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span>Configuration</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span>Confirmation</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Configuration -->
+                <div class="step-content active" id="template-step1">
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Template name</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="template-name-input" 
+                                   placeholder="My awesome template"
+                                   required>
+                            <div class="error-message" id="name-error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" 
+                                      id="template-description-input" 
+                                      placeholder="Describe your template..." 
+                                      rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="config-grid">
+                                <div class="yaml-section">
+                                    <label>YAML Configuration <span class="required">*</span></label>
+                                    <div class="yaml-upload" data-upload-area>
+                                        <input type="file" 
+                                               id="yaml-file" 
+                                               hidden 
+                                               accept=".yaml,.yml"
+                                               required>
+                                        <label for="yaml-file" class="upload-area">
+                                            <i class='bx bx-file'></i>
+                                            <span>Drop your YAML file here or click to browse</span>
+                                        </label>
+                                        <div class="error-message" id="yaml-error"></div>
+                                    </div>
+                                </div>
+
+                                <div class="preview-section">
+                                    <label>Template image</label>
+                                    <div class="preview-container--upload" data-upload-area>
+                                        <input type="file" 
+                                               id="preview-image" 
+                                               hidden 
+                                               accept="image/*">
+                                        <label for="preview-image" class="upload-area">
+                                            <i class='bx bx-image'></i>
+                                            <span>Click to upload preview image</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="services-header">
+                                <label>Services <span class="required">*</span></label>
+                                <button type="button" class="create-service-link">
+                                    <i class='bx bx-plus'></i>
+                                    Create service
+                                </button>
+                            </div>
+                            <div class="services-selection">
+                                <!-- Services will be loaded dynamically -->
+                                <div class="loading-indicator">Loading services...</div>
+                            </div>
+                            <div class="error-message" id="services-error"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Confirmation -->
+                <div class="step-content" id="template-step2">
+                    <div class="form-card">
+                        <h2>Template details</h2>
+                        <div class="template-info">
+                            <div class="detail-group">
+                                <label>Template name</label>
+                                <div class="detail-value" id="template-name-confirm"></div>
+                            </div>
+
+                            <div class="detail-group">
+                                <label>Description</label>
+                                <div class="detail-value" id="template-description-confirm"></div>
+                            </div>
+
+                            <div class="detail-group upload-grid">
+                                <div class="yaml-section">
+                                    <label>YAML Configuration</label>
+                                    <div class="yaml-file-display">
+                                        <!-- Will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <div class="preview-section">
+                                    <label>Template image</label>
+                                    <div class="preview-container preview-container--detail">
+                                        <!-- Will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <label>Services</label>
+                                <div class="service-tags">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-navigation">
+                <button class="back-button">
+                    <i class='bx bx-arrow-back'></i>
+                    Back
+                </button>
+                <button class="next-button">
+                    <span>Next</span>
+                    <i class='bx bxs-right-arrow-alt'></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>Creating your template...</p>
+            </div>
+        </div>
+
+        <div class="success-overlay">
+            <div class="success-content">
+                <div class="success-icon flex-center">
+                    <i class='bx bx-check'></i>
+                </div>
+                <h2>Template Created!</h2>
+                <p>Your template has been successfully created.</p>
+            </div>
+        </div>
+
+        <!-- Tilføj services modal -->
+        <div class="modal" id="servicesModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Configure Services</h2>
+                    <button class="close-modal">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-header">
+                                <i class='bx bxl-wordpress'></i>
+                                <h3>WordPress</h3>
+                            </div>
+                            <p class="text-secondary">Latest version of WordPress CMS</p>
+                            <button class="add-service">Add service</button>
+                        </div>
+                        <!-- Flere services her -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" id="cancelServices">Cancel</button>
+                    <button class="button primary" id="saveServices">Save changes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Service Modal -->
+        <div class="modal" id="createServiceModal">
+            <div class="modal-content small">
+                <div class="modal-header">
+                    <h3>Create New Service</h3>
+                    <button type="button" class="close-modal" aria-label="Close modal">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Service Name <span class="required">*</span></label>
+                        <input type="text" 
+                               id="service-name-input" 
+                               class="form-control" 
+                               placeholder="Enter service name"
+                               required>
+                        <div class="error-message" id="service-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Choose Icon <span class="required">*</span></label>
+                        <div class="icon-grid">
+                            <button type="button" class="icon-option" data-icon="bxl-wordpress">
+                                <i class='bx bxl-wordpress'></i>
+                            </button>
+                            <button class="icon-option" data-icon="bx-data">
+                                <i class='bx bx-data'></i>
+                            </button>
+                            <button class="icon-option" data-icon="bx-server">
+                                <i class='bx bx-server'></i>
+                            </button>
+                            <button class="icon-option" data-icon="bx-cloud">
+                                <i class='bx bx-cloud'></i>
+                            </button>
+                            <button class="icon-option" data-icon="bx-code">
+                                <i class='bx bx-code'></i>
+                            </button>
+                            <button class="icon-option" data-icon="bxl-docker">
+                                <i class='bx bxl-docker'></i>
+                            </button>
+                            <button class="icon-option" data-icon="bxl-php">
+                                <i class='bx bxl-php'></i>
+                            </button>
+                            <button class="icon-option" data-icon="bxl-nodejs">
+                                <i class='bx bxl-nodejs'></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="icon-error"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="button secondary" id="cancelCreateService">Cancel</button>
+                    <button type="button" class="button primary" id="saveCreateService">Create</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Service tag template -->
+    <script id="service-tag-template" type="text/x-handlebars-template">
+        <div class="service-tag {{#if isSelectable}}service-tag--selectable{{/if}} {{#if isRemovable}}service-tag--removable{{/if}}" 
+             data-service="{{id}}"
+             role="button"
+             tabindex="0">
+            <i class='bx {{icon}}'></i>
+            <span>{{name}}</span>
+            {{#if isRemovable}}
+                <button type="button" class="remove-service" aria-label="Remove service">
+                    <i class='bx bx-x'></i>
+                </button>
+            {{/if}}
+        </div>
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new BaseStepForm('template');
+        });
+    </script>
+</body>
+</html>

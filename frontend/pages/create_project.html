@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Project - Kubelab</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="../assets/js/script.js" defer></script>
+    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
+    
+</head>
+<body class="dark-mode" data-form-type="project">
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    <img src="../assets/images/logo.svg" alt="Logo">
+                    <span>Kubelab</span>
+                </li>
+                <li>
+                    <a href="#" data-resize-btn>
+                        <i class='bx bx-chevron-left'></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="create.html" class="create-button">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                        <span>Create</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="project.html">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="templates.html" class="active">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <span>Templates</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <span>Teams</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-bottom">
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-container">
+            <h1 class="page-title">Create new project</h1>
+            <p class="page-subtitle text-secondary">Choose between different templates for your project.</p>
+            
+            <div class="content-wrapper">
+                <!-- Steps -->
+                <div class="steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span>Choose template</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span>Project info</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <span>Confirmation</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Choose template -->
+                <div class="step-content project-step active" id="project-step1">
+                    <div class="search-bar">
+                        <input type="text" 
+                               placeholder="Search templates..." 
+                               class="form-control"
+                               id="template-search">
+                    </div>
+
+                    <div class="services-filter-section">
+                        <label>Filter by services</label>
+                        <div class="services-filter">
+                            <!-- Services vil blive indsat dynamisk -->
+                            <div class="loading-indicator">Loading services...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-template-grid">
+                        <!-- Templates vil blive indsat dynamisk -->
+                        <div class="loading-indicator">Loading templates...</div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Project Info -->
+                <div class="step-content project-step" id="project-step2">
+                    <div class="form-card">
+                        <h2>Configure project</h2>
+                        
+                        <div class="form-group">
+                            <label>Project name <span class="required">*</span></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="project-name-input" 
+                                   placeholder="My awesome project"
+                                   required>
+                            <div class="error-message" id="name-error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Domain <span class="required">*</span></label>
+                            <div class="domain-input">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="project-domain-input" 
+                                       placeholder="minside"
+                                       required>
+                                <span class="domain-suffix">.kubelab.dk</span>
+                                <div class="error-message" id="domain-error"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" 
+                                      id="project-description-input" 
+                                      placeholder="Describe your project..." 
+                                      rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div class="step-content project-step" id="project-step3">
+                    <div class="form-card">
+                        <div class="project-summary">
+                            <h2>Project details</h2>
+                            
+                            <div class="detail-group">
+                                <label>Project name</label>
+                                <div class="detail-value" id="project-name-confirm"></div>
+                            </div>
+
+                            <div class="detail-group">
+                                <label>Domain</label>
+                                <div class="detail-value" id="project-domain-confirm"></div>
+                            </div>
+
+                            <div class="detail-group">
+                                <label>Description</label>
+                                <div class="detail-value" id="project-description-confirm"></div>
+                            </div>
+                        </div>
+
+                        <div class="selected-template-preview">
+                            <span class="label">Selected template</span>
+                            <div class="template-display">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flow navigation -->
+                <div class="flow-navigation">
+                    <button class="back-button">
+                        <i class='bx bx-arrow-back'></i>
+                        Back
+                    </button>
+                    <button class="next-button">
+                        Next
+                        <i class='bx bxs-right-arrow-alt'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading & Success overlays -->
+        <div class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>Creating your project...</p>
+            </div>
+        </div>
+
+        <div class="success-overlay">
+            <div class="success-content">
+                <div class="success-icon flex-center">
+                    <i class='bx bx-check'></i>
+                </div>
+                <h2>Project Created!</h2>
+                <p>Your project has been successfully created.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Service tag template -->
+    <script id="service-tag-template" type="text/x-handlebars-template">
+        <div class="service-tag" 
+             data-service="{{id}}"
+             role="button"
+             tabindex="0">
+            <i class='bx {{icon}}'></i>
+            <span>{{name}}</span>
+        </div>
+    </script>
+
+    <!-- Template card template -->
+    <script id="template-card-template" type="text/x-handlebars-template">
+        <div class="project-template-card" 
+             data-id="{{id}}"
+             data-services="{{services}}"
+             role="button"
+             tabindex="0">
+            <h2>{{name}}</h2>
+            <p class="text-secondary">{{description}}</p>
+            <div class="preview-container preview-container--template">
+                <img src="{{image}}" alt="Template preview">
+            </div>
+            <div class="author text-secondary">By {{author}}</div>
+            <div class="included-services text-secondary">Included services:</div>
+            <div class="services">
+                {{{serviceTagsHtml}}}
+            </div>
+        </div>
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+</body>
+</html>

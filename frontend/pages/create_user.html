@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User - Kubelab</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
+    <script src="../assets/js/script.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body class="dark-mode">
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    <img src="../assets/images/logo.svg" alt="Logo">
+                    <span>Kubelab</span>
+                </li>
+                <li>
+                    <a href="#" data-resize-btn>
+                        <i class='bx bx-chevron-left'></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="create.html" class="create-button">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                        <span>Create</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="project.html">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="templates.html" class="active">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <span>Templates</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <span>Teams</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-bottom">
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-container">
+            <h1 class="page-title">Create new user</h1>
+            <p class="page-subtitle text-secondary">Give your user a name and expiration date.</p>
+            
+            <div class="content-wrapper">
+                <!-- User Information -->
+                <div class="form-card">
+                    <h2>User information</h2>
+                    
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="user-name-input" 
+                               placeholder="Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" 
+                               class="form-control" 
+                               id="user-email-input" 
+                               placeholder="Email">
+                    </div>
+
+                    <div class="form-group">
+                        <label>TEAM</label>
+                        <div class="custom-select">
+                            <div class="select-header">
+                                <span class="selected-option">Select a team</span>
+                                <i class='bx bx-chevron-down'></i>
+                            </div>
+                            <div class="select-options">
+                                <div class="option" data-value="wuoe24">WUOE24</div>
+                                <div class="option" data-value="wordpress">Wordpress Kenneth</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ROLE</label>
+                        <div class="custom-select">
+                            <div class="select-header">
+                                <span class="selected-option">Select a role</span>
+                                <i class='bx bx-chevron-down'></i>
+                            </div>
+                            <div class="select-options">
+                                <div class="option" data-value="admin">Administrator</div>
+                                <div class="option" data-value="user">User</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Expiration date</label>
+                        <div class="date-input-wrapper" data-wrap="true">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="user-expiration-input"
+                                   placeholder="dd.mm.yyyy"
+                                   data-input>
+                            <i class='bx bx-calendar' data-toggle></i>
+                        </div>
+                    </div>
+
+                    <div class="flow-navigation">
+                        <button class="next-button create-user-button">
+                            Create user
+                            <i class='bx bx-check'></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Creating user...</p>
+        </div>
+    </div>
+
+    <div class="success-overlay">
+        <div class="success-content">
+            <div class="success-icon flex-center">
+                <i class='bx bx-check'></i>
+            </div>
+            <h2>User Created!</h2>
+            <p>The user has been successfully created.</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new BaseStepForm('user');
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize flatpickr
+            flatpickr("#user-expiration-input", {
+                dateFormat: "d.m.Y",
+                minDate: "today",
+                static: true
+            });
+
+            // Add click handler for calendar icon
+            document.querySelector('.date-input-wrapper i').addEventListener('click', () => {
+                document.querySelector('#user-expiration-input').focus();
+            });
+
+            // Initialize custom selects
+            document.querySelectorAll('.custom-select').forEach(select => {
+                const header = select.querySelector('.select-header');
+                const options = select.querySelector('.select-options');
+                const selectedText = header.querySelector('.selected-option');
+
+                // Toggle dropdown
+                header.addEventListener('click', () => {
+                    select.classList.toggle('open');
+                });
+
+                // Handle option selection
+                options.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        selectedText.textContent = option.textContent;
+                        select.classList.remove('open');
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!select.contains(e.target)) {
+                        select.classList.remove('open');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

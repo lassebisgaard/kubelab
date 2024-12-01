@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Team - Kubelab</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
+    <script src="../assets/js/script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body class="dark-mode">
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    <img src="../assets/images/logo.svg" alt="Logo">
+                    <span>Kubelab</span>
+                </li>
+                <li>
+                    <a href="#" data-resize-btn>
+                        <i class='bx bx-chevron-left'></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="create.html" class="create-button">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                        <span>Create</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="project.html">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="templates.html" class="active">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <span>Templates</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <span>Teams</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-bottom">
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-container">
+            <h1 class="page-title">Create new team</h1>
+            <p class="page-subtitle text-secondary">Give your team a name and expiration date.</p>
+            
+            <div class="content-wrapper">
+                <!-- Steps -->
+                <div class="steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span>Team information</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span>Members</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <span>Confirmation</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Team Information -->
+                <div class="step-content team-step active" id="team-step1">
+                    <div class="form-card">
+                        <h2>Team information</h2>
+                        
+                        <div class="form-group">
+                            <label>Team name</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="team-name-input" 
+                                   placeholder="fx. WUOE24">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Expiration date</label>
+                            <div class="date-input-wrapper" data-wrap="true">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="team-expiration-input"
+                                       placeholder="dd.mm.yyyy"
+                                       data-input>
+                                <i class='bx bx-calendar' data-toggle></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" id="team-description-input" placeholder="Describe your team..." rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Team Members -->
+                <div class="step-content team-step" id="team-step2">
+                    <div class="form-card">
+                        <div class="form-group">
+                            <div class="services-header">
+                                <label>Team members</label>
+                                <button class="create-service-link">
+                                    <i class='bx bx-plus'></i>
+                                    Add member
+                                </button>
+                            </div>
+                            <div class="services-selection">
+                                <!-- Members will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div class="step-content team-step" id="team-step3">
+                    <div class="form-card">
+                        <h2>Team details</h2>
+                        
+                        <div class="detail-group">
+                            <label>Team name</label>
+                            <div class="detail-value" id="team-name-confirm">Not specified</div>
+                        </div>
+
+                        <div class="detail-group">
+                            <label>Expiration date</label>
+                            <div class="detail-value" id="team-expiration-confirm">Not specified</div>
+                        </div>
+
+                        <div class="detail-group">
+                            <label>Description</label>
+                            <div class="detail-value" id="team-description-confirm">Not specified</div>
+                        </div>
+
+                        <div class="detail-group">
+                            <label>Team members</label>
+                            <div class="service-tags" id="team-members-confirm">
+                                <!-- Members will be listed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flow navigation -->
+                <div class="flow-navigation">
+                    <button class="back-button">
+                        <i class='bx bx-arrow-back'></i>
+                        Back
+                    </button>
+                    <button class="next-button">
+                        Next
+                        <i class='bx bxs-right-arrow-alt'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Member Modal -->
+    <div class="modal" id="addMemberModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>Add Team Member</h3>
+                <button class="close-modal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Search users</label>
+                    <input type="text" class="form-control" placeholder="Search by name or email">
+                </div>
+                <div class="search-results">
+                    <!-- Search results will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="button secondary" id="cancelAddMember">Cancel</button>
+                <button class="button primary" id="saveAddMember">Add selected</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Creating your team...</p>
+        </div>
+    </div>
+
+    <div class="success-overlay">
+        <div class="success-content">
+            <div class="success-icon flex-center">
+                <i class='bx bx-check'></i>
+            </div>
+            <h2>Team Created!</h2>
+            <p>Your team has been successfully created.</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new BaseStepForm('team');
+            // Initialize flatpickr
+            flatpickr("#team-expiration-input", {
+                dateFormat: "d.m.Y",
+                minDate: "today",
+                static: true
+            });
+
+            // Add click handler for calendar icon
+            document.querySelector('.date-input-wrapper i').addEventListener('click', () => {
+                document.querySelector('#team-expiration-input').focus();
+            });
+        });
+    </script>
+</body>
+</html>

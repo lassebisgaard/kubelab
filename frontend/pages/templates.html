@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Templates - Kubelab</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="../assets/js/script.js" defer></script>
+</head>
+<body class="dark-mode">
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    <img src="../assets/images/logo.svg" alt="Logo">
+                    <span>Kubelab</span>
+                </li>
+                <li>
+                    <a href="#" data-resize-btn>
+                        <i class='bx bx-chevron-left'></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="create.html" class="create-button">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                        <span>Create</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="project.html">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="templates.html" class="active">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <span>Templates</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <span>Teams</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-bottom">
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-container">
+            <div class="page-header">
+                <div class="title-section">
+                    <h1 class="page-title">Templates</h1>
+                    <a href="create_template.html" class="button primary">
+                        <i class='bx bx-plus'></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <div class="search-bar">
+                    <input type="text" placeholder="Søg ...">
+                </div>
+
+                <div class="services-filter-section">
+                    <div class="services-filter">
+                        <!-- Service tags will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Template Grid -->
+                <div class="project-template-grid">
+                    <!-- Loading state -->
+                    <div class="loading-indicator">Loading templates...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Tilføj Handlebars script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+
+    <!-- Service tag template -->
+    <script id="service-tag-template" type="text/x-handlebars-template">
+        <span class="service-tag" data-service="{{id}}">
+            <i class='bx {{icon}}'></i>
+            <span>{{name}}</span>
+        </span>
+    </script>
+
+    <!-- Template card template -->
+    <script id="template-card-template" type="text/x-handlebars-template">
+        <div class="project-template-card" data-id="{{id}}" data-services="{{services}}">
+            <div class="template-header">
+                <h2>{{name}}</h2>
+                <div class="template-actions">
+                    <button class="icon-button edit-button" title="Edit template">
+                        <i class='bx bx-edit-alt'></i>
+                    </button>
+                    <button class="icon-button delete-button" title="Delete template">
+                        <i class='bx bx-trash'></i>
+                    </button>
+                </div>
+            </div>
+            <p class="text-secondary">{{description}}</p>
+            <div class="preview-container preview-container--template">
+                <img src="{{image}}" alt="Template preview">
+            </div>
+            <div class="author text-secondary">By: {{author}}</div>
+            <div class="included-services text-secondary">Included services:</div>
+            <div class="services">
+                {{{serviceTagsHtml}}}
+            </div>
+        </div>
+    </script>
+
+    <!-- Tilføj initialization script -->
+    <script>
+        function initTemplateActions() {
+            document.querySelectorAll('.project-template-card').forEach(card => {
+                const deleteBtn = card.querySelector('.delete-button');
+                const editBtn = card.querySelector('.edit-button');
+                
+                deleteBtn?.addEventListener('click', async (e) => {
+                    e.stopPropagation(); // Prevent card click
+                    showDeleteConfirmation(
+                        'Delete Template',
+                        'Are you sure you want to delete this template?',
+                        async () => {
+                            try {
+                                const templateId = card.dataset.id;
+                                const response = await fetch(`/api/templates/${templateId}`, {
+                                    method: 'DELETE'
+                                });
+
+                                if (response.ok) {
+                                    card.remove();
+                                } else {
+                                    throw new Error('Failed to delete template');
+                                }
+                            } catch (error) {
+                                console.error('Error deleting template:', error);
+                                alert('Failed to delete template. Please try again.');
+                            }
+                        }
+                    );
+                });
+                
+                editBtn?.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent card click
+                    const templateId = card.dataset.id;
+                    const templateData = {
+                        name: card.querySelector('h2').textContent,
+                        description: card.querySelector('p').textContent,
+                        services: card.dataset.services.split(','),
+                        author: card.querySelector('.author').textContent.replace('By: ', ''),
+                        previewImage: card.querySelector('.preview-container img').src
+                    };
+                    sessionStorage.setItem('editTemplate', JSON.stringify(templateData));
+                    window.location.href = `create_template.html?edit=${templateId}`;
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Fetch templates
+                const response = await fetch('/api/templates');
+                if (!response.ok) throw new Error('Failed to fetch templates');
+                const templates = await response.json();
+                
+                // Get and compile template
+                const template = Handlebars.compile(
+                    document.getElementById('template-card-template').innerHTML
+                );
+                
+                // Update template grid
+                const templateGrid = document.querySelector('.project-template-grid');
+                if (templateGrid) {
+                    templateGrid.innerHTML = templates.map(templateData => {
+                        return template({
+                            ...templateData,
+                            serviceTagsHtml: window.renderServiceTags(templateData.services, { 
+                                isStatic: true 
+                            })
+                        });
+                    }).join('');
+
+                    // Add event listeners
+                    initTemplateActions();
+                }
+
+                // Initialize search
+                const searchInput = document.querySelector('.search-bar input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        templateGrid.querySelectorAll('.project-template-card').forEach(card => {
+                            const text = card.textContent.toLowerCase();
+                            card.style.display = text.includes(searchTerm) ? '' : 'none';
+                        });
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error loading templates:', error);
+                showErrorMessage('Failed to load templates. Please try again later.');
+            }
+        });
+
+        function showErrorMessage(message) {
+            const templateGrid = document.querySelector('.project-template-grid');
+            if (templateGrid) {
+                templateGrid.innerHTML = `
+                    <div class="error-message">
+                        <i class='bx bx-error'></i>
+                        <p>${message}</p>
+                        <button class="button secondary" onclick="location.reload()">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
