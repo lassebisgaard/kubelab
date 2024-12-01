@@ -196,3 +196,27 @@ function handlePageTransition(url) {
     }, 300);
 }
 
+const toggleSwitch = document.getElementById('dark-mode-toggle');
+const rootElement = document.documentElement;
+
+// Load the current theme from localStorage (if any)
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+  rootElement.classList.add(currentTheme);
+  toggleSwitch.checked = currentTheme === 'dark-mode'; // Sync the toggle switch state
+}
+
+// Add an event listener to the toggle switch
+toggleSwitch.addEventListener('change', () => {
+  if (toggleSwitch.checked) {
+  
+    rootElement.classList.remove('light-mode');
+    rootElement.classList.add('dark-mode');
+    localStorage.setItem('theme', 'dark-mode'); 
+  } else {
+    // Switch to light mode
+    rootElement.classList.remove('dark-mode');
+    rootElement.classList.add('light-mode');
+    localStorage.setItem('theme', 'light-mode'); 
+  }
+});
