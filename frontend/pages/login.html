@@ -1,43 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Kubelab</title>
+    <title>Log In</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/navigation.css">
-    <link rel="stylesheet" href="../css/components.css">
-    <link rel="stylesheet" href="../css/layout.css">
-    <link rel="stylesheet" href="../css/variables.css">
-    <script src="../js/script.js" defer></script>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
+    <script src="../assets/js/script.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body class="dark-mode">
 
     <main>
-        <div class="grid-list">
-            <div class="page-container">
-                <div class="page-title">Log in</div>
-                <body>
-                    <form class="formular">
-                        <div>
-                        <label for="username"></label>
-                        <input type="text" id="username" name="username" placeholder="Email" required>
-                        </div>
+        <div class="page-container">
+            <div class="top-left-container">
+                <img src="../assets/images/logo.svg" alt="Kubelab logo">
+                <p class="front-page">Kubelab</p>
+            </div>
+            
+            <div class="content-wrapper">
+                <h1 class="page-title">Log in</h1>
+                <!-- Login Form -->
+                    
+                <div class="form-group">
+                    <label for="user-email-input"></label>
+                    <input type="email" 
+                           class="form-control2" 
+                           id="user-email-input" 
+                           placeholder="Email">
+                </div>
 
-                        <div>
-                        <label for="password"></label>
-                        <input type="password" id="password" name="password" placeholder="Password" required>
-                        </div>
+                <div class="form-group">
+                    <label for="user-password-input"></label>
+                    <div class="password-container">
+                        <input type="password" 
+                               class="form-control2 password-input" 
+                               id="user-password-input" 
+                               placeholder="Password">
+                    </div>
+                </div>
 
-                        <div class="rememberMe">
-                            <input type="checkbox" id="rememberMe" name="rememberMe">
-                            <label for="rememberMe">Remember me</label>
-                        </div>
-                        
-                        <button type="submit">Create account</button>
-                    </form>
+                <!-- Remember Me and Forgot Password -->
+                <div class="form-group">
+                    <div class="remember-container">
+                        <label class="remember-checkbox">
+                            <input type="checkbox" id="remember-me">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="" class="forgot-password">Forgot Password?</a>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button class="account-create">
+                        Log in
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <p>Don't have an account? <a href="create-account.html" class="login-link">Create one</a></p>
+                </div>
+            </div>
         </div>
     </main>
+
 </body>
-</html> 
+</html>

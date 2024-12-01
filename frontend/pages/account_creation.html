@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account creation</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
+    <script src="../assets/js/script.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body class="dark-mode">
+
+    <main>
+
+        <div class="page-container">
+            <div class="top-left-container">
+                <img src="../assets/images/logo.svg" alt="Kubelab logo">
+                <p class="front-page">Kubelab</p>
+            </div>
+            
+            <div class="content-wrapper">
+                <h1 class="page-title">Create account</h1>
+                <!-- User Information -->
+                    
+                    <div class="form-group">
+                        <label></label>
+                        <input type="text" 
+                               class="form-control2" 
+                               id="user-name-input" 
+                               placeholder="Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label></label>
+                        <input type="email" 
+                               class="form-control2" 
+                               id="user-email-input" 
+                               placeholder="Email">
+                    </div>
+
+                    <div class="form-group">
+                        <label></label>
+                        <div class="custom-select2">
+                            <div class="select-header">
+                                <span class="selected-option">Select a team</span>
+                                <i class='bx bx-chevron-down'></i>
+                            </div>
+                            <div class="select-options">
+                                <div class="option" data-value="wuoe24">WUOE24</div>
+                                <div class="option" data-value="wordpress">Wordpress Kenneth</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label></label>
+                        <div class="password-container">
+                            <input type="password" 
+                                   class="form-control2 password-input" 
+                                   id="user-password-input" 
+                                   placeholder="Password">
+                            <button type="button" 
+                                    class="toggle-password" onclick="togglePasswordVisibility('user-password-input')">
+                                Show
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label></label>
+                        <div class="password-container">
+                            <input type="password" 
+                                   class="form-control2 password-input" 
+                                   id="user-repeat-password-input" 
+                                   placeholder="Repeat Password">
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('user-repeat-password-input')">
+                                Show
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="account-create">
+                            Create user
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                    <p>Already have an account? <a href="login.html" class="login-link">Sign in</a></p>
+                    </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new BaseStepForm('user');
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize flatpickr
+            flatpickr("#user-expiration-input", {
+                dateFormat: "d.m.Y",
+                minDate: "today",
+                static: true
+            });
+
+            // Add click handler for calendar icon
+            document.querySelector('.date-input-wrapper i').addEventListener('click', () => {
+                document.querySelector('#user-expiration-input').focus();
+            });
+
+            // Initialize custom selects
+            document.querySelectorAll('.custom-select').forEach(select => {
+                const header = select.querySelector('.select-header');
+                const options = select.querySelector('.select-options');
+                const selectedText = header.querySelector('.selected-option');
+
+                // Toggle dropdown
+                header.addEventListener('click', () => {
+                    select.classList.toggle('open');
+                });
+
+                // Handle option selection
+                options.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        selectedText.textContent = option.textContent;
+                        select.classList.remove('open');
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!select.contains(e.target)) {
+                        select.classList.remove('open');
+                    }
+                });
+            });
+        });
+
+        function togglePasswordVisibility(inputId) {
+        const input = document.getElementById(inputId);
+        const button = input.nextElementSibling;
+
+        if (input.type === "password") {
+            input.type = "text";
+            button.textContent = "Hide";
+        } else {
+            input.type = "password";
+            button.textContent = "Show";
+        }
+    }
+    </script>
+</body>
+</html>

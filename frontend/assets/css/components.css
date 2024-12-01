@@ -33,6 +33,89 @@
     color: var(--background-color);
 }
 
+.account-create {
+    width: 404px;
+    height: 40px;
+    margin-bottom: 24px;
+    background-color: var(--background-color-dark);
+    border-color: var(--accent-color-dark);
+    font-size: 20px;
+    border-radius: 8px;
+    color: var(--text-color-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.6s ease;
+    text-decoration: none;
+    padding: 0;
+}
+
+.account-create {
+    width: 404px;
+    height: 40px;
+    margin-bottom: 24px;
+    background-color: var(--background-color-dark);
+    border-color: var(--accent-color-dark);
+    font-size: 20px;
+    border-radius: 8px;
+    color: var(--text-color-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.6s ease;
+    text-decoration: none;
+    padding: 0;
+}
+
+.account-create-front {
+    width: 404px;
+    height: 40px;
+    margin-bottom: 24px;
+    background-color: var(--background-color-dark);
+    border-color: var(--accent-color-dark);
+    font-size: 20px;
+    border-radius: 8px;
+    color: var(--text-color-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.6s ease;
+    text-decoration: none;
+    padding: 0;
+}
+
+
+.login-btn {
+    width: 404px;
+    height: 40px;
+    margin-bottom: 24px;
+    background-color: var(--accent-color-dark);
+    border: none;
+    font-size: 20px;
+    border-radius: 8px;
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.6s ease;
+    text-decoration: none;
+    padding: 0;
+    margin-top: 50px;
+}
+
+.login-link {
+    color: var(--link-color-dark);
+    text-decoration: none;
+}
+
 /* === Theme Toggle === */
 .theme-toggle {
     background: none;
@@ -48,7 +131,7 @@
     color: var(--text-color);
     text-decoration: none;
     border-radius: 0.375rem;
-    transition: 
+    transition:
         background-color 0.5s ease-in-out,
         color 0.5s ease-in-out;
 }
@@ -131,7 +214,8 @@
     transition: all 0.5s ease;
 }
 
-.step.active, .step.completed {
+.step.active,
+.step.completed {
     opacity: 1;
     color: var(--accent-color);
     transform: scale(1.05);
@@ -148,7 +232,7 @@
     border: 2px solid currentColor;
     position: relative;
     overflow: hidden;
-    background-color:var(--card-background);
+    background-color: var(--card-background);
 }
 
 .step.completed .step-number {
@@ -190,6 +274,7 @@
         transform: scale(0) rotate(-45deg);
         opacity: 0;
     }
+
     100% {
         transform: scale(1) rotate(0);
         opacity: 1;
@@ -339,6 +424,46 @@ textarea.form-control {
     transition: background-color 5000s ease-in-out 0s;
 }
 
+.form-control2 {
+    width: 404px;
+    padding: 12px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+}
+
+.form-control2::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+/* Specifikt for textarea */
+textarea.form-control2 {
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.form-control2:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    background-color: var(--card-background);
+}
+
+/* Fjern browser's default hvide baggrund på autofill */
+.form-control2:-webkit-autofill,
+.form-control2:-webkit-autofill:hover,
+.form-control2:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-color);
+    -webkit-box-shadow: 0 0 0px 1000px var(--card-background) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
 /* === Domain Input === */
 .domain-input {
     position: relative;
@@ -439,6 +564,19 @@ textarea.form-control {
 
 /* === Form Card === */
 .form-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.form-card h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.form-card2 {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -826,16 +964,25 @@ textarea.form-control {
 
 /* Animation keyframes */
 @keyframes slide-in {
-    to { transform: translateX(0); }
+    to {
+        transform: translateX(0);
+    }
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes pop-in {
-    from { transform: scale(0); }
-    to { transform: scale(1); }
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
 }
 
 @keyframes card-appear {
@@ -843,6 +990,7 @@ textarea.form-control {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -975,7 +1123,7 @@ textarea.form-control {
     gap: 24px;
 }
 
-.detail-group--grid > * {
+.detail-group--grid>* {
     flex: 1;
     min-width: 0;
 }
@@ -1002,7 +1150,7 @@ textarea.form-control {
     padding: 24px;
 }
 
-.delete-service-dialog .modal-body > p {
+.delete-service-dialog .modal-body>p {
     font-size: 14px;
     margin-bottom: 16px;
     color: var(--text-color);
@@ -1265,16 +1413,22 @@ textarea.form-control {
 
 /* === Animations === */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideIn {
-    from { 
+    from {
         opacity: 0;
         transform: translateY(20px);
     }
-    to { 
+
+    to {
         opacity: 1;
         transform: translateY(0);
     }
@@ -1401,7 +1555,8 @@ textarea.form-control {
 .date-input-wrapper input {
     width: 100%;
     padding: 12px;
-    padding-right: 40px; /* Make room for the icon */
+    padding-right: 40px;
+    /* Make room for the icon */
 }
 
 .date-input-wrapper i {
@@ -1411,8 +1566,10 @@ textarea.form-control {
     transform: translateY(-50%);
     color: var(--text-color);
     opacity: 0.5;
-    cursor: pointer; /* Make the icon clickable */
-    pointer-events: auto; /* Enable clicking on the icon */
+    cursor: pointer;
+    /* Make the icon clickable */
+    pointer-events: auto;
+    /* Enable clicking on the icon */
     z-index: 1;
 }
 
@@ -1471,6 +1628,11 @@ textarea.form-control {
 .custom-select {
     position: relative;
     width: 100%;
+}
+
+.custom-select2 {
+    position: relative;
+    width: 404px;
 }
 
 .select-header {
@@ -1930,4 +2092,113 @@ textarea.form-control {
     border-radius: 8px;
     color: var(--text-color);
     font-size: 14px;
+}
+
+.top-left-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    margin: 20px;
+}
+
+.top-left-container img {
+    width: 34px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.top-left-container p {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-color-dark);
+}
+
+.password-container {
+    position: relative;
+    width: 404px;
+}
+
+.password-container .password-input {
+    width: 100%;
+    padding-right: 60px;
+    box-sizing: border-box;
+    height: 40px;
+    font-size: 14px;
+}
+
+.password-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--border-color-dark);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    height: 100%;
+    font-weight: bold;
+}
+
+.password-container .toggle-password:hover {
+    color: var(--text-color-dark);
+}
+
+.front-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.front-page-logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.front-page-logo img {
+    width: 32px;
+    height: auto;
+    margin-right: 12px;
+}
+
+.front-page-logo .front-page {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-color-dark);
+}
+
+.front-page-wrapper h1 {
+    font-size: 24px;
+}
+
+.remember-container {
+    align-items: center;
+    margin-top: 10px;
+}
+
+.remember-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.remember-checkbox input {
+    margin-right: 5px;
+}
+
+.forgot-password {
+    font-size: 14px;
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
 }
