@@ -21,6 +21,11 @@ window.BaseStepForm = class BaseStepForm {
             services: []
         };
 
+        // Disable next button initially for project type
+        if (this.type === 'project') {
+            this.nextButton.disabled = true;
+        }
+
         // Init
         this.init();
     }
@@ -37,6 +42,10 @@ window.BaseStepForm = class BaseStepForm {
         
         // Fetch initial data
         if (this.type === 'template') {
+            this.loadServices();
+        } else if (this.type === 'project') {
+            // Add this block to load templates for project creation
+            this.loadTemplates();
             this.loadServices();
         }
         
@@ -194,36 +203,26 @@ window.BaseStepForm = class BaseStepForm {
 
     async fetchTemplates() {
         try {
-            const response = await fetch('/api/templates');
+            const response = await fetch('http://localhost:3000/api/templates');
             const templates = await response.json();
             
             const templateGrid = document.querySelector('.project-template-grid');
             if (templateGrid) {
                 templateGrid.innerHTML = templates.map(template => `
                     <div class="project-template-card" 
-                         data-id="${template.id}"
-                         data-services="${template.services.join(',')}"
+                         data-id="${template.TemplateId}"
+                         data-services="${template.service_ids || ''}"
                          role="button"
                          tabindex="0">
-                        <h2>${template.name}</h2>
-                        <p class="text-secondary">${template.description}</p>
+                        <h2>${template.TemplateName}</h2>
+                        <p class="text-secondary">${template.Description || 'No description'}</p>
                         <div class="preview-container preview-container--template">
-                            <img src="${template.image || '../assets/images/placeholder.webp'}" 
+                            <img src="${template.Image || '../assets/images/placeholder.webp'}" 
                                  alt="Template preview">
                         </div>
-                        <div class="author text-secondary">By ${template.author}</div>
                         <div class="included-services text-secondary">Included services:</div>
                         <div class="services">
-                            ${template.services.map(serviceId => {
-                                const service = window.SERVICES[serviceId];
-                                if (!service) return '';
-                                return `
-                                    <div class="service-tag service-tag--static">
-                                        <i class='bx ${service.icon}'></i>
-                                        <span>${service.name}</span>
-                                    </div>
-                                `;
-                            }).join('')}
+                            ${template.service_ids ? window.renderServiceTags(template.service_ids.split(','), { isStatic: true }) : ''}
                         </div>
                     </div>
                 `).join('');
@@ -232,10 +231,18 @@ window.BaseStepForm = class BaseStepForm {
                 this.initTemplateSelection();
             }
 
-            // Initialize service filters
-            this.initServiceFilters();
         } catch (error) {
             console.error('Error fetching templates:', error);
+            const templateGrid = document.querySelector('.project-template-grid');
+            if (templateGrid) {
+                templateGrid.innerHTML = `
+                    <div class="error-message">
+                        <i class='bx bx-error'></i>
+                        <p>Failed to load templates</p>
+                        <button class="button secondary" onclick="this.fetchTemplates()">Try Again</button>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -728,6 +735,102 @@ window.BaseStepForm = class BaseStepForm {
         
         this.formData.services = selectedServices;
         console.log('Updated selected services:', this.formData.services);
+    }
+
+    async loadTemplates() {
+        try {
+            console.log('Starting to load templates...');
+            const templateGrid = document.querySelector('.project-template-grid');
+            if (!templateGrid) {
+                console.error('Template grid not found');
+                return;
+            }
+
+            // Remove loading indicator if it exists
+            templateGrid.querySelector('.loading-indicator')?.remove();
+
+            console.log('Fetching templates from API...');
+            const response = await fetch('http://localhost:3000/api/templates');
+            const templates = await response.json();
+            console.log('Received templates:', templates);
+            
+            const templateSource = document.getElementById('template-card-template');
+            if (!templateSource) {
+                console.error('Template card template not found');
+                return;
+            }
+
+            console.log('Compiling template...');
+            const templateFunction = Handlebars.compile(templateSource.innerHTML);
+
+            const templatesHtml = templates.map(template => {
+                console.log('Processing template:', template);
+                const serviceIds = template.service_ids ? 
+                    template.service_ids.split(',').filter(id => id && id.trim()) : 
+                    [];
+
+                // Generer service tags HTML
+                const serviceTagsHtml = serviceIds.map(id => {
+                    const service = window.SERVICES[id];
+                    if (!service) return '';
+                    return `
+                        <div class="service-tag service-tag--static" data-service="${id}">
+                            <i class='bx ${service.icon}'></i>
+                            <span>${service.name}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                return templateFunction({
+                    id: template.TemplateId,
+                    name: template.TemplateName,
+                    description: template.Description || 'No description',
+                    image: template.Image || '../assets/images/placeholder.webp',
+                    author: 'System',
+                    services: template.service_ids,
+                    serviceTagsHtml: serviceTagsHtml || '<span class="text-secondary">No services added</span>'
+                });
+            }).join('');
+
+            console.log('Generated HTML:', templatesHtml);
+            templateGrid.innerHTML = templatesHtml;
+
+            // Add click handlers for template selection
+            const cards = templateGrid.querySelectorAll('.project-template-card');
+            console.log('Found template cards:', cards.length);
+            
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    cards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    
+                    this.formData.template = {
+                        id: card.dataset.id,
+                        name: card.querySelector('h2').textContent,
+                        description: card.querySelector('p').textContent,
+                        services: card.dataset.services?.split(',') || []
+                    };
+                    console.log('Selected template:', this.formData.template);
+                    
+                    // Enable next button when a template is selected
+                    if (this.nextButton) {
+                        this.nextButton.disabled = false;
+                    }
+                });
+            });
+
+        } catch (error) {
+            console.error('Error loading templates:', error);
+            const templateGrid = document.querySelector('.project-template-grid');
+            if (templateGrid) {
+                templateGrid.innerHTML = `
+                    <div class="error-message">
+                        <i class='bx bx-error'></i>
+                        <p>Failed to load templates. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
     }
 }
 

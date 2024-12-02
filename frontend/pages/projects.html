@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
+        // Check for saved sidebar state
         const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
         document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templates - Kubelab</title>
+    <title>Projects - Kubelab</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../assets/css/variables.css">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/navigation.css">
     <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <script src="../assets/js/script.js" defer></script>
 </head>
+
 <body class="dark-mode">
     <aside>
         <nav>
@@ -35,13 +39,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="projects.html">
+                    <a href="projects.html" class="active">
                         <img src="../assets/Icons/Projects.svg" alt="Projects">
                         <span>Projects</span>
                     </a>
                 </li>
                 <li>
-                    <a href="templates.html" class="active">
+                    <a href="templates.html">
                         <img src="../assets/Icons/Template.svg" alt="Templates">
                         <span>Templates</span>
                     </a>
@@ -62,7 +66,7 @@
 
             <ul class="nav-bottom">
                 <li>
-                    <a href="settings.html">
+                    <a href="#">
                         <img src="../assets/Icons/settings.svg" alt="Settings">
                         <span>Settings</span>
                     </a>
@@ -79,64 +83,65 @@
 
     <main>
         <div class="page-container">
-            <h1 class="page-title">Templates</h1>
-            <p class="page-subtitle text-secondary">Browse and manage your templates.</p>
-            
+            <div class="page-header">
+                <div class="title-section">
+                    <h1 class="page-title">Projects</h1>
+                    <a href="create_project.html" class="button primary">
+                        <i class='bx bx-plus'></i>
+                    </a>
+                </div>
+            </div>
+
             <div class="content-wrapper">
+                <h2 class="section-title">My projects</h2>
                 <div class="search-bar">
                     <input type="text" 
-                           placeholder="Search templates..." 
-                           class="form-control"
-                           id="template-search">
+                           placeholder="Search my projects..." 
+                           class="form-control" 
+                           id="project-search">
                 </div>
-
-                <div class="services-filter-section">
-                    <label>Filter by services</label>
-                    <div class="services-filter">
-                        <!-- Services vil blive indsat dynamisk -->
-                    </div>
-                </div>
-
-                <div class="project-template-grid">
-                    <div class="loading-indicator">
-                        <i class='bx bx-loader-alt bx-spin'></i>
-                        <span>Loading templates...</span>
-                    </div>
+                <div class="project-grid">
+                    <!-- Projects will be inserted here -->
                 </div>
             </div>
         </div>
     </main>
 
-    <script id="template-card-template" type="text/x-handlebars-template">
-        <div class="project-template-card" data-id="{{id}}" data-services="{{service_ids}}">
-            <div class="template-header">
+    <!-- Project Card Template -->
+    <script id="project-card-template" type="text/x-handlebars-template">
+        <div class="project-card">
+            <div class="project-header">
                 <h3>{{name}}</h3>
-                <div class="template-actions">
-                    <button class="action-button edit-button" title="Edit template">
-                        <i class='bx bx-edit'></i>
-                    </button>
-                    <button class="action-button delete-button" title="Delete template">
-                        <i class='bx bx-trash'></i>
-                    </button>
+                <span class="status-badge {{status}}">{{status}}</span>
+                </button>
+            </div>
+            
+            <div class="project-info-wrapper">
+            <div class="project-info">
+                <div class="info-row">
+                    <span class="text-secondary">Template</span>
+                    <span>{{template}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="text-secondary">Domain name</span>
+                    <span>{{domain}}</span>
                 </div>
             </div>
-            <p class="text-secondary">{{description}}</p>
-            <div class="preview-container preview-container--template">
-                <img src="{{image}}" alt="Template preview" onerror="this.style.display='none'">
-            </div>
-            <div class="author text-secondary">By: {{author}}</div>
-            <div class="included-services text-secondary">Included services:</div>
-            <div class="service-tags-container">
-                {{{serviceTagsHtml}}}
-            </div>
-            <div class="template-meta text-secondary">
-                <span>Created: {{dateCreated}}</span>
+
+            <div class="project-controls">
+                <button class="action-button" title="Power">
+                    <i class='bx bx-power-off'></i>
+                </button>
+                <button class="action-button" title="Restart">
+                    <i class='bx bx-refresh'></i>
+                </button>
             </div>
         </div>
+    </div>
     </script>
 
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
-    <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/pages/templates.js"></script>
+    <script src="../assets/js/pages/projects.js"></script>
 </body>
 </html>

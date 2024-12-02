@@ -1946,7 +1946,7 @@ textarea.form-control2 {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 24px;
+    padding: 2rem;
 }
 
 .project-header {
@@ -1966,6 +1966,7 @@ textarea.form-control2 {
     border-radius: 20px;
     font-size: 14px;
     font-weight: 500;
+    margin-left: 2rem;
 }
 
 .status-badge.online {
@@ -1994,12 +1995,16 @@ textarea.form-control2 {
     opacity: 1;
 }
 
-.project-info {
-    margin-bottom: 24px;
+.project-info-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 }
+
 
 .info-row {
     display: flex;
+    flex-direction: column;
     margin-bottom: 12px;
 }
 
@@ -2034,6 +2039,8 @@ textarea.form-control2 {
 .project-controls {
     display: flex;
     gap: 8px;
+    height: 2.2rem;
+    width: auto;
 }
 
 .power-button,
@@ -2292,4 +2299,25 @@ textarea.form-control2 {
         transform: translateX(0);
         opacity: 1;
     }
+}
+
+.project-template-card {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.project-template-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.project-template-card.active {
+    border: 2px solid var(--accent-color);
+    background-color: var(--card-background);
+}
+
+/* Opdater også next button styling */
+.next-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

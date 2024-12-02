@@ -1,92 +1,91 @@
 async function loadProjects() {
     try {
-        const response = await fetch('http://localhost:3000/api/projects');
+        const response = await fetch('/api/projects');
         const projects = await response.json();
         
         const projectGrid = document.querySelector('.project-grid');
         if (!projectGrid) return;
 
-        projectGrid.innerHTML = projects.map(project => `
-            <div class="project-card" data-id="${project.ProjectId}">
-                <div class="project-header">
-                    <h3>${project.ProjectName}</h3>
-                    <span class="status-badge ${project.Status?.toLowerCase() || 'offline'}">
-                        ${project.Status || 'Offline'}
-                    </span>
-                </div>
-                <div class="project-info">
-                    <div class="info-row">
-                        <span class="info-label">Domain:</span>
-                        <a href="https://${project.Domain}.kubelab.dk" 
-                           class="domain-link" 
-                           target="_blank">
-                            ${project.Domain}.kubelab.dk
-                            <i class='bx bx-link-external'></i>
-                        </a>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Template:</span>
-                        <span class="info-value">${project.TemplateName || 'Custom'}</span>
-                    </div>
-                </div>
-                <div class="project-controls">
-                    <button class="power-button ${project.Status === 'Online' ? 'active' : ''}" 
-                            title="Power ${project.Status === 'Online' ? 'off' : 'on'}">
-                        <i class='bx bx-power-off'></i>
-                    </button>
-                    <button class="restart-button" 
-                            title="Restart" 
-                            ${project.Status !== 'Online' ? 'disabled' : ''}>
-                        <i class='bx bx-refresh'></i>
-                    </button>
-                </div>
-            </div>
-        `).join('');
+        const templateSource = document.getElementById('project-card-template');
+        const templateFunction = Handlebars.compile(templateSource.innerHTML);
 
-        // Add event listeners
-        initProjectActions();
+        // Render project cards
+        projectGrid.innerHTML = projects.map(project => templateFunction({
+            id: project.ProjectId,
+            name: project.ProjectName,
+            status: 'offline',  // Hardcoded for now
+            template: project.Description,
+            domain: `${project.Domain}.kubelab.dk`
+        })).join('');
+
+        initProjectControls();
     } catch (error) {
         console.error('Error loading projects:', error);
+        showErrorMessage('Failed to load projects. Please try again.');
     }
 }
 
-function initProjectActions() {
+function initProjectControls() {
     document.querySelectorAll('.project-card').forEach(card => {
         const projectId = card.dataset.id;
+        const powerBtn = card.querySelector('.control-button[title="Power"]');
+        const restartBtn = card.querySelector('.control-button[title="Restart"]');
+        const statusBadge = card.querySelector('.status-badge');
         
-        // Power button
-        card.querySelector('.power-button')?.addEventListener('click', async () => {
-            const isActive = card.querySelector('.power-button').classList.contains('active');
+        // Power button handler
+        powerBtn?.addEventListener('click', async () => {
+            const isRunning = powerBtn.classList.contains('active');
             try {
-                const response = await fetch(`/api/projects/${projectId}/power`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ power: !isActive })
-                });
+                const action = isRunning ? 'stop' : 'start';
+                const response = await fetch(`/api/projects/${projectId}/${action}`);
+
                 if (response.ok) {
-                    loadProjects(); // Reload to update status
+                    powerBtn.classList.toggle('active');
+                    restartBtn.disabled = !powerBtn.classList.contains('active');
+                    
+                    if (isRunning) {
+                        statusBadge.textContent = 'Offline';
+                        statusBadge.className = 'status-badge offline';
+                    } else {
+                        statusBadge.textContent = 'Online';
+                        statusBadge.className = 'status-badge online';
+                    }
                 }
             } catch (error) {
-                console.error('Error toggling power:', error);
+                console.error('Error toggling project state:', error);
             }
         });
-        
-        // Restart button
-        card.querySelector('.restart-button')?.addEventListener('click', async () => {
-            if (card.querySelector('.restart-button').disabled) return;
-            
+
+        // Restart button handler
+        restartBtn?.addEventListener('click', async () => {
             try {
-                const response = await fetch(`/api/projects/${projectId}/restart`, {
-                    method: 'POST'
-                });
+                restartBtn.classList.add('rotating');
+                const response = await fetch(`/api/projects/${projectId}/restart`);
+
                 if (response.ok) {
-                    loadProjects(); // Reload to update status
+                    setTimeout(() => restartBtn.classList.remove('rotating'), 1000);
                 }
             } catch (error) {
                 console.error('Error restarting project:', error);
+                restartBtn.classList.remove('rotating');
             }
         });
     });
-} 
+}
+
+function showErrorMessage(message) {
+    const projectGrid = document.querySelector('.project-grid');
+    if (projectGrid) {
+        projectGrid.innerHTML = `
+            <div class="error-message">
+                <i class='bx bx-error'></i>
+                <p>${message}</p>
+                <button class="button secondary" onclick="location.reload()">
+                    Try Again
+                </button>
+            </div>
+        `;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadProjects); 
