@@ -1632,22 +1632,22 @@ textarea.form-control2 {
 
 .custom-select2 {
     position: relative;
-    width: 100%;
-    padding-right: 60px;
-    box-sizing: border-box;
-    height: 40px;
+    width: 404px;
+    padding: 12px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
     font-size: 14px;
+    font-family: inherit;
 }
 
+
 .custom-select2 .select-header {
-    background-color: var(--background-color-dark);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 16px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: var(--secondary-color-light);
 }
 
 .custom-select2 .select-header i {
@@ -1679,12 +1679,13 @@ textarea.form-control2 {
     transition: background-color 0.3s ease;
 }
 
+
 .custom-select2 .option:hover {
     background-color: var(--accent-color-dark);
 }
 
 .custom-select2 .selected-option {
-    color: var(--text-color);
+    color: grey !important;
 }
 
 /* === Template Header === */
