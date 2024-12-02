@@ -8,7 +8,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templates - Kubelab</title>
+    <title>Teams - Kubelab</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../assets/css/variables.css">
     <link rel="stylesheet" href="../assets/css/main.css">
@@ -55,7 +55,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="users.html">
                         <img src="../assets/Icons/Users.svg" alt="Users">
                         <span>Users</span>
                     </a>
@@ -83,7 +83,7 @@
         <div class="page-container">
             <div class="page-header">
                 <div class="title-section">
-                    <h1 class="page-title">Templates</h1>
+                    <h1 class="page-title">Teams</h1>
                     <a href="create_template.html" class="button primary">
                         <i class='bx bx-plus'></i>
                     </a>
@@ -94,97 +94,104 @@
                 <div class="search-bar">
                     <input type="text" placeholder="Søg ...">
                 </div>
-                <ul class="accordion-titles">
-                    <li>Teams</li>
-                    <li>Edit</li>
-                    <li>members</li>
-                </ul>
 
+                <!-- Header for column alignment -->
                 <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="team-info">
+                            <span>Teams</span>
+                        </div>
+                        <div class="edit">
+                            <span>Edit</span>
+                        </div>
+                        <div class="members">
+                            <span>Members</span>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Accordion items -->
                 <div class="accordion">
                     <div class="accordion-item">
-                      <div class="accordion-header">
-                        <div class="team-info">
-                        <img src="../assets/Icons/Teams.svg" alt="Teams">
-                          <span>WUOE24</span>
+                        <div class="accordion-header">
+                            <div class="team-info">
+                                <img src="../assets/Icons/Teams.svg" alt="Teams">
+                                <span>WUOE24</span>
+                            </div>
+                            <div class="edit">
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="members">
+                                <span>23</span>
+                                <button class="toggle-button">▼</button>
+                            </div>
                         </div>
-                        <div class="edit">
-                          <input type="checkbox" checked>
+                        <div class="accordion-content">
+                            <p>James Portainer</p>
                         </div>
-                        <div class="members">
-                          <span>23</span>
-                          <button class="toggle-button">▼</button>
-                        </div>
-                      </div>
-                      <div class="accordion-content">
-                        <!-- Content for WUOE24 -->
-                        <p>Details about team WUOE24...</p>
-                      </div>
                     </div>
-                
+
                     <div class="accordion-item">
-                      <div class="accordion-header">
-                        <div class="team-info">
-                            <img src="../assets/Icons/Teams.svg" alt="Teams">
-                          <span>WUOF23</span>
+                        <div class="accordion-header">
+                            <div class="team-info">
+                                <img src="../assets/Icons/Teams.svg" alt="Teams">
+                                <span>WUOF23</span>
+                            </div>
+                            <div class="edit">
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="members">
+                                <span>12</span>
+                                <button class="toggle-button">▼</button>
+                            </div>
                         </div>
-                        <div class="edit">
-                          <input type="checkbox" checked>
+                        <div class="accordion-content">
+                            <p>Sarah English</p>
                         </div>
-                        <div class="members">
-                          <span>12</span>
-                          <button class="toggle-button">▼</button>
-                        </div>
-                      </div>
-                      <div class="accordion-content">
-                        <!-- Content for WUOF23 -->
-                        <p>Details about team WUOF23...</p>
-                      </div>
                     </div>
-                
+
                     <div class="accordion-item">
-                      <div class="accordion-header">
-                        <div class="team-info">
-                            <img src="../assets/Icons/Teams.svg" alt="Teams">
-                          <span>WUOE23</span>
+                        <div class="accordion-header">
+                            <div class="team-info">
+                                <img src="../assets/Icons/Teams.svg" alt="Teams">
+                                <span>WUOE23</span>
+                            </div>
+                            <div class="edit">
+                                <input type="checkbox">
+                            </div>
+                            <div class="members">
+                                <span>8</span>
+                                <button class="toggle-button">▼</button>
+                            </div>
                         </div>
-                        <div class="edit">
-                          <input type="checkbox">
+                        <div class="accordion-content">
+                            <p>Lasse Bisgaard</p>
+                            <p>Sarah English</p>
+
                         </div>
-                        <div class="members">
-                          <span>8</span>
-                          <button class="toggle-button">▼</button>
-                        </div>
-                      </div>
-                      <div class="accordion-content">
-                        <!-- Content for WUOE23 -->
-                        <p>Details about team WUOE23...</p>
-                      </div>
                     </div>
-                  </div>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
         document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-            const content = header.nextElementSibling;
-            const isVisible = content.style.display === 'block';
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isVisible = content?.style.display === 'block';
 
-            // Close all accordion items
-            document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
-            document.querySelectorAll('.toggle-button').forEach(btn => btn.textContent = '▼');
+                // Close all accordion items
+                document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
+                document.querySelectorAll('.toggle-button').forEach(btn => btn.textContent = '▼');
 
-            // Toggle current item
-            if (!isVisible) {
-            content.style.display = 'block';
-            header.querySelector('.toggle-button').textContent = '▲';
-            }
+                // Toggle current item
+                if (!isVisible && content) {
+                    content.style.display = 'block';
+                    header.querySelector('.toggle-button').textContent = '▲';
+                }
+            });
         });
-        });
-
     </script>
 </body>
 </html>
