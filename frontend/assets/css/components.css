@@ -2246,3 +2246,17 @@ textarea.form-control2 {
     padding: 20px;
     width: 75%;
 }
+
+.remember-container {
+    width: 404px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.top-left-container {
+    display: inline-block;
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    margin: 20px;
+}
