@@ -47,7 +47,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="templates.html" class="active">
+                    <a href="templates.html">
                         <img src="../assets/Icons/Template.svg" alt="Templates">
                         <span>Templates</span>
                     </a>
@@ -111,21 +111,20 @@
 
                     <div class="form-group">
                         <label>TEAM</label>
-                        <div class="custom-select">
+                        <div class="custom-select" data-type="team">
                             <div class="select-header">
                                 <span class="selected-option">Select a team</span>
                                 <i class='bx bx-chevron-down'></i>
                             </div>
                             <div class="select-options">
-                                <div class="option" data-value="wuoe24">WUOE24</div>
-                                <div class="option" data-value="wordpress">Wordpress Kenneth</div>
+                                <!-- Teams vil blive indsat dynamisk -->
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>ROLE</label>
-                        <div class="custom-select">
+                        <div class="custom-select" data-type="role">
                             <div class="select-header">
                                 <span class="selected-option">Select a role</span>
                                 <i class='bx bx-chevron-down'></i>
@@ -178,50 +177,14 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../assets/js/forms/BaseStepForm.js"></script>
+    <script src="../assets/js/pages/createUser.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            new BaseStepForm('user');
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize flatpickr
+            // Initialiser flatpickr
             flatpickr("#user-expiration-input", {
-                dateFormat: "d.m.Y",
-                minDate: "today",
-                static: true
-            });
-
-            // Add click handler for calendar icon
-            document.querySelector('.date-input-wrapper i').addEventListener('click', () => {
-                document.querySelector('#user-expiration-input').focus();
-            });
-
-            // Initialize custom selects
-            document.querySelectorAll('.custom-select').forEach(select => {
-                const header = select.querySelector('.select-header');
-                const options = select.querySelector('.select-options');
-                const selectedText = header.querySelector('.selected-option');
-
-                // Toggle dropdown
-                header.addEventListener('click', () => {
-                    select.classList.toggle('open');
-                });
-
-                // Handle option selection
-                options.querySelectorAll('.option').forEach(option => {
-                    option.addEventListener('click', () => {
-                        selectedText.textContent = option.textContent;
-                        select.classList.remove('open');
-                    });
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!select.contains(e.target)) {
-                        select.classList.remove('open');
-                    }
-                });
+                dateFormat: "Y-m-d",
+                minDate: "today"
             });
         });
     </script>

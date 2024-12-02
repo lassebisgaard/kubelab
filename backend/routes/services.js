@@ -4,12 +4,10 @@ const pool = require('../config/database');
 
 router.get('/', async (req, res) => {
     try {
-        console.log('Fetching services...');
         const [services] = await pool.execute(`
             SELECT ServiceId, ServiceName, Icon 
             FROM Services
         `);
-        console.log('Services fetched:', services);
         res.json(services);
     } catch (error) {
         console.error('Error:', error);
