@@ -884,7 +884,7 @@ textarea.form-control2 {
 
 .service-tag i {
     font-size: 1rem;
-    color: var(--text-color);
+    color: var(--accent-color);
 }
 
 /* Selectable service tags */
@@ -1647,15 +1647,12 @@ textarea.form-control2 {
     font-size: 14px;
 }
 
-/* Når en option er valgt (ikke placeholder tekst) */
-.custom-select .select-header .selected-option:not(:contains('Select')) {
-    opacity: 1;
-}
-
-/* Alternativ måde at detektere valgt option */
+/* Når en option er valgt */
 .custom-select[data-value] .select-header .selected-option {
     opacity: 1;
 }
+
+
 
 .custom-select .select-header i {
     transition: transform 0.3s ease;
@@ -1792,7 +1789,7 @@ textarea.form-control2 {
 
 .service-tag i {
     font-size: 1rem;
-    color: var(--text-color);
+    color: var(--accent-color);
 }
 
 .service-tag:hover {
