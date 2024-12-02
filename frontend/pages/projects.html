@@ -109,7 +109,7 @@
 
     <!-- Project Card Template -->
     <script id="project-card-template" type="text/x-handlebars-template">
-        <div class="project-card">
+        <div class="project-card" data-project-id="{{id}}" onclick="window.location.href='project_details.html?id={{id}}'">
             <div class="project-header">
                 <h3>{{name}}</h3>
                 <span class="status-badge {{status}}">{{status}}</span>

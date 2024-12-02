@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details - Kubelab</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+</head>
+<body class="dark-mode">
+    <!-- Sidebar navigation -->
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    <img src="../assets/images/logo.svg" alt="Logo">
+                    <span>Kubelab</span>
+                </li>
+                <li>
+                    <a href="#" data-resize-btn>
+                        <i class='bx bx-chevron-left'></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="create.html" class="create-button">
+                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                        <span>Create</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="projects.html">
+                        <img src="../assets/Icons/Projects.svg" alt="Projects">
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="templates.html">
+                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <span>Templates</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <span>Teams</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-bottom">
+                <li>
+                    <a href="settings.html">
+                        <img src="../assets/Icons/settings.svg" alt="Settings">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="profile-link">
+                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
+                        <span>Lasse Bisgaard</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-container">
+            <div class="content-wrapper">
+                <!-- Project card template -->
+                <script id="project-details-template" type="text/x-handlebars-template">
+                    <div class="project-card">
+                        <!-- Header section med titel, status og controls -->
+                        <div class="project-header">
+                            <div class="header-left">
+                                <h1>{{name}}</h1>
+                                <span class="status-badge {{status}}">{{status}}</span>
+                            </div>
+                            <div class="project-controls">
+                                <button class="action-button" title="Power">
+                                    <i class='bx bx-power-off'></i>
+                                </button>
+                                <button class="action-button" title="Restart">
+                                    <i class='bx bx-refresh'></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Services section -->
+                        <div class="service-tags-container">
+                            <div class="service-tag">
+                                <i class='bx bxl-wordpress'></i>
+                                <span>wordpress</span>
+                            </div>
+                            <div class="service-tag">
+                                <i class='bx bx-data'></i>
+                                <span>mySQL</span>
+                            </div>
+                            <div class="service-tag">
+                                <i class='bx bx-server'></i>
+                                <span>phpMyAdmin</span>
+                            </div>
+                        </div>
+
+                        <!-- 2x3 Grid for project info -->
+                        <div class="project-details-grid">
+                            <!-- Left column -->
+                            <div class="details-column">
+                                <div class="info-row">
+                                    <div class="text-secondary">Project owner</div>
+                                    <div>{{owner}}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="text-secondary">Domain name</div>
+                                    <div>{{domain}}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="text-secondary">Date of creation</div>
+                                    <div>{{dateCreated}}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right column -->
+                            <div class="details-column">
+                                <div class="info-row">
+                                    <div class="text-secondary">Team</div>
+                                    <div>{{team}}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="text-secondary">Template</div>
+                                    <div>{{template}}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="text-secondary">Date of creation</div>
+                                    <div>{{dateCreated}}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danger zone -->
+                        <div class="danger-zone">
+                            <div class="danger-zone-content">
+                                <h2>Danger zone</h2>
+                                <p class="text-secondary">
+                                    Deleting a project will permanently remove all associated resources and data. 
+                                    This action cannot be undone.
+                                </p>
+                            </div>
+                            <button class="button delete">Delete project</button>
+                        </div>
+                    </div>
+                </script>
+
+                <!-- Container for rendered template -->
+                <div id="project-details-container"></div>
+            </div>
+
+            <!-- Bottom navigation -->
+            <div class="flow-navigation bottom">
+                <a href="projects.html" class="back-button">
+                    <i class='bx bx-arrow-back'></i>
+                    Back
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/pages/projectDetails.js"></script>
+</body>
+</html> 

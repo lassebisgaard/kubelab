@@ -1965,48 +1965,41 @@ textarea.form-control2 {
 
 .project-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
-.project-header h3 {
-    font-size: 20px;
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-left h1 {
     margin: 0;
 }
 
-.status-badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
+/* Danger zone layout */
+.danger-zone {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.danger-zone-content {
+    flex: 1;
+}
+
+.danger-zone-content h2 {
+    margin: 0 0 0.5rem 0;
+}
+
+.danger-zone .button.delete {
     margin-left: 2rem;
-}
-
-.status-badge.online {
-    background-color: rgba(0, 255, 187, 0.1);
-    color: #00FFBB;
-}
-
-.status-badge.offline {
-    background-color: rgba(255, 71, 87, 0.1);
-    color: #FF4757;
-}
-
-.menu-button {
-    margin-left: auto;
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 24px;
-    cursor: pointer;
-    padding: 4px;
-    opacity: 0.5;
-    transition: opacity 0.2s ease;
-}
-
-.menu-button:hover {
-    opacity: 1;
 }
 
 .project-info-wrapper {
@@ -2391,4 +2384,98 @@ textarea.form-control2 {
 
 .custom-select2 .selected-option {
     color: grey !important;
+}
+
+/* Project Details Grid Layout */
+.project-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.info-group {
+    margin-bottom: 1.5rem;
+}
+
+.info-group .text-secondary {
+    margin-bottom: 0.5rem;
+}
+
+/* Juster project header til at inkludere controls */
+.project-header {
+    position: relative;
+}
+
+.project-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.project-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.details-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.details-column .info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Status Badge Styling */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-badge.offline {
+    background-color: rgba(255, 71, 87, 0.1);
+    color: #FF4757;
+}
+
+.status-badge.online {
+    background-color: rgba(0, 255, 187, 0.1);
+    color: #00FFBB;
+}
+
+/* Danger Zone Styling */
+.danger-zone {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.danger-zone-content h2 {
+    color: #FF4757;
+    margin-bottom: 0.5rem;
+}
+
+.button.delete {
+    background-color: rgba(255, 71, 87, 0.1);
+    color: #FF4757;
+    border: 1px solid #FF4757;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button.delete:hover {
+    background-color: #FF4757;
+    color: white;
 }
