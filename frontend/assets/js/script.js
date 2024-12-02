@@ -80,6 +80,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch services from database
     loadServices();
+
+    const toggleSwitch = document.getElementById('dark-mode-toggle');
+    const rootElement = document.documentElement;
+
+    // Load the current theme from localStorage (if any)
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme && toggleSwitch) {
+        rootElement.classList.add(currentTheme);
+        toggleSwitch.checked = currentTheme === 'dark-mode';
+    }
+
+    // Wrap toggle switch code in a check
+    if (toggleSwitch) {
+        toggleSwitch.addEventListener('change', () => {
+            if (toggleSwitch.checked) {
+                rootElement.classList.remove('light-mode');
+                rootElement.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark-mode'); 
+            } else {
+                rootElement.classList.remove('dark-mode');
+                rootElement.classList.add('light-mode');
+                localStorage.setItem('theme', 'light-mode'); 
+            }
+        });
+    }
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
@@ -197,31 +222,6 @@ function handlePageTransition(url) {
     setTimeout(() => {
         window.location.href = url;
     }, 300);
-}
-
-const toggleSwitch = document.getElementById('dark-mode-toggle');
-const rootElement = document.documentElement;
-
-// Load the current theme from localStorage (if any)
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme) {
-  rootElement.classList.add(currentTheme);
-  toggleSwitch.checked = currentTheme === 'dark-mode'; // Sync the toggle switch state
-}
-
-// Wrap toggle switch code in a check
-if (toggleSwitch) {  // Only add listener if element exists
-    toggleSwitch.addEventListener('change', () => {
-        if (toggleSwitch.checked) {
-            rootElement.classList.remove('light-mode');
-            rootElement.classList.add('dark-mode');
-            localStorage.setItem('theme', 'dark-mode'); 
-        } else {
-            rootElement.classList.remove('dark-mode');
-            rootElement.classList.add('light-mode');
-            localStorage.setItem('theme', 'light-mode'); 
-        }
-    });
 }
 
 // Fetch services from database

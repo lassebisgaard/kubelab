@@ -7,15 +7,7 @@ router.get('/', async (req, res) => {
     try {
         console.log('Fetching projects...');
         const [projects] = await pool.execute(`
-            SELECT 
-                p.ProjectId,
-                p.ProjectName,
-                p.Domain,
-                p.Description,
-                p.DateCreated,
-                p.UserId,
-                t.TemplateName,
-                t.Description as TemplateDescription
+            SELECT p.*, t.TemplateName 
             FROM Projects p
             LEFT JOIN Templates t ON p.ProjectId = t.ProjectId
         `);

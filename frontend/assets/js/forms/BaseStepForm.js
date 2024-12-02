@@ -36,10 +36,8 @@ window.BaseStepForm = class BaseStepForm {
         }
         
         // Fetch initial data
-        if (this.type === 'project') {
-            this.fetchTemplates();
-        } else if (this.type === 'template') {
-            this.fetchServices();
+        if (this.type === 'template') {
+            this.loadServices();
         }
         
         this.updateSteps();
@@ -676,55 +674,67 @@ window.BaseStepForm = class BaseStepForm {
         }
     }
 
-    async fetchServices() {
+    async loadServices() {
         try {
-            const response = await fetch('/api/services');
-            if (!response.ok) throw new Error('Failed to fetch services');
+            const response = await fetch('http://localhost:3000/api/services');
             const services = await response.json();
+            console.log('Loaded services for form:', services);
             
             const servicesSelection = document.querySelector('.services-selection');
-            if (servicesSelection) {
-                servicesSelection.innerHTML = window.renderServiceTags(Object.keys(services), {
-                    isSelectable: true,
-                    isRemovable: this.type === 'template'
-                });
-
-                // Add click handlers
-                servicesSelection.querySelectorAll('.service-tag').forEach(tag => {
-                    // Toggle selection
-                    tag.addEventListener('click', (e) => {
-                        if (!e.target.closest('.service-tag--remove')) {
-                            tag.classList.toggle('active');
-                            this.formData.services = Array.from(
-                                servicesSelection.querySelectorAll('.service-tag.active')
-                            ).map(t => t.dataset.service);
-                        }
-                    });
-
-                    // Handle delete
-                    const deleteBtn = tag.querySelector('.service-tag--remove');
-                    if (deleteBtn) {
-                        deleteBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const serviceId = tag.dataset.service;
-                            const serviceName = tag.querySelector('span').textContent;
-                            
-                            if (confirm(`Are you sure you want to delete the service "${serviceName}"?`)) {
-                                delete window.SERVICES[serviceId];
-                                tag.remove();
-                                
-                                // Update formData
-                                this.formData.services = Array.from(
-                                    servicesSelection.querySelectorAll('.service-tag.active')
-                                ).map(t => t.dataset.service);
-                            }
-                        });
-                    }
-                });
+            if (!servicesSelection) {
+                console.error('Services selection container not found');
+                return;
             }
+
+            // Fjern loading indicator
+            servicesSelection.querySelector('.loading-indicator')?.remove();
+
+            // Opdater det globale services objekt
+            services.forEach(service => {
+                window.SERVICES[service.ServiceId] = {
+                    id: service.ServiceId,
+                    name: service.ServiceName,
+                    icon: service.Icon
+                };
+            });
+
+            // Render services
+            servicesSelection.innerHTML = services.map(service => `
+                <div class="service-tag service-tag--selectable" data-service="${service.ServiceId}">
+                    <i class='bx ${service.Icon}'></i>
+                    <span>${service.ServiceName}</span>
+                </div>
+            `).join('');
+
+            // Tilføj click handlers
+            servicesSelection.querySelectorAll('.service-tag--selectable').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    tag.classList.toggle('active');
+                    this.updateSelectedServices();
+                });
+            });
+
         } catch (error) {
-            console.error('Error fetching services:', error);
+            console.error('Error loading services:', error);
+            const servicesSelection = document.querySelector('.services-selection');
+            if (servicesSelection) {
+                servicesSelection.innerHTML = `
+                    <div class="error-message">
+                        <i class='bx bx-error'></i>
+                        <span>Failed to load services</span>
+                    </div>
+                `;
+            }
         }
+    }
+
+    updateSelectedServices() {
+        const selectedServices = Array.from(
+            document.querySelectorAll('.service-tag--selectable.active')
+        ).map(tag => tag.dataset.service);
+        
+        this.formData.services = selectedServices;
+        console.log('Updated selected services:', this.formData.services);
     }
 }
 

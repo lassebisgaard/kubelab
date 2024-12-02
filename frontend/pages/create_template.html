@@ -15,8 +15,7 @@
     <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/navigation.css">
     <link rel="stylesheet" href="../assets/css/components.css">
-    <script src="../assets/js/script.js" defer></script>
-    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 </head>
 <body class="dark-mode">
 
@@ -156,18 +155,11 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="services-header">
-                                <label>Services <span class="required">*</span></label>
-                                <button type="button" class="create-service-link">
-                                    <i class='bx bx-plus'></i>
-                                    Create service
-                                </button>
-                            </div>
+                            <label>SERVICES *</label>
                             <div class="services-selection">
                                 <!-- Services will be loaded dynamically -->
                                 <div class="loading-indicator">Loading services...</div>
                             </div>
-                            <div class="error-message" id="services-error"></div>
                         </div>
                     </div>
                 </div>
@@ -347,7 +339,8 @@
     </script>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/forms/BaseStepForm.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             new BaseStepForm('template');

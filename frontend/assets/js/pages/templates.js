@@ -1,46 +1,88 @@
+async function loadServices() {
+    try {
+        const response = await fetch('http://localhost:3000/api/services');
+        const services = await response.json();
+        
+        window.SERVICES = {};
+        services.forEach(service => {
+            window.SERVICES[service.ServiceId] = {
+                id: service.ServiceId,
+                name: service.ServiceName,
+                icon: service.Icon
+            };
+        });
+
+        const filterContainer = document.querySelector('.services-filter');
+        if (filterContainer) {
+            filterContainer.innerHTML = window.renderServiceTags(
+                services.map(s => s.ServiceId),
+                { isSelectable: true }
+            );
+        }
+
+        document.querySelectorAll('.service-tag--selectable').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.toggle('active');
+                filterTemplatesByServices();
+            });
+        });
+
+    } catch (error) {
+        console.error('Error loading services:', error);
+    }
+}
+
+function filterTemplatesByServices() {
+    const activeFilters = Array.from(document.querySelectorAll('.service-tag--selectable.active'))
+        .map(tag => tag.dataset.service);
+
+    document.querySelectorAll('.project-template-card').forEach(card => {
+        const cardServices = card.dataset.services ? card.dataset.services.split(',') : [];
+        
+        if (activeFilters.length === 0 || 
+            activeFilters.some(filter => cardServices.includes(filter))) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
 async function loadTemplates() {
     try {
+        await loadServices();
+
         const response = await fetch('http://localhost:3000/api/templates');
         const templates = await response.json();
+        
+        console.log('Loaded templates:', templates);
         
         const templateGrid = document.querySelector('.project-template-grid');
         if (!templateGrid) return;
 
-        templateGrid.innerHTML = templates.map(template => `
-            <div class="card template-card" data-id="${template.TemplateId}">
-                <div class="template-header">
-                    <h2>${template.TemplateName || 'Unnamed Template'}</h2>
-                    <div class="template-actions">
-                        <button class="action-button edit-button" title="Edit template">
-                            <i class='bx bx-edit'></i>
-                            Edit
-                        </button>
-                        <button class="action-button delete-button" title="Delete template">
-                            <i class='bx bx-trash'></i>
-                            Delete
-                        </button>
-                    </div>
-                </div>
-                <p class="text-secondary">${template.Description || 'No description'}</p>
-                
-                <div class="card-content">
-                    <div class="service-tags">
-                        ${template.service_ids ? window.renderServiceTags(template.service_ids.split(','), {
-                            isStatic: true
-                        }) : ''}
-                    </div>
-                </div>
-                
-                <div class="template-meta text-secondary">
-                    <span>Created: ${new Date(template.DateCreated).toLocaleDateString()}</span>
-                </div>
-            </div>
-        `).join('');
+        const templateSource = document.getElementById('template-card-template');
+        const templateFunction = Handlebars.compile(templateSource.innerHTML);
 
-        // Remove loading indicator
-        templateGrid.querySelector('.loading-indicator')?.remove();
+        const templatesHtml = templates.map(template => {
+            const serviceIds = template.service_ids ? 
+                template.service_ids.split(',').filter(id => id && id.trim()) : 
+                [];
 
-        // Add event listeners
+            return templateFunction({
+                id: template.TemplateId,
+                name: template.TemplateName,
+                description: template.Description,
+                dateCreated: new Date(template.DateCreated).toLocaleDateString(),
+                service_ids: template.service_ids,
+                serviceTagsHtml: serviceIds.length > 0 ? 
+                    window.renderServiceTags(serviceIds, { isStatic: true }) : 
+                    '<span class="text-secondary">No services added</span>'
+            });
+        }).join('');
+
+        templateGrid.innerHTML = templatesHtml;
+
+        initSearch();
         initTemplateActions();
     } catch (error) {
         console.error('Error loading templates:', error);
@@ -57,116 +99,55 @@ async function loadTemplates() {
     }
 }
 
+function initSearch() {
+    const searchInput = document.getElementById('template-search');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.project-template-card');
+
+        cards.forEach(card => {
+            const name = card.querySelector('h3').textContent.toLowerCase();
+            const description = card.querySelector('p').textContent.toLowerCase();
+            const isVisible = name.includes(searchTerm) || description.includes(searchTerm);
+            card.style.display = isVisible ? '' : 'none';
+        });
+    });
+}
+
 function initTemplateActions() {
-    document.querySelectorAll('.template-card').forEach(card => {
+    document.querySelectorAll('.project-template-card').forEach(card => {
         const templateId = card.dataset.id;
         
-        // Edit button
         card.querySelector('.edit-button')?.addEventListener('click', (e) => {
             e.stopPropagation();
-            window.location.href = `/pages/create_template.html?edit=${templateId}`;
+            window.location.href = `create_template.html?edit=${templateId}`;
         });
         
-        // Delete button
         card.querySelector('.delete-button')?.addEventListener('click', (e) => {
             e.stopPropagation();
-            console.log('Delete clicked for template:', templateId);
-            
-            showDeleteConfirmation(
-                'Delete Template',
-                'Are you sure you want to delete this template?',
-                async () => {
-                    try {
-                        console.log('Sending delete request for template:', templateId);
-                        const response = await fetch(`http://localhost:3000/api/templates/${templateId}`, {
-                            method: 'DELETE'
-                        });
-                        
-                        console.log('Delete response:', response);
-                        
-                        if (!response.ok) {
-                            const errorData = await response.json();
-                            throw new Error(errorData.error || 'Failed to delete template');
+            if (window.showDeleteConfirmation) {
+                window.showDeleteConfirmation(
+                    'Delete Template',
+                    'Are you sure you want to delete this template?',
+                    async () => {
+                        try {
+                            const response = await fetch(`http://localhost:3000/api/templates/${templateId}`, {
+                                method: 'DELETE'
+                            });
+                            
+                            if (!response.ok) throw new Error('Failed to delete template');
+                            
+                            card.remove();
+                        } catch (error) {
+                            console.error('Error deleting template:', error);
                         }
-
-                        card.remove();
-                        showError('Template deleted successfully', 'success');
-                    } catch (error) {
-                        console.error('Error deleting template:', error);
-                        showError(error.message || 'Failed to delete template');
-                        throw error; // Re-throw for the confirmation handler
                     }
-                }
-            );
-        });
-
-        // Gør hele kortet klikbart
-        card.addEventListener('click', () => {
-            window.location.href = `/pages/create_template.html?edit=${templateId}`;
+                );
+            }
         });
     });
 }
 
-// Opdateret showError funktion der kan håndtere forskellige typer
-function showError(message, type = 'error') {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = `toast-message ${type}`;
-    errorDiv.innerHTML = `
-        <i class='bx ${type === 'success' ? 'bx-check' : 'bx-error'}'></i>
-        <span>${message}</span>
-    `;
-    document.body.appendChild(errorDiv);
-    setTimeout(() => {
-        errorDiv.classList.add('fade-out');
-        setTimeout(() => errorDiv.remove(), 300);
-    }, 3000);
-}
-
-function showDeleteConfirmation(title, message, onConfirm) {
-    const dialog = document.createElement('div');
-    dialog.className = 'modal delete-confirmation-dialog';
-    dialog.innerHTML = `
-        <div class="modal-content small">
-            <div class="modal-header">
-                <h3>${title}</h3>
-                <button class="close-modal">
-                    <i class='bx bx-x'></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>${message}</p>
-                <div class="warning-message">
-                    <i class='bx bx-error'></i>
-                    <div>
-                        <div class="warning-title">Warning</div>
-                        <div class="warning-text">This action cannot be undone.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="button secondary" id="cancelDelete">Cancel</button>
-                <button class="button delete" id="confirmDelete">Delete</button>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(dialog);
-    dialog.classList.add('show');
-
-    const closeDialog = () => {
-        dialog.classList.remove('show');
-        setTimeout(() => dialog.remove(), 300);
-    };
-
-    dialog.querySelector('.close-modal')?.addEventListener('click', closeDialog);
-    dialog.querySelector('#cancelDelete')?.addEventListener('click', closeDialog);
-    dialog.querySelector('#confirmDelete')?.addEventListener('click', async () => {
-        try {
-            await onConfirm();
-            closeDialog();
-        } catch (error) {
-            console.error('Error in delete confirmation:', error);
-            showError('Failed to delete template');
-        }
-    });
-} 
+document.addEventListener('DOMContentLoaded', loadTemplates); 
