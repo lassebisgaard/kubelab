@@ -63,4 +63,38 @@ router.post('/', async (req, res) => {
     }
 });
 
+// Tilføj denne nye DELETE route
+router.delete('/:id', async (req, res) => {
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+        
+        // Slet først alle service relations
+        await connection.execute(
+            'DELETE FROM template_services WHERE template_id = ?',
+            [req.params.id]
+        );
+        
+        // Derefter slet selve templaten
+        const [result] = await connection.execute(
+            'DELETE FROM Templates WHERE TemplateId = ?',
+            [req.params.id]
+        );
+        
+        await connection.commit();
+        
+        if (result.affectedRows === 0) {
+            res.status(404).json({ error: 'Template not found' });
+        } else {
+            res.json({ message: 'Template deleted successfully' });
+        }
+    } catch (error) {
+        await connection.rollback();
+        console.error('Error deleting template:', error);
+        res.status(500).json({ error: 'Failed to delete template' });
+    } finally {
+        connection.release();
+    }
+});
+
 module.exports = router;

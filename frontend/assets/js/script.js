@@ -50,49 +50,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize sidebar toggle
     initSidebarToggle();
 
-    // Initialize form if we're on a form page
-    const formType = document.body.dataset.formType;
-    if (formType) {
-        new BaseStepForm(formType);
-    }
-
-    // Initialize service filters if they exist
-    initServiceFilters();
-
-    // Add transition container to body
-    const transitionDiv = document.createElement('div');
-    transitionDiv.className = 'transition-container';
-    document.body.appendChild(transitionDiv);
-
-    // Handle link clicks
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (!link || !link.href || link.target === '_blank') return;
-        
-        e.preventDefault();
-        handlePageTransition(link.href);
-    });
-
-    // Remove transition class when page loads
-    window.addEventListener('pageshow', () => {
-        document.body.classList.remove('transition-active');
-    });
-
-    // Fetch services from database
-    loadServices();
-
+    // Theme toggle setup
     const toggleSwitch = document.getElementById('dark-mode-toggle');
     const rootElement = document.documentElement;
 
-    // Load the current theme from localStorage (if any)
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme && toggleSwitch) {
-        rootElement.classList.add(currentTheme);
-        toggleSwitch.checked = currentTheme === 'dark-mode';
-    }
-
-    // Wrap toggle switch code in a check
     if (toggleSwitch) {
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            rootElement.classList.add(currentTheme);
+            toggleSwitch.checked = currentTheme === 'dark-mode';
+        }
+
         toggleSwitch.addEventListener('change', () => {
             if (toggleSwitch.checked) {
                 rootElement.classList.remove('light-mode');
@@ -105,6 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Initialize other functionality
+    initServiceFilters();
+    loadServices();
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
