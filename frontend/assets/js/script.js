@@ -77,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('pageshow', () => {
         document.body.classList.remove('transition-active');
     });
+
+    // Fetch services from database
+    loadServices();
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
@@ -220,3 +223,25 @@ toggleSwitch.addEventListener('change', () => {
     localStorage.setItem('theme', 'light-mode'); 
   }
 });
+
+// Fetch services from database
+async function loadServices() {
+    try {
+        const response = await fetch('/api/services');
+        const services = await response.json();
+        
+        // Update global services object
+        services.forEach(service => {
+            window.SERVICES[service.ServiceId] = {
+                id: service.ServiceId,
+                name: service.ServiceName,
+                icon: service.Icon
+            };
+        });
+        
+        // Initialize service filters if they exist
+        initServiceFilters();
+    } catch (error) {
+        console.error('Failed to load services:', error);
+    }
+}
