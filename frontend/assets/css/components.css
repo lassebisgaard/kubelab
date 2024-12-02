@@ -2243,5 +2243,6 @@ textarea.form-control2 {
 }
 
 .settings-container-settings {
+    padding: 20px;
     width: 75%;
 }
