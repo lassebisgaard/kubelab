@@ -2097,74 +2097,64 @@ textarea.form-control2 {
     background: #001724;
     border-radius: 8px;
     overflow: hidden;
-  }
-  
-  .accordion-item {
+    margin-bottom: 20px;
+}
+
+.accordion-item {
     border-bottom: 1px solid #1c3b57;
-  }
-  
-  .accordion-header {
+}
+
+.accordion-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
     cursor: pointer;
-    
-  }
-  
-  .team-info {
+}
+
+.accordion-header > div {
+    flex: 1; /* Ensures even spacing between columns */
+    text-align: left; /* Aligns text */
+}
+
+.accordion-header .team-info {
     display: flex;
     align-items: center;
-  }
-  
-  .team-info img {
-    padding-right: 10px;
-    font-size: 1.2rem;
-  }
-  
-  .edit input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .members {
+}
+
+.accordion-header .team-info img {
+    margin-right: 10px;
+}
+
+.accordion-header .edit {
+    text-align: center; /* Centers the checkbox */
+}
+
+.accordion-header .members {
+    text-align: right;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-  }
-  
-  .members span {
+}
+
+.accordion-header .members span {
     margin-right: 5px;
-  }
-  
-  .toggle-button {
+}
+
+.accordion-header .toggle-button {
     background: none;
     border: none;
     color: #00ffcc;
     font-size: 1rem;
     cursor: pointer;
-  }
-  
-  .accordion-content {
+}
+
+.accordion-content {
     display: none;
     padding: 10px 20px;
     background: #1c3b57;
-  }
-  
-  .accordion-content p {
-    margin: 0;
-  }
-
-  .accordion-titles {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
 }
 
-.accordion-titles li {
-    padding: 10px;
-    cursor: pointer;
+.accordion-content p {
+    margin: 0;
 }
