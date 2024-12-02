@@ -1632,63 +1632,55 @@ textarea.form-control2 {
 
 .custom-select2 {
     position: relative;
-    width: 404px;
+    width: 100%;
 }
 
-.select-header {
+.custom-select2 .select-header {
+    background-color: var(--background-color-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    cursor: pointer;
-    color: var(--text-color);
 }
 
-.select-header i {
-    opacity: 0.5;
-    transition: transform 0.2s ease;
+.custom-select2 .select-header i {
+    transition: transform 0.3s ease;
 }
 
-.custom-select.open .select-header i {
-    transform: rotate(180deg);
-}
-
-.select-options {
+.custom-select2 .select-options {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
-    background-color: var(--card-background);
+    background-color: var(--background-color-dark);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 8px;
     margin-top: 4px;
     display: none;
-    z-index: 100;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
-.custom-select.open .select-options {
+.custom-select2.open .select-options {
     display: block;
 }
 
-.option {
-    padding: 12px;
+.custom-select2 .option {
+    padding: 10px 16px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
-.option:hover {
-    background-color: var(--hover-background);
+.custom-select2 .option:hover {
+    background-color: var(--accent-color-dark);
 }
 
-.selected-option {
-    opacity: 0.5;
-}
-
-.custom-select.has-value .selected-option {
-    opacity: 1;
+.custom-select2 .selected-option {
+    color: var(--text-color);
 }
 
 /* === Template Header === */
