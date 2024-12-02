@@ -1633,6 +1633,10 @@ textarea.form-control2 {
 .custom-select2 {
     position: relative;
     width: 100%;
+    padding-right: 60px;
+    box-sizing: border-box;
+    height: 40px;
+    font-size: 14px;
 }
 
 .custom-select2 .select-header {
