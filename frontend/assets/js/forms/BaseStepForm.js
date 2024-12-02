@@ -526,69 +526,63 @@ window.BaseStepForm = class BaseStepForm {
 
     async handleSubmission() {
         try {
+            const endpoint = this.type === 'template' ? '/api/templates' : '/api/projects';
+            
+            // Vis loading overlay før vi starter
             this.showLoadingOverlay();
             
+            // Byg det korrekte data objekt baseret på type
+            let submitData = {};
+            
             if (this.type === 'template') {
-                const formData = new FormData();
-                formData.append('name', this.formData.name);
-                formData.append('description', this.formData.description);
-                formData.append('services', JSON.stringify(this.formData.services));
-                
-                if (this.formData.yamlFile) {
-                    formData.append('yaml', this.formData.yamlFile);
-                }
-                
-                if (this.formData.previewImage) {
-                    const response = await fetch(this.formData.previewImage);
-                    const blob = await response.blob();
-                    formData.append('image', blob);
-                }
-
-                const response = await fetch('/api/templates', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to create template');
-                }
+                submitData = {
+                    name: this.formData.name,
+                    description: this.formData.description,
+                    services: this.formData.services || []
+                };
             } else if (this.type === 'project') {
-                const projectData = {
+                submitData = {
                     name: this.formData.name,
                     domain: this.formData.domain,
                     description: this.formData.description,
-                    template: {
-                        id: this.formData.template.id,
-                        name: this.formData.template.name,
-                        services: this.formData.template.services
-                    }
+                    templateId: this.formData.template?.id,
+                    userId: 1
                 };
+            }
+            
+            console.log('Sending data:', submitData);
+            
+            const response = await fetch(`http://localhost:3000${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(submitData)
+            });
 
-                console.log('Sending project data:', projectData); // Debug log
-
-                const response = await fetch('/api/projects', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(projectData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to create project');
-                }
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || `Failed to create ${this.type}`);
             }
 
+            const result = await response.json();
+            console.log(`${this.type} created:`, result);
+            
+            // Skjul loading overlay og vis success
             this.hideLoadingOverlay();
             this.showSuccessOverlay();
             
+            // Redirect efter success
             setTimeout(() => {
-                window.location.href = this.type === 'template' ? 'templates.html' : 'project.html';
+                window.location.href = this.type === 'template' 
+                    ? '/pages/templates.html' 
+                    : '/pages/projects.html';
             }, 2000);
         } catch (error) {
-            console.error('Submission error:', error);
+            // Skjul loading overlay ved fejl
             this.hideLoadingOverlay();
-            alert('Der skete en fejl. Prøv igen.');
+            console.error('Submission error:', error);
+            this.showError(error.message);
         }
     }
 

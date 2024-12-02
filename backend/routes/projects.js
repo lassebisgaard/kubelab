@@ -2,21 +2,25 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
-// Serve static project page
-router.get('/', (req, res) => {
-    res.sendFile('project.html', { root: './frontend/pages' });
-});
-
-// API: Get all projects
-router.get('/api/projects', async (req, res) => {
+// Get all projects
+router.get('/', async (req, res) => {
     try {
+        console.log('Fetching projects...');
         const [projects] = await pool.execute(`
-            SELECT p.*, 
-                   t.TemplateName as template_name,
-                   t.Description as template_description
+            SELECT 
+                p.ProjectId,
+                p.ProjectName,
+                p.Domain,
+                p.Description,
+                p.DateCreated,
+                p.UserId,
+                t.TemplateName,
+                t.Description as TemplateDescription
             FROM Projects p
-            LEFT JOIN Templates t ON p.TemplateId = t.TemplateId
+            LEFT JOIN Templates t ON p.ProjectId = t.ProjectId
         `);
+        
+        console.log('Projects fetched:', projects);
         res.json(projects);
     } catch (error) {
         console.error('Error:', error);
@@ -24,21 +28,29 @@ router.get('/api/projects', async (req, res) => {
     }
 });
 
-// API: Create new project
-router.post('/api/projects', async (req, res) => {
+// Create new project
+router.post('/', async (req, res) => {
     const connection = await pool.getConnection();
     try {
+        console.log('Creating project with data:', req.body);
         await connection.beginTransaction();
         
-        const { name, domain, description, templateId } = req.body;
+        const { name, domain, description, templateId, userId } = req.body;
 
-        // Insert project
         const [result] = await connection.execute(
             `INSERT INTO Projects 
-            (ProjectName, Domain, Description, TemplateId, DateCreated) 
+            (ProjectName, Domain, Description, UserId, DateCreated) 
             VALUES (?, ?, ?, ?, NOW())`,
-            [name, domain, description, templateId]
+            [name, domain, description, userId]
         );
+
+        // Hvis der er valgt en template, opdater template med project ID
+        if (templateId) {
+            await connection.execute(
+                `UPDATE Templates SET ProjectId = ? WHERE TemplateId = ?`,
+                [result.insertId, templateId]
+            );
+        }
 
         await connection.commit();
         
@@ -47,51 +59,15 @@ router.post('/api/projects', async (req, res) => {
             name,
             domain,
             description,
-            templateId
+            templateId,
+            userId
         });
     } catch (error) {
         await connection.rollback();
-        console.error('Error:', error);
+        console.error('Error creating project:', error);
         res.status(500).json({ error: 'Failed to create project' });
     } finally {
         connection.release();
-    }
-});
-
-// API: Delete project
-router.delete('/api/projects/:id', async (req, res) => {
-    const connection = await pool.getConnection();
-    try {
-        await connection.beginTransaction();
-        
-        await connection.execute(
-            'DELETE FROM Projects WHERE ProjectId = ?',
-            [req.params.id]
-        );
-
-        await connection.commit();
-        res.json({ message: 'Project deleted successfully' });
-    } catch (error) {
-        await connection.rollback();
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to delete project' });
-    } finally {
-        connection.release();
-    }
-});
-
-// API: Update project status
-router.patch('/api/projects/:id/status', async (req, res) => {
-    try {
-        const { status } = req.body;
-        await pool.execute(
-            'UPDATE Projects SET Status = ? WHERE ProjectId = ?',
-            [status, req.params.id]
-        );
-        res.json({ message: 'Status updated successfully' });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to update status' });
     }
 });
 
