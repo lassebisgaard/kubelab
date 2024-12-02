@@ -231,3 +231,25 @@ async function loadServices() {
         console.error('Failed to load services:', error);
     }
 }
+
+// Mobile navigation
+document.querySelector('.burger-menu')?.addEventListener('click', () => {
+    const aside = document.querySelector('aside');
+    const overlay = document.querySelector('.mobile-nav-overlay');
+    
+    // Toggle mobile navigation
+    aside.classList.toggle('mobile-nav-open');
+    overlay.classList.toggle('active');
+    
+    // Ensure sidebar is expanded on mobile
+    document.documentElement.classList.add('sb-expanded');
+});
+
+document.querySelector('.mobile-nav-overlay')?.addEventListener('click', () => {
+    const aside = document.querySelector('aside');
+    const overlay = document.querySelector('.mobile-nav-overlay');
+    
+    // Close mobile navigation
+    aside.classList.remove('mobile-nav-open');
+    overlay.classList.remove('active');
+});
