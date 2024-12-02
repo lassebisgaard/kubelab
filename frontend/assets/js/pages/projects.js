@@ -11,23 +11,33 @@ async function loadProjects() {
 
         // Render project cards
         const projectsHtml = projects.map(project => {
-            // Lav et objekt med de data vi vil sende til templaten
             const templateData = {
-                id: project.ProjectId, // Sørg for at dette matcher database kolonnen
+                id: project.ProjectId,
                 name: project.ProjectName,
                 status: project.Status || 'offline',
                 template: project.TemplateName || 'Not specified',
                 domain: `${project.Domain}.kubelab.dk`
             };
             
-            // Render template med data
             return templateFunction(templateData);
         }).join('');
 
         projectGrid.innerHTML = projectsHtml;
 
-        // Vi behøver ikke at tilføje click handlers da vi bruger onclick i templaten
-        initProjectControls();
+        // Add click handlers for controls
+        document.querySelectorAll('.project-controls .action-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const projectCard = button.closest('.project-card');
+                const projectId = projectCard.dataset.projectId;
+                
+                if (button.title === 'Power') {
+                    handlePowerToggle(projectId, button);
+                } else if (button.title === 'Restart') {
+                    handleRestart(projectId, button);
+                }
+            });
+        });
 
     } catch (error) {
         console.error('Error loading projects:', error);

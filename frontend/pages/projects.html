@@ -107,38 +107,36 @@
         </div>
     </main>
 
-    <!-- Project Card Template -->
-    <script id="project-card-template" type="text/x-handlebars-template">
-        <div class="project-card" data-project-id="{{id}}" onclick="window.location.href='project_details.html?id={{id}}'">
-            <div class="project-header">
-                <h3>{{name}}</h3>
-                <span class="status-badge {{status}}">{{status}}</span>
-                </button>
-            </div>
-            
-            <div class="project-info-wrapper">
-            <div class="project-info">
-                <div class="info-row">
-                    <span class="text-secondary">Template</span>
-                    <span>{{template}}</span>
+   <!-- Project Card Template -->
+        <script id="project-card-template" type="text/x-handlebars-template">
+            <div class="project-card" data-project-id="{{id}}">
+                <div class="project-content" onclick="window.location.href='project_details.html?id={{id}}'">
+                    <div class="project-header">
+                        <h3>{{name}}</h3>
+                        <span class="status-badge {{status}}">{{status}}</span>
+                    </div>
+                    
+                    <div class="project-info">
+                        <div class="info-row">
+                            <span class="text-secondary">Template</span>
+                            <span>{{template}}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="text-secondary">Domain name</span>
+                            <span>{{domain}}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="info-row">
-                    <span class="text-secondary">Domain name</span>
-                    <span>{{domain}}</span>
+                <div class="project-controls">
+                    <button class="action-button" title="Power">
+                        <i class='bx bx-power-off'></i>
+                    </button>
+                    <button class="action-button" title="Restart">
+                        <i class='bx bx-refresh'></i>
+                    </button>
                 </div>
             </div>
-
-            <div class="project-controls">
-                <button class="action-button" title="Power">
-                    <i class='bx bx-power-off'></i>
-                </button>
-                <button class="action-button" title="Restart">
-                    <i class='bx bx-refresh'></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    </script>
+        </script>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
