@@ -1931,3 +1931,81 @@ textarea.form-control {
     color: var(--text-color);
     font-size: 14px;
 }
+
+
+.accordion {
+    width: 100%;
+    background: #001724;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .accordion-item {
+    border-bottom: 1px solid #1c3b57;
+  }
+  
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    
+  }
+  
+  .team-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .team-info img {
+    padding-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .edit input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .members {
+    display: flex;
+    align-items: center;
+  }
+  
+  .members span {
+    margin-right: 5px;
+  }
+  
+  .toggle-button {
+    background: none;
+    border: none;
+    color: #00ffcc;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .accordion-content {
+    display: none;
+    padding: 10px 20px;
+    background: #1c3b57;
+  }
+  
+  .accordion-content p {
+    margin: 0;
+  }
+
+  .accordion-titles {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.accordion-titles li {
+    padding: 10px;
+    cursor: pointer;
+}
