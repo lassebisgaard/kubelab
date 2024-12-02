@@ -209,26 +209,40 @@ if (currentTheme) {
   toggleSwitch.checked = currentTheme === 'dark-mode'; // Sync the toggle switch state
 }
 
-// Add an event listener to the toggle switch
-toggleSwitch.addEventListener('change', () => {
-  if (toggleSwitch.checked) {
-  
-    rootElement.classList.remove('light-mode');
-    rootElement.classList.add('dark-mode');
-    localStorage.setItem('theme', 'dark-mode'); 
-  } else {
-    // Switch to light mode
-    rootElement.classList.remove('dark-mode');
-    rootElement.classList.add('light-mode');
-    localStorage.setItem('theme', 'light-mode'); 
-  }
-});
+// Wrap toggle switch code in a check
+if (toggleSwitch) {  // Only add listener if element exists
+    toggleSwitch.addEventListener('change', () => {
+        if (toggleSwitch.checked) {
+            rootElement.classList.remove('light-mode');
+            rootElement.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark-mode'); 
+        } else {
+            rootElement.classList.remove('dark-mode');
+            rootElement.classList.add('light-mode');
+            localStorage.setItem('theme', 'light-mode'); 
+        }
+    });
+}
 
 // Fetch services from database
 async function loadServices() {
     try {
-        const response = await fetch('/api/services');
+        // Check om services allerede er loaded
+        if (Object.keys(window.SERVICES).length > 0) {
+            return;
+        }
+
+        console.log('Starting service fetch...');
+        const response = await fetch('http://localhost:3000/api/services');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const services = await response.json();
+        
+        // Reset services object før vi tilføjer nye
+        window.SERVICES = {};
         
         // Update global services object
         services.forEach(service => {

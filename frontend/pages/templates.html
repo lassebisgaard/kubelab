@@ -256,5 +256,14 @@
             }
         }
     </script>
+
+    <!-- Tilføj dette i bunden af filen -->
+    <script src="../assets/js/pages/templates.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadServices();
+            loadTemplates();
+        });
+    </script>
 </body>
 </html>
