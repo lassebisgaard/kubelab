@@ -10,35 +10,18 @@ async function loadProjects() {
         const templateFunction = Handlebars.compile(templateSource.innerHTML);
 
         // Render project cards
-        const projectsHtml = projects.map(project => {
-            const templateData = {
-                id: project.ProjectId,
-                name: project.ProjectName,
-                status: project.Status || 'offline',
-                template: project.TemplateName || 'Not specified',
-                domain: `${project.Domain}.kubelab.dk`
-            };
-            
-            return templateFunction(templateData);
-        }).join('');
+        const projectsHtml = projects.map(project => ({
+            id: project.ProjectId,
+            name: project.ProjectName,
+            status: project.Status || 'offline',
+            template: project.TemplateName || 'Not specified',
+            domain: `${project.Domain}.kubelab.dk`
+        })).map(templateFunction).join('');
 
         projectGrid.innerHTML = projectsHtml;
 
         // Add click handlers for controls
-        document.querySelectorAll('.project-controls .action-button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const projectCard = button.closest('.project-card');
-                const projectId = projectCard.dataset.projectId;
-                
-                if (button.title === 'Power') {
-                    handlePowerToggle(projectId, button);
-                } else if (button.title === 'Restart') {
-                    handleRestart(projectId, button);
-                }
-            });
-        });
-
+        initProjectControls();
     } catch (error) {
         console.error('Error loading projects:', error);
         showErrorMessage('Failed to load projects. Please try again.');
@@ -46,13 +29,12 @@ async function loadProjects() {
 }
 
 function initProjectControls() {
-    // Stop event propagation på control buttons så de ikke trigger card click
     document.querySelectorAll('.project-controls .action-button').forEach(button => {
         button.addEventListener('click', (e) => {
-            e.stopPropagation(); // Stop event fra at boble op til card
+            e.stopPropagation();
             
             const projectCard = button.closest('.project-card');
-            const projectId = projectCard.getAttribute('data-project-id');
+            const projectId = projectCard.dataset.projectId;
             
             if (button.title === 'Power') {
                 handlePowerToggle(projectId, button);
@@ -76,13 +58,8 @@ async function handlePowerToggle(projectId, button) {
             const card = button.closest('.project-card');
             const statusBadge = card.querySelector('.status-badge');
             
-            if (isRunning) {
-                statusBadge.textContent = 'Offline';
-                statusBadge.className = 'status-badge offline';
-            } else {
-                statusBadge.textContent = 'Online';
-                statusBadge.className = 'status-badge online';
-            }
+            statusBadge.textContent = isRunning ? 'Offline' : 'Online';
+            statusBadge.className = `status-badge ${isRunning ? 'offline' : 'online'}`;
         }
     } catch (error) {
         console.error('Error toggling project state:', error);
@@ -112,13 +89,10 @@ function showErrorMessage(message) {
             <div class="error-message">
                 <i class='bx bx-error'></i>
                 <p>${message}</p>
-                <button class="button secondary" onclick="location.reload()">
-                    Try Again
-                </button>
+                <button class="button secondary" onclick="loadProjects()">Try Again</button>
             </div>
         `;
     }
 }
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', loadProjects); 

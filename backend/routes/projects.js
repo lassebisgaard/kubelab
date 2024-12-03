@@ -82,9 +82,9 @@ router.post('/', async (req, res) => {
         const { name, domain, description, templateId, userId } = req.body;
         
         const [result] = await connection.execute(
-            `INSERT INTO Projects (ProjectName, Domain, Description, ProjectId, UserId, DateCreated) 
-             VALUES (?, ?, ?, ?, ?, NOW())`,
-            [name, domain, description, templateId, userId]
+            `INSERT INTO Projects (ProjectName, Domain, Description, UserId, DateCreated) 
+             VALUES (?, ?, ?, ?, NOW())`,
+            [name, domain, description, userId]
         );
 
         await connection.commit();
@@ -100,7 +100,10 @@ router.post('/', async (req, res) => {
     } catch (error) {
         await connection.rollback();
         console.error('Error creating project:', error);
-        res.status(500).json({ error: 'Failed to create project' });
+        res.status(500).json({ 
+            error: 'Failed to create project',
+            details: error.message 
+        });
     } finally {
         connection.release();
     }
