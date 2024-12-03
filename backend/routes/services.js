@@ -4,6 +4,7 @@ const pool = require('../config/database');
 
 // Get all services - simpel og lige til
 router.get('/', async (req, res) => {
+    console.log('Services GET route called');
     try {
         const [services] = await pool.execute('SELECT ServiceId, ServiceName, Icon FROM Services');
         res.json(services);

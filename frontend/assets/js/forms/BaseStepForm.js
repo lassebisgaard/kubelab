@@ -523,47 +523,68 @@ window.BaseStepForm = class BaseStepForm {
             
             this.showLoadingOverlay();
             
-            let submitData = {};
-            
             if (this.type === 'template') {
-                submitData = {
-                    name: this.formData.name,
-                    description: this.formData.description,
-                    services: this.formData.services || []
-                };
-            } else if (this.type === 'project') {
-                submitData = {
+                const formData = new FormData();
+                formData.append('name', this.formData.name);
+                formData.append('description', this.formData.description);
+                formData.append('services', JSON.stringify(this.formData.services || []));
+                
+                // Brug den gemte YAML fil fra formData
+                if (this.formData.yamlFile) {
+                    formData.append('yaml', this.formData.yamlFile);
+                    console.log('Appending YAML file:', this.formData.yamlFile);
+                } else {
+                    console.error('No YAML file found in formData');
+                    throw new Error('YAML file is required');
+                }
+
+                const response = await fetch(`http://localhost:3000${endpoint}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create template');
+                }
+
+                const result = await response.json();
+                
+                this.hideLoadingOverlay();
+                this.showSuccessOverlay();
+                
+                setTimeout(() => {
+                    window.location.href = '/pages/templates.html';
+                }, 2000);
+            } else {  // Projekt logik
+                let submitData = {
                     name: this.formData.name,
                     domain: this.formData.domain,
                     description: this.formData.description,
-                    templateId: this.formData.template?.id,
-                    userId: 1
+                    templateId: this.formData.template?.id
                 };
-            }
-            
-            const response = await fetch(`http://localhost:3000${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(submitData)
-            });
+                console.log('Project data being sent:', submitData);
+                
+                const response = await fetch(`http://localhost:3000${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(submitData)
+                });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || `Failed to create ${this.type}`);
-            }
+                if (!response.ok) {
+                    throw new Error('Failed to create project');
+                }
 
-            const result = await response.json();
-            
-            this.hideLoadingOverlay();
-            this.showSuccessOverlay();
-            
-            setTimeout(() => {
-                window.location.href = this.type === 'template' 
-                    ? '/pages/templates.html' 
-                    : '/pages/projects.html';
-            }, 2000);
+                const result = await response.json();
+                
+                this.hideLoadingOverlay();
+                this.showSuccessOverlay();
+                
+                setTimeout(() => {
+                    window.location.href = '/pages/projects.html';
+                }, 2000);
+            }
         } catch (error) {
             this.hideLoadingOverlay();
             this.showErrorMessage(error.message);

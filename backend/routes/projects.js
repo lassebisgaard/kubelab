@@ -1,19 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+const PortainerService = require('../services/portainerService');
 
 // Get all projects
 router.get('/', async (req, res) => {
     try {
-        const [projects] = await pool.execute(`
-            SELECT p.*, t.TemplateName
-            FROM Projects p
-            LEFT JOIN Templates t ON t.ProjectId = p.ProjectId
-        `);
+        const [projects] = await pool.execute('SELECT * FROM Projects');
         res.json(projects);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Could not load projects' });
+        res.status(500).json({ error: 'Failed to fetch projects' });
     }
 });
 
@@ -62,13 +59,28 @@ router.post('/', async (req, res) => {
     try {
         await connection.beginTransaction();
         
-        const { name, domain, description, templateId, userId } = req.body;
+        const { 
+            name, 
+            domain, 
+            description, 
+            templateId, 
+            userId = 1 
+        } = req.body;
+        
+        console.log('Creating project with data:', { name, domain, description, templateId, userId });
         
         const [result] = await connection.execute(
             `INSERT INTO Projects (ProjectName, Domain, Description, UserId, DateCreated) 
              VALUES (?, ?, ?, ?, NOW())`,
             [name, domain, description, userId]
         );
+
+        const portainer = new PortainerService();
+        await portainer.deployStack({
+            name,
+            domain,
+            templateId
+        });
 
         await connection.commit();
         
