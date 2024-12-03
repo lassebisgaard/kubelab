@@ -5,41 +5,29 @@ const pool = require('../config/database');
 // Get all projects
 router.get('/', async (req, res) => {
     try {
-        console.log('Fetching projects...');
         const [projects] = await pool.execute(`
-            SELECT p.*, 
-                   t.TemplateName,
-                   t.Description as TemplateDescription,
-                   GROUP_CONCAT(DISTINCT ts.service_id) as service_ids,
-                   GROUP_CONCAT(DISTINCT s.ServiceName) as service_names
+            SELECT p.*, t.TemplateName
             FROM Projects p
-            LEFT JOIN Templates t ON p.ProjectId = t.ProjectId
-            LEFT JOIN template_services ts ON t.TemplateId = ts.template_id
-            LEFT JOIN Services s ON ts.service_id = s.ServiceId
-            GROUP BY p.ProjectId, t.TemplateName, t.Description
+            LEFT JOIN Templates t ON t.ProjectId = p.ProjectId
         `);
-        
-        console.log('Projects fetched:', projects);
         res.json(projects);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to fetch projects' });
+        res.status(500).json({ error: 'Could not load projects' });
     }
 });
 
 // Get specific project by ID
 router.get('/:id', async (req, res) => {
     try {
-        console.log('Fetching project with ID:', req.params.id);
-        
         const [project] = await pool.execute(`
             SELECT p.*, 
                    t.TemplateName,
                    t.Description as TemplateDescription,
-                   GROUP_CONCAT(DISTINCT ts.service_id) as service_ids,
-                   GROUP_CONCAT(DISTINCT s.ServiceName) as service_names
+                   GROUP_CONCAT(ts.service_id) as service_ids,
+                   GROUP_CONCAT(s.ServiceName) as service_names
             FROM Projects p
-            LEFT JOIN Templates t ON p.ProjectId = t.ProjectId
+            LEFT JOIN Templates t ON t.ProjectId = p.ProjectId
             LEFT JOIN template_services ts ON t.TemplateId = ts.template_id
             LEFT JOIN Services s ON ts.service_id = s.ServiceId
             WHERE p.ProjectId = ?
@@ -47,28 +35,23 @@ router.get('/:id', async (req, res) => {
         `, [req.params.id]);
 
         if (!project || project.length === 0) {
-            console.log('Project not found');
             return res.status(404).json({ error: 'Project not found' });
         }
 
-        // Format response data
-        const responseData = {
+        res.json({
             ProjectId: project[0].ProjectId,
             ProjectName: project[0].ProjectName,
             Status: project[0].Status || 'offline',
-            Owner: 'Admin', // Hardcoded for now
-            TeamName: 'Default Team', // Hardcoded for now
+            Owner: 'Admin',
+            TeamName: 'Default Team',
             Domain: project[0].Domain,
             TemplateName: project[0].TemplateName || project[0].Description,
             DateCreated: project[0].DateCreated,
             service_ids: project[0].service_ids
-        };
-
-        console.log('Project found:', responseData);
-        res.json(responseData);
+        });
         
     } catch (error) {
-        console.error('Error fetching project:', error);
+        console.error('Error:', error);
         res.status(500).json({ error: 'Failed to fetch project details' });
     }
 });

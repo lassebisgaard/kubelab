@@ -334,153 +334,131 @@ window.BaseStepForm = class BaseStepForm {
     }
 
     validateCurrentStep() {
-        console.log('Validating step:', this.currentStep, 'Type:', this.type);
-        console.log('Current form data:', this.formData);
-
-        if (this.type === 'template') {
+        // Template validation
+        if (this.type === 'template' && this.currentStep === 1) {
+            return this.validateTemplateStep();
+        }
+        
+        // Project validation
+        if (this.type === 'project') {
             if (this.currentStep === 1) {
-                const nameInput = document.getElementById('template-name-input');
-                const descriptionInput = document.getElementById('template-description-input');
-                
-                if (!nameInput?.value) {
-                    alert('Please enter a template name');
-                    return false;
-                }
-                
-                if (!this.formData.yamlFile) {
-                    alert('Please upload a YAML file');
-                    return false;
-                }
-
-                // Gem data
-                this.formData.name = nameInput.value;
-                this.formData.description = descriptionInput?.value || '';
-
-                // Opdater confirmation step
-                document.getElementById('template-name-confirm').textContent = this.formData.name;
-                document.getElementById('template-description-confirm').textContent = this.formData.description;
-
-                // Opdater YAML display
-                const yamlDisplay = document.querySelector('#template-step2 .yaml-file-display');
-                if (yamlDisplay && this.formData.yamlFile) {
-                    yamlDisplay.innerHTML = `
-                        <div class="file-preview">
-                            <i class='bx bx-file'></i>
-                            <span class="filename">${this.formData.yamlFile.name}</span>
-                        </div>
-                    `;
-                }
-
-                // Opdater preview image
-                const previewContainer = document.querySelector('#template-step2 .preview-container--detail');
-                if (previewContainer && this.formData.previewImage) {
-                    previewContainer.innerHTML = `<img src="${this.formData.previewImage}" alt="Preview">`;
-                }
-
-                // Opdater services
-                const serviceTagsContainer = document.querySelector('#template-step2 .service-tags');
-                if (serviceTagsContainer) {
-                    serviceTagsContainer.innerHTML = this.formData.services.map(id => {
-                        const service = window.SERVICES[id];
-                        return `
-                            <div class="service-tag service-tag--static">
-                                <i class='bx ${service.icon}'></i>
-                                <span>${service.name}</span>
-                            </div>
-                        `;
-                    }).join('');
-                }
+                return this.validateProjectTemplateStep();
             }
-        } else if (this.type === 'project') {
-            if (this.currentStep === 1) {
-                if (!this.formData.template) {
-                    alert('Please select a template');
-                    return false;
-                }
-            } else if (this.currentStep === 2) {
-                const nameInput = document.getElementById('project-name-input');
-                const domainInput = document.getElementById('project-domain-input');
-                const descriptionInput = document.getElementById('project-description-input');
-                
-                if (!nameInput?.value || !domainInput?.value) {
-                    alert('Please fill in required fields');
-                    return false;
-                }
-
-                this.formData.name = nameInput.value;
-                this.formData.domain = domainInput.value;
-                this.formData.description = descriptionInput?.value || '';
-
-                // Update confirmation step
-                document.getElementById('project-name-confirm').textContent = this.formData.name;
-                document.getElementById('project-domain-confirm').textContent = `${this.formData.domain}.kubelab.dk`;
-                document.getElementById('project-description-confirm').textContent = this.formData.description || 'Not specified';
+            if (this.currentStep === 2) {
+                return this.validateProjectInfoStep();
             }
         }
+        
+        return true;
+    }
+
+    validateTemplateStep() {
+        const nameInput = document.getElementById('template-name-input');
+        
+        if (!nameInput?.value) {
+            alert('Please enter a template name');
+            return false;
+        }
+        
+        if (!this.formData.yamlFile) {
+            alert('Please upload a YAML file');
+            return false;
+        }
+
+        // Gem form data
+        this.formData.name = nameInput.value;
+        this.formData.description = document.getElementById('template-description-input')?.value || '';
 
         // Opdater confirmation step
-        if (this.currentStep === 1) {  // Vi er på vej til step 2
-            if (this.type === 'template') {
-                // Opdater template confirmation
-                document.getElementById('template-name-confirm').textContent = this.formData.name;
-                document.getElementById('template-description-confirm').textContent = this.formData.description;
-                
-                // Opdater YAML display
-                const yamlDisplay = document.querySelector('.yaml-file-display');
-                if (yamlDisplay && this.formData.yamlFile) {
-                    yamlDisplay.innerHTML = `
-                        <div class="file-preview">
-                            <i class='bx bx-file'></i>
-                            <span class="filename">${this.formData.yamlFile.name}</span>
-                        </div>
-                    `;
-                }
+        this.updateTemplateConfirmation();
+        
+        return true;
+    }
 
-                // Opdater preview image
-                const previewContainer = document.querySelector('.preview-container--detail');
-                if (previewContainer && this.formData.previewImage) {
-                    previewContainer.innerHTML = `<img src="${this.formData.previewImage}" alt="Preview">`;
-                }
+    validateProjectTemplateStep() {
+        if (!this.formData.template) {
+            alert('Please select a template');
+            return false;
+        }
+        return true;
+    }
 
-                // Opdater services
-                const serviceTagsContainer = document.querySelector('#template-step2 .service-tags');
-                if (serviceTagsContainer) {
-                    serviceTagsContainer.innerHTML = this.formData.services.map(id => {
-                        const service = window.SERVICES[id];
-                        return `
-                            <div class="service-tag service-tag--static">
-                                <i class='bx ${service.icon}'></i>
-                                <span>${service.name}</span>
-                            </div>
-                        `;
-                    }).join('');
-                }
-            }
-        } else if (this.currentStep === 2) {  // Vi er på vej til step 3 (for projects)
-            if (this.type === 'project') {
-                // Opdater project confirmation
-                document.getElementById('project-name-confirm').textContent = this.formData.name;
-                document.getElementById('project-domain-confirm').textContent = `${this.formData.domain}.kubelab.dk`;
-                document.getElementById('project-description-confirm').textContent = this.formData.description || 'Not specified';
-
-                // Opdater template display
-                const templateDisplay = document.querySelector('.template-display');
-                if (templateDisplay && this.formData.template) {
-                    templateDisplay.innerHTML = `
-                        <i class='bx bx-code-block'></i>
-                        <div class="template-info">
-                            <h3>${this.formData.template.name}</h3>
-                            <p>${this.formData.template.description}</p>
-                            <div class="services">
-                                ${window.renderServiceTags(this.formData.template.services, { isStatic: true })}
-                            </div>
-                        </div>
-                    `;
-                }
-            }
+    validateProjectInfoStep() {
+        const nameInput = document.getElementById('project-name-input');
+        const domainInput = document.getElementById('project-domain-input');
+        
+        if (!nameInput?.value || !domainInput?.value) {
+            alert('Please fill in required fields');
+            return false;
         }
 
+        // Gem form data
+        this.formData.name = nameInput.value;
+        this.formData.domain = domainInput.value;
+        this.formData.description = document.getElementById('project-description-input')?.value || '';
+
+        // Opdater confirmation step
+        this.updateProjectConfirmation();
+        
         return true;
+    }
+
+    updateTemplateConfirmation() {
+        document.getElementById('template-name-confirm').textContent = this.formData.name;
+        document.getElementById('template-description-confirm').textContent = this.formData.description;
+
+        // Vis YAML fil
+        const yamlDisplay = document.querySelector('#template-step2 .yaml-file-display');
+        if (yamlDisplay && this.formData.yamlFile) {
+            yamlDisplay.innerHTML = `
+                <div class="file-preview">
+                    <i class='bx bx-file'></i>
+                    <span class="filename">${this.formData.yamlFile.name}</span>
+                </div>
+            `;
+        }
+
+        // Vis preview billede
+        const previewContainer = document.querySelector('#template-step2 .preview-container--detail');
+        if (previewContainer && this.formData.previewImage) {
+            previewContainer.innerHTML = `<img src="${this.formData.previewImage}" alt="Preview">`;
+        }
+
+        // Vis services
+        const serviceTagsContainer = document.querySelector('#template-step2 .service-tags');
+        if (serviceTagsContainer) {
+            serviceTagsContainer.innerHTML = this.formData.services.map(id => {
+                const service = window.SERVICES[id];
+                return `
+                    <div class="service-tag service-tag--static">
+                        <i class='bx ${service.icon}'></i>
+                        <span>${service.name}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    updateProjectConfirmation() {
+        // Opdater projekt info
+        document.getElementById('project-name-confirm').textContent = this.formData.name;
+        document.getElementById('project-domain-confirm').textContent = `${this.formData.domain}.kubelab.dk`;
+        document.getElementById('project-description-confirm').textContent = this.formData.description || 'Not specified';
+
+        // Opdater template visning
+        const templateDisplay = document.querySelector('.template-display');
+        if (templateDisplay && this.formData.template) {
+            templateDisplay.innerHTML = `
+                <i class='bx bx-code-block'></i>
+                <div class="template-info">
+                    <h3>${this.formData.template.name}</h3>
+                    <p>${this.formData.template.description}</p>
+                    <div class="services">
+                        ${window.renderServiceTags(this.formData.template.services, { isStatic: true })}
+                    </div>
+                </div>
+            `;
+        }
     }
 
     updateSteps() {

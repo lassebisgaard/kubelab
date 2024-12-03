@@ -2,12 +2,10 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
+// Get all services - simpel og lige til
 router.get('/', async (req, res) => {
     try {
-        const [services] = await pool.execute(`
-            SELECT ServiceId, ServiceName, Icon 
-            FROM Services
-        `);
+        const [services] = await pool.execute('SELECT ServiceId, ServiceName, Icon FROM Services');
         res.json(services);
     } catch (error) {
         console.error('Error:', error);
@@ -15,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Create new service
+// Create new service - kun de nødvendige felter
 router.post('/', async (req, res) => {
     try {
         const { name, icon } = req.body;
@@ -23,6 +21,7 @@ router.post('/', async (req, res) => {
             'INSERT INTO Services (ServiceName, Icon) VALUES (?, ?)',
             [name, icon]
         );
+        
         res.status(201).json({
             id: result.insertId,
             name,
