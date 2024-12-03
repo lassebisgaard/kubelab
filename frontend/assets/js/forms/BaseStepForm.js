@@ -44,9 +44,9 @@ window.BaseStepForm = class BaseStepForm {
         if (this.type === 'template') {
             this.loadServices();
         } else if (this.type === 'project') {
-            // Add this block to load templates for project creation
             this.loadTemplates();
             this.loadServices();
+            this.initServiceFilters();
         }
         
         this.updateSteps();
@@ -145,13 +145,11 @@ window.BaseStepForm = class BaseStepForm {
                 const selectedIcon = document.querySelector('.icon-option.selected');
                 
                 if (!nameInput?.value) {
-                    document.getElementById('service-name-error').textContent = 
-                        'Please enter a service name';
+                    alert('Please enter a service name');
                     return;
                 }
                 if (!selectedIcon) {
-                    document.getElementById('icon-error').textContent = 
-                        'Please select an icon';
+                    alert('Please select an icon');
                     return;
                 }
 
@@ -180,12 +178,32 @@ window.BaseStepForm = class BaseStepForm {
                         serviceTag.innerHTML = `
                             <i class='bx ${newService.icon}'></i>
                             <span>${newService.name}</span>
+                            <button class="service-tag--remove" title="Remove service">
+                                <i class='bx bx-x'></i>
+                            </button>
                         `;
 
                         servicesSelection.appendChild(serviceTag);
                         
-                        // Add click handler
-                        serviceTag.addEventListener('click', () => {
+                        // Add click handlers
+                        serviceTag.addEventListener('click', async (e) => {
+                            if (e.target.closest('.service-tag--remove')) {
+                                try {
+                                    const response = await fetch(`http://localhost:3000/api/services/${newService.id}`, {
+                                        method: 'DELETE'
+                                    });
+                                    
+                                    if (!response.ok) throw new Error('Failed to delete service');
+                                    
+                                    serviceTag.remove();
+                                    this.updateSelectedServices();
+                                } catch (error) {
+                                    console.error('Error deleting service:', error);
+                                    alert('Failed to delete service');
+                                }
+                                return;
+                            }
+                            
                             serviceTag.classList.toggle('active');
                             this.updateSelectedServices();
                         });
@@ -194,8 +212,7 @@ window.BaseStepForm = class BaseStepForm {
                     closeModal();
                 } catch (error) {
                     console.error('Error creating service:', error);
-                    document.getElementById('service-name-error').textContent = 
-                        'Failed to create service';
+                    alert('Failed to create service');
                 }
             });
         }
@@ -645,24 +662,52 @@ window.BaseStepForm = class BaseStepForm {
 
     async loadServices() {
         try {
-            await window.loadServices(); // Brug den eksisterende funktion
+            await window.loadServices();
             
             const servicesSelection = document.querySelector('.services-selection');
             if (!servicesSelection) return;
             
             servicesSelection.querySelector('.loading-indicator')?.remove();
             
-            // Render services using existing window.SERVICES
             servicesSelection.innerHTML = Object.values(window.SERVICES).map(service => `
                 <div class="service-tag service-tag--selectable" data-service="${service.id}">
                     <i class='bx ${service.icon}'></i>
                     <span>${service.name}</span>
+                    <button class="service-tag--remove" title="Remove service">
+                        <i class='bx bx-x'></i>
+                    </button>
                 </div>
             `).join('');
 
-            // Tilføj click handlers
             servicesSelection.querySelectorAll('.service-tag--selectable').forEach(tag => {
-                tag.addEventListener('click', () => {
+                tag.addEventListener('click', async (e) => {
+                    if (e.target.closest('.service-tag--remove')) {
+                        const serviceId = tag.dataset.service;
+                        const serviceName = tag.querySelector('span').textContent;
+                        
+                        // Brug window.showDeleteConfirmation fra script.js
+                        window.showDeleteConfirmation(
+                            'Delete Service',
+                            `Are you sure you want to delete the service "${serviceName}"?`,
+                            async () => {
+                                try {
+                                    const response = await fetch(`http://localhost:3000/api/services/${serviceId}`, {
+                                        method: 'DELETE'
+                                    });
+                                    
+                                    if (!response.ok) throw new Error('Failed to delete service');
+                                    
+                                    tag.remove();
+                                    this.updateSelectedServices();
+                                } catch (error) {
+                                    console.error('Error deleting service:', error);
+                                    alert('Failed to delete service');
+                                }
+                            }
+                        );
+                        return;
+                    }
+                    
                     tag.classList.toggle('active');
                     this.updateSelectedServices();
                 });
@@ -686,38 +731,44 @@ window.BaseStepForm = class BaseStepForm {
         if (!templateGrid) return;
 
         try {
-            // Hent templates
             const response = await fetch('http://localhost:3000/api/templates');
             const templates = await response.json();
             
-            // Brug Handlebars
-            const template = Handlebars.compile(
-                document.getElementById('template-card-template').innerHTML
-            );
-
-            // Vis templates
-            templateGrid.innerHTML = templates.map(t => template({
-                id: t.TemplateId,
-                name: t.TemplateName,
-                description: t.Description || 'No description',
-                services: t.service_ids,
-                serviceTagsHtml: t.service_ids ? 
-                    window.renderServiceTags(t.service_ids.split(','), { isStatic: true }) : 
-                    '<span class="text-secondary">No services added</span>'
-            })).join('');
+            templateGrid.innerHTML = templates.map(t => `
+                <div class="project-template-card" 
+                     data-id="${t.TemplateId}"
+                     data-services="${t.service_ids || ''}"
+                     role="button"
+                     tabindex="0">
+                    <div class="template-header">
+                        <h3>${t.TemplateName}</h3>
+                    </div>
+                    <p class="text-secondary">${t.Description || 'No description'}</p>
+                    <div class="preview-container preview-container--template">
+                        <img src="${t.Image || '../assets/images/placeholder.webp'}" alt="Template preview">
+                    </div>
+                    <div class="author text-secondary">By: ${t.Owner || 'Unknown'}</div>
+                    <div class="included-services text-secondary">Included services:</div>
+                    <div class="service-tags-container">
+                        ${t.service_ids ? window.renderServiceTags(t.service_ids.split(','), { isStatic: true }) : 
+                        '<span class="text-secondary">No services added</span>'}
+                    </div>
+                    <div class="template-meta text-secondary">
+                        <span>Created: ${new Date(t.DateCreated).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `).join('');
 
             // Tilføj click på templates
             templateGrid.querySelectorAll('.project-template-card').forEach(card => {
                 card.addEventListener('click', () => {
-                    // Marker valgt template
                     templateGrid.querySelectorAll('.project-template-card')
                         .forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
                     
-                    // Gem valgt template
                     this.formData.template = {
                         id: card.dataset.id,
-                        name: card.querySelector('h2').textContent,
+                        name: card.querySelector('h3').textContent,
                         description: card.querySelector('p').textContent,
                         services: card.dataset.services?.split(',') || []
                     };

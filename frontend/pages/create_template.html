@@ -15,10 +15,13 @@
     <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/navigation.css">
     <link rel="stylesheet" href="../assets/css/components.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 </head>
 <body class="dark-mode">
-
+    <button class="burger-menu">
+        <i class='bx bx-menu'></i>
+    </button>
+    <div class="mobile-nav-overlay"></div>
+    <!-- Navigation -->
     <aside>
         <nav>
             <ul>
@@ -109,7 +112,6 @@
                                    id="template-name-input" 
                                    placeholder="My awesome template"
                                    required>
-                            <div class="error-message" id="name-error"></div>
                         </div>
 
                         <div class="form-group">
@@ -156,7 +158,7 @@
 
                         <div class="form-group">
                             <div class="services-header">
-                                <label>SERVICES *</label>
+                                <label>Services <span class="required">*</span></label>
                                 <button type="button" class="create-service-link">
                                     <i class='bx bx-plus'></i>
                                     Create service
@@ -177,12 +179,12 @@
                         <div class="template-info">
                             <div class="detail-group">
                                 <label>Template name</label>
-                                <div class="detail-value" id="template-name-confirm"></div>
+                                <div id="template-name-confirm"></div>
                             </div>
 
                             <div class="detail-group">
                                 <label>Description</label>
-                                <div class="detail-value" id="template-description-confirm"></div>
+                                <div id="template-description-confirm"></div>
                             </div>
 
                             <div class="detail-group upload-grid">
@@ -212,18 +214,21 @@
                 </div>
             </div>
 
-            <div class="flow-navigation">
-                <button class="back-button">
-                    <i class='bx bx-arrow-back'></i>
-                    Back
-                </button>
-                <button class="next-button">
-                    <span>Next</span>
-                    <i class='bx bxs-right-arrow-alt'></i>
-                </button>
+                <!-- Navigation buttons -->
+                <div class="flow-navigation">
+                    <button class="back-button">
+                        <i class='bx bx-arrow-back'></i>
+                        Back
+                    </button>
+                    <button class="next-button">
+                        Next
+                        <i class='bx bxs-right-arrow-alt'></i>
+                    </button>
+                </div>
             </div>
         </div>
 
+        <!-- Loading & Success overlays -->
         <div class="loading-overlay">
             <div class="loading-content">
                 <div class="loading-spinner"></div>
@@ -233,40 +238,11 @@
 
         <div class="success-overlay">
             <div class="success-content">
-                <div class="success-icon flex-center">
+                <div class="success-icon">
                     <i class='bx bx-check'></i>
                 </div>
                 <h2>Template Created!</h2>
                 <p>Your template has been successfully created.</p>
-            </div>
-        </div>
-
-        <!-- Tilføj services modal -->
-        <div class="modal" id="servicesModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Configure Services</h2>
-                    <button class="close-modal">
-                        <i class='bx bx-x'></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="services-grid">
-                        <div class="service-card">
-                            <div class="service-header">
-                                <i class='bx bxl-wordpress'></i>
-                                <h3>WordPress</h3>
-                            </div>
-                            <p class="text-secondary">Latest version of WordPress CMS</p>
-                            <button class="add-service">Add service</button>
-                        </div>
-                        <!-- Flere services her -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="button secondary" id="cancelServices">Cancel</button>
-                    <button class="button primary" id="saveServices">Save changes</button>
-                </div>
             </div>
         </div>
 
@@ -275,7 +251,7 @@
             <div class="modal-content small">
                 <div class="modal-header">
                     <h3>Create New Service</h3>
-                    <button type="button" class="close-modal" aria-label="Close modal">
+                    <button type="button" class="close-modal">
                         <i class='bx bx-x'></i>
                     </button>
                 </div>
@@ -287,7 +263,6 @@
                                class="form-control" 
                                placeholder="Enter service name"
                                required>
-                        <div class="error-message" id="service-name-error"></div>
                     </div>
                     <div class="form-group">
                         <label>Choose Icon <span class="required">*</span></label>
@@ -317,7 +292,6 @@
                                 <i class='bx bxl-nodejs'></i>
                             </button>
                         </div>
-                        <div class="error-message" id="icon-error"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -328,23 +302,8 @@
         </div>
     </main>
 
-    <!-- Service tag template -->
-    <script id="service-tag-template" type="text/x-handlebars-template">
-        <div class="service-tag {{#if isSelectable}}service-tag--selectable{{/if}} {{#if isRemovable}}service-tag--removable{{/if}}" 
-             data-service="{{id}}"
-             role="button"
-             tabindex="0">
-            <i class='bx {{icon}}'></i>
-            <span>{{name}}</span>
-            {{#if isRemovable}}
-                <button type="button" class="remove-service" aria-label="Remove service">
-                    <i class='bx bx-x'></i>
-                </button>
-            {{/if}}
-        </div>
-    </script>
-
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/forms/BaseStepForm.js"></script>
     <script>

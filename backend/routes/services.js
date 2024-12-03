@@ -33,4 +33,38 @@ router.post('/', async (req, res) => {
     }
 });
 
+// Delete service - TILFØJ DENNE NYE ROUTE
+router.delete('/:id', async (req, res) => {
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+        
+        // Først slet fra template_services (foreign key relations)
+        await connection.execute(
+            'DELETE FROM template_services WHERE service_id = ?',
+            [req.params.id]
+        );
+        
+        // Derefter slet selve servicen
+        const [result] = await connection.execute(
+            'DELETE FROM Services WHERE ServiceId = ?',
+            [req.params.id]
+        );
+        
+        await connection.commit();
+        
+        if (result.affectedRows === 0) {
+            res.status(404).json({ error: 'Service not found' });
+        } else {
+            res.json({ message: 'Service deleted successfully' });
+        }
+    } catch (error) {
+        await connection.rollback();
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to delete service' });
+    } finally {
+        connection.release();
+    }
+});
+
 module.exports = router;

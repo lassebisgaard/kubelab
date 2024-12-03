@@ -8,36 +8,44 @@ async function loadTemplates() {
         const templateGrid = document.querySelector('.project-template-grid');
         if (!templateGrid) return;
 
-        const templateSource = document.getElementById('template-card-template');
-        const templateFunction = Handlebars.compile(templateSource.innerHTML);
+        templateGrid.innerHTML = templates.map(template => `
+            <div class="project-template-card" 
+                 data-id="${template.TemplateId}" 
+                 data-services="${template.service_ids || ''}">
+                <div class="template-header">
+                    <h3>${template.TemplateName}</h3>
+                    <div class="template-actions">
+                        <button class="action-button edit-button" title="Edit template">
+                            <i class='bx bx-edit'></i>
+                        </button>
+                        <button class="action-button delete-button" title="Delete template">
+                            <i class='bx bx-trash'></i>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-secondary">${template.Description || 'No description'}</p>
+                <div class="preview-container preview-container--template">
+                    <img src="${template.Image || '../assets/images/placeholder.webp'}" alt="Template preview">
+                </div>
+                <div class="author text-secondary">By: ${template.Owner || 'Unknown'}</div>
+                <div class="included-services text-secondary">Included services:</div>
+                <div class="service-tags-container">
+                    ${template.service_ids ? window.renderServiceTags(template.service_ids.split(','), { isStatic: true }) : 
+                    '<span class="text-secondary">No services added</span>'}
+                </div>
+                <div class="template-meta text-secondary">
+                    <span>Created: ${new Date(template.DateCreated).toLocaleDateString()}</span>
+                </div>
+            </div>
+        `).join('');
 
-        const templatesHtml = templates.map(template => {
-            const serviceIds = template.service_ids ? 
-                template.service_ids.split(',').filter(id => id && id.trim()) : 
-                [];
-
-            return templateFunction({
-                id: template.TemplateId,
-                name: template.TemplateName,
-                description: template.Description || 'No description',
-                dateCreated: new Date(template.DateCreated).toLocaleDateString(),
-                service_ids: template.service_ids,
-                serviceTagsHtml: serviceIds.length > 0 ? 
-                    window.renderServiceTags(serviceIds, { isStatic: true }) : 
-                    '<span class="text-secondary">No services added</span>'
-            });
-        }).join('');
-
-        templateGrid.innerHTML = templatesHtml;
-
-        initSearch();
         initTemplateActions();
     } catch (error) {
         console.error('Error loading templates:', error);
         templateGrid.innerHTML = `
             <div class="error-message">
                 <i class='bx bx-error'></i>
-                <p>Failed to load templates. Please try again.</p>
+                <p>Failed to load templates</p>
                 <button class="button secondary" onclick="loadTemplates()">Try Again</button>
             </div>
         `;

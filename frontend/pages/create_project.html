@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Check for saved sidebar state
+        const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
+        document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Project - Kubelab</title>
@@ -13,6 +18,10 @@
 </head>
 <body class="dark-mode">
     <!-- Navigation -->
+    <button class="burger-menu"></button>
+        <i class='bx bx-menu'></i>
+    </button>
+    <div class="mobile-nav-overlay"></div>
     <aside>
         <nav>
             <ul>
@@ -107,6 +116,13 @@
                                id="template-search">
                     </div>
                     
+                    <div class="services-filter-section">
+                        <label>Filter by services</label>
+                        <div class="services-filter">
+                            <!-- Services vil blive indsat dynamisk -->
+                        </div>
+                    </div>
+
                     <div class="project-template-grid">
                         <!-- Templates vil blive indsat dynamisk -->
                         <div class="loading-indicator">Loading templates...</div>
