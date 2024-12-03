@@ -1964,27 +1964,6 @@ textarea.form-control2 {
     margin: 0;
 }
 
-/* Danger zone layout */
-.danger-zone {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.danger-zone-content {
-    flex: 1;
-}
-
-.danger-zone-content h2 {
-    margin: 0 0 0.5rem 0;
-}
-
-.danger-zone .button.delete {
-    margin-left: 2rem;
-}
 
 .project-info-wrapper {
     display: flex;
@@ -2444,11 +2423,16 @@ textarea.form-control2 {
 .danger-zone {
     display: flex;
     justify-content: space-between;
+    flex-direction: row;
+    align-items: start;
     align-items: center;
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 1px solid var(--border-color);
+    gap: 8rem;
+    margin-top: 20px;
 }
+
 
 .danger-zone-content h2 {
     color: #FF4757;
@@ -2459,10 +2443,11 @@ textarea.form-control2 {
     background-color: rgba(255, 71, 87, 0.1);
     color: #FF4757;
     border: 1px solid #FF4757;
-    padding: 8px 16px;
+    padding: 10px 16px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
+    width: 12rem;
 }
 
 .button.delete:hover {
@@ -2673,13 +2658,6 @@ textarea.form-control2 {
     cursor: pointer;
 }
 
-.danger-zone {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 10px;
-    margin-top: 20px;
-}
 
 .logout {
     display: flex;

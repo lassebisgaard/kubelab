@@ -1,33 +1,28 @@
 class ProjectDetails {
     constructor() {
-        // Flyt hele initialiseringen ind i DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
             this.init();
         });
     }
 
     init() {
-        // Get ID from URL
         this.projectId = new URLSearchParams(window.location.search).get('id');
         console.log('Project ID:', this.projectId); // Debug log
 
-        // Redirect if no ID
         if (!this.projectId) {
             console.log('No project ID found, redirecting...'); // Debug log
             window.location.href = 'projects.html';
             return;
         }
 
-        // Compile template and load data
         this.template = Handlebars.compile(document.getElementById('project-details-template').innerHTML);
         this.loadProjectDetails();
     }
 
     async loadProjectDetails() {
         try {
-            console.log('Fetching project details for ID:', this.projectId); // Debug log
+            await window.loadServices();
             
-            // Brug den korrekte API sti
             const response = await fetch(`http://localhost:3000/api/projects/${this.projectId}`);
             
             if (!response.ok) {
@@ -35,9 +30,7 @@ class ProjectDetails {
             }
             
             const project = await response.json();
-            console.log('Project data:', project); // Debug log
 
-            // Format data for template
             const templateData = {
                 name: project.ProjectName,
                 status: project.Status || 'offline',
@@ -49,11 +42,9 @@ class ProjectDetails {
                 services: this.formatServices(project.service_ids)
             };
 
-            // Render template
             document.getElementById('project-details-container').innerHTML = 
                 this.template(templateData);
 
-            // Initialize controls after rendering
             this.initializeControls();
 
         } catch (error) {
@@ -76,19 +67,14 @@ class ProjectDetails {
     }
 
     initializeControls() {
-        // Power button
         document.querySelector('[title="Power"]')?.addEventListener('click', () => {
-            // Toggle power state
             console.log('Power toggle clicked');
         });
 
-        // Restart button
         document.querySelector('[title="Restart"]')?.addEventListener('click', () => {
-            // Restart project
             console.log('Restart clicked');
         });
 
-        // Delete button
         document.querySelector('.button.delete')?.addEventListener('click', () => {
             if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
                 this.deleteProject();
@@ -114,5 +100,4 @@ class ProjectDetails {
     }
 }
 
-// Initialize
 new ProjectDetails(); 
