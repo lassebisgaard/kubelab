@@ -66,16 +66,8 @@ class ProjectDetails {
     formatServices(serviceIds) {
         if (!serviceIds) return [];
         
-        // Definer services hvis window.SERVICES ikke findes
-        const SERVICES = {
-            wordpress: { name: 'WordPress', icon: 'bxl-wordpress' },
-            mysql: { name: 'MySQL', icon: 'bx-data' },
-            phpmyadmin: { name: 'phpMyAdmin', icon: 'bx-server' }
-            // Tilføj flere services efter behov
-        };
-
         return serviceIds.split(',').map(id => {
-            const service = SERVICES[id] || window.SERVICES?.[id];
+            const service = window.SERVICES?.[id];
             return service ? {
                 name: service.name,
                 icon: service.icon

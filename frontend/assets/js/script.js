@@ -1,33 +1,7 @@
 // Define services as a regular object (no localStorage)
-window.SERVICES = {
-    wordpress: {
-        id: 'wordpress',
-        name: 'WordPress',
-        icon: 'bxl-wordpress'
-    },
-    mysql: {
-        id: 'mysql',
-        name: 'MySQL',
-        icon: 'bx-data'
-    },
-    phpmyadmin: {
-        id: 'phpmyadmin',
-        name: 'phpMyAdmin',
-        icon: 'bx-server'
-    },
-    nginx: {
-        id: 'nginx',
-        name: 'Nginx',
-        icon: 'bx-server'
-    },
-    php: {
-        id: 'php',
-        name: 'PHP',
-        icon: 'bxl-php'
-    }
-};
+window.SERVICES = {};
 
-// Update saveService to not use localStorage
+// Update saveService to not use localStorage, but keep window.SERVICES functionality
 window.saveService = function(service) {
     window.SERVICES[service.id] = service;
 };
@@ -185,7 +159,6 @@ function initServiceFilters() {
         });
     }
 }
-
 document.addEventListener('DOMContentLoaded', initServiceFilters);
 
 function handlePageTransition(url) {
@@ -195,15 +168,9 @@ function handlePageTransition(url) {
         window.location.href = url;
     }, 300);
 }
-
 // Fetch services from database
 async function loadServices() {
     try {
-        // Check om services allerede er loaded
-        if (Object.keys(window.SERVICES).length > 0) {
-            return;
-        }
-
         console.log('Starting service fetch...');
         const response = await fetch('http://localhost:3000/api/services');
         
@@ -212,9 +179,6 @@ async function loadServices() {
         }
         
         const services = await response.json();
-        
-        // Reset services object før vi tilføjer nye
-        window.SERVICES = {};
         
         // Update global services object
         services.forEach(service => {
@@ -253,3 +217,5 @@ document.querySelector('.mobile-nav-overlay')?.addEventListener('click', () => {
     aside.classList.remove('mobile-nav-open');
     overlay.classList.remove('active');
 });
+
+

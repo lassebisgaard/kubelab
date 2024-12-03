@@ -1,56 +1,6 @@
-async function loadServices() {
-    try {
-        const response = await fetch('http://localhost:3000/api/services');
-        const services = await response.json();
-        
-        window.SERVICES = {};
-        services.forEach(service => {
-            window.SERVICES[service.ServiceId] = {
-                id: service.ServiceId,
-                name: service.ServiceName,
-                icon: service.Icon
-            };
-        });
-
-        const filterContainer = document.querySelector('.services-filter');
-        if (filterContainer) {
-            filterContainer.innerHTML = window.renderServiceTags(
-                services.map(s => s.ServiceId),
-                { isSelectable: true }
-            );
-        }
-
-        document.querySelectorAll('.service-tag--selectable').forEach(tag => {
-            tag.addEventListener('click', () => {
-                tag.classList.toggle('active');
-                filterTemplatesByServices();
-            });
-        });
-
-    } catch (error) {
-        console.error('Error loading services:', error);
-    }
-}
-
-function filterTemplatesByServices() {
-    const activeFilters = Array.from(document.querySelectorAll('.service-tag--selectable.active'))
-        .map(tag => tag.dataset.service);
-
-    document.querySelectorAll('.project-template-card').forEach(card => {
-        const cardServices = card.dataset.services ? card.dataset.services.split(',') : [];
-        
-        if (activeFilters.length === 0 || 
-            activeFilters.some(filter => cardServices.includes(filter))) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
-
 async function loadTemplates() {
     try {
-        await loadServices();
+        await window.loadServices();
 
         const response = await fetch('http://localhost:3000/api/templates');
         const templates = await response.json();
