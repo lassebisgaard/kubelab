@@ -159,7 +159,6 @@ function initServiceFilters() {
         });
     }
 }
-document.addEventListener('DOMContentLoaded', initServiceFilters);
 
 function handlePageTransition(url) {
     document.body.classList.add('transition-active');

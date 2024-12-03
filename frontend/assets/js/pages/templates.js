@@ -5,8 +5,6 @@ async function loadTemplates() {
         const response = await fetch('http://localhost:3000/api/templates');
         const templates = await response.json();
         
-        console.log('Loaded templates:', templates);
-        
         const templateGrid = document.querySelector('.project-template-grid');
         if (!templateGrid) return;
 
@@ -21,7 +19,7 @@ async function loadTemplates() {
             return templateFunction({
                 id: template.TemplateId,
                 name: template.TemplateName,
-                description: template.Description,
+                description: template.Description || 'No description',
                 dateCreated: new Date(template.DateCreated).toLocaleDateString(),
                 service_ids: template.service_ids,
                 serviceTagsHtml: serviceIds.length > 0 ? 
@@ -36,16 +34,13 @@ async function loadTemplates() {
         initTemplateActions();
     } catch (error) {
         console.error('Error loading templates:', error);
-        const templateGrid = document.querySelector('.project-template-grid');
-        if (templateGrid) {
-            templateGrid.innerHTML = `
-                <div class="error-message">
-                    <i class='bx bx-error'></i>
-                    <p>Failed to load templates. Please try again.</p>
-                    <button class="button secondary" onclick="loadTemplates()">Try Again</button>
-                </div>
-            `;
-        }
+        templateGrid.innerHTML = `
+            <div class="error-message">
+                <i class='bx bx-error'></i>
+                <p>Failed to load templates. Please try again.</p>
+                <button class="button secondary" onclick="loadTemplates()">Try Again</button>
+            </div>
+        `;
     }
 }
 
