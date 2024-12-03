@@ -2047,6 +2047,7 @@ textarea.form-control2 {
     border-color: var(--accent-color);
     color: var(--accent-color);
 }
+
 .power-button.active {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
@@ -2102,9 +2103,11 @@ textarea.form-control2 {
     cursor: pointer;
 }
 
-.accordion-header > div {
-    flex: 1; /* Ensures even spacing between columns */
-    text-align: left; /* Aligns text */
+.accordion-header>div {
+    flex: 1;
+    /* Ensures even spacing between columns */
+    text-align: left;
+    /* Aligns text */
 }
 
 .accordion-header .team-info {
@@ -2117,7 +2120,8 @@ textarea.form-control2 {
 }
 
 .accordion-header .edit {
-    text-align: center; /* Centers the checkbox */
+    text-align: center;
+    /* Centers the checkbox */
 }
 
 .accordion-header .members {
@@ -2234,12 +2238,26 @@ textarea.form-control2 {
 }
 
 .top-left-container {
-    display: inline-block;
     position: absolute;
-    top: 0; 
-    left: 0; 
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
     margin: 20px;
 }
+
+.top-left-container img {
+    width: 34px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.top-left-container p {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-color-dark);
+}
+
 /* Toast Messages */
 .toast-message {
     position: fixed;
@@ -2278,6 +2296,7 @@ textarea.form-control2 {
         transform: translateX(100%);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -2487,7 +2506,7 @@ textarea.form-control2 {
 }
 
 /* Specifik for project cards på projects siden */
-.project-card > .project-controls {
+.project-card>.project-controls {
     position: absolute;
     bottom: 1.5rem;
     right: 1.5rem;
@@ -2495,4 +2514,77 @@ textarea.form-control2 {
 
 .project-card {
     position: relative;
+}
+
+.front-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.front-page-logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.front-page-logo img {
+    width: 32px;
+    height: auto;
+    margin-right: 12px;
+}
+
+.front-page-logo .front-page {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-color-dark);
+}
+
+.front-page-wrapper h1 {
+    font-size: 24px;
+}
+
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.password-container {
+    position: relative;
+    width: 404px;
+}
+
+.password-container .password-input {
+    width: 100%;
+    padding-right: 60px;
+    box-sizing: border-box;
+    height: 40px;
+    font-size: 14px;
+}
+
+.password-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--border-color-dark);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    height: 100%;
+    font-weight: bold;
+}
+
+.password-container .toggle-password:hover {
+    color: var(--text-color-dark);
 }

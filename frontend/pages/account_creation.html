@@ -15,7 +15,11 @@
     <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/navigation.css">
     <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="../assets/js/forms/BaseStepForm.js" defer></script>
     <script src="../assets/js/script.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body class="dark-mode">
 
@@ -101,76 +105,48 @@
         </div>
     </main>
 
-    <!-- Scripts -->
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+
             // Initialize custom selects
-            document.querySelectorAll('.custom-select2').forEach(select => {
+            document.querySelectorAll('.custom-select').forEach(select => {
                 const header = select.querySelector('.select-header');
                 const options = select.querySelector('.select-options');
                 const selectedText = header.querySelector('.selected-option');
-                
-                // Toggle dropdown on header click
-                header.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent event bubbling
-                    const isOpen = select.classList.contains('open');
-                    
-                    // Close all other open dropdowns
-                    document.querySelectorAll('.custom-select2.open').forEach(openSelect => {
-                        if (openSelect !== select) {
-                            openSelect.classList.remove('open');
-                        }
-                    });
-                    
-                    // Toggle current dropdown
+
+                // Toggle dropdown
+                header.addEventListener('click', () => {
                     select.classList.toggle('open');
-                    
-                    // Rotate chevron icon
-                    const icon = header.querySelector('.bx-chevron-down');
-                    if (icon) {
-                        icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-                    }
                 });
 
                 // Handle option selection
                 options.querySelectorAll('.option').forEach(option => {
-                    option.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent event bubbling
+                    option.addEventListener('click', () => {
                         selectedText.textContent = option.textContent;
                         select.classList.remove('open');
-                        header.querySelector('.bx-chevron-down').style.transform = 'rotate(0deg)';
-                        
-                        // Dispatch change event
-                        const changeEvent = new Event('change');
-                        select.dispatchEvent(changeEvent);
                     });
                 });
-            });
 
-            // Close all dropdowns when clicking outside
-            document.addEventListener('click', () => {
-                document.querySelectorAll('.custom-select2.open').forEach(select => {
-                    select.classList.remove('open');
-                    const icon = select.querySelector('.bx-chevron-down');
-                    if (icon) {
-                        icon.style.transform = 'rotate(0deg)';
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!select.contains(e.target)) {
+                        select.classList.remove('open');
                     }
                 });
             });
-        });
 
         function togglePasswordVisibility(inputId) {
-            const input = document.getElementById(inputId);
-            const button = input.nextElementSibling;
+        const input = document.getElementById(inputId);
+        const button = input.nextElementSibling;
 
-            if (input.type === "password") {
-                input.type = "text";
-                button.textContent = "Hide";
-            } else {
-                input.type = "password";
-                button.textContent = "Show";
-            }
+        if (input.type === "password") {
+            input.type = "text";
+            button.textContent = "Hide";
+        } else {
+            input.type = "password";
+            button.textContent = "Show";
         }
+    }
     </script>
 </body>
 </html>
