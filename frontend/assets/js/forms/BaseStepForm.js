@@ -526,10 +526,8 @@ window.BaseStepForm = class BaseStepForm {
         try {
             const endpoint = this.type === 'template' ? '/api/templates' : '/api/projects';
             
-            // Vis loading overlay før vi starter
             this.showLoadingOverlay();
             
-            // Byg det korrekte data objekt baseret på type
             let submitData = {};
             
             if (this.type === 'template') {
@@ -548,8 +546,6 @@ window.BaseStepForm = class BaseStepForm {
                 };
             }
             
-            console.log('Sending data:', submitData);
-            
             const response = await fetch(`http://localhost:3000${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -564,23 +560,18 @@ window.BaseStepForm = class BaseStepForm {
             }
 
             const result = await response.json();
-            console.log(`${this.type} created:`, result);
             
-            // Skjul loading overlay og vis success
             this.hideLoadingOverlay();
             this.showSuccessOverlay();
             
-            // Redirect efter success
             setTimeout(() => {
                 window.location.href = this.type === 'template' 
                     ? '/pages/templates.html' 
                     : '/pages/projects.html';
             }, 2000);
         } catch (error) {
-            // Skjul loading overlay ved fejl
             this.hideLoadingOverlay();
-            console.error('Submission error:', error);
-            this.showError(error.message);
+            this.showErrorMessage(error.message);
         }
     }
 
@@ -805,6 +796,23 @@ window.BaseStepForm = class BaseStepForm {
                     </div>
                 `;
             }
+        }
+    }
+
+    showErrorMessage(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `
+            <i class='bx bx-error'></i>
+            <p>${message}</p>
+        `;
+
+        // Find det aktive step content og indsæt fejlmeddelelsen
+        const activeStep = document.querySelector('.step-content.active');
+        if (activeStep) {
+            // Fjern eksisterende fejlmeddelelser
+            activeStep.querySelectorAll('.error-message').forEach(el => el.remove());
+            activeStep.insertBefore(errorDiv, activeStep.firstChild);
         }
     }
 }
