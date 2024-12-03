@@ -676,33 +676,18 @@ window.BaseStepForm = class BaseStepForm {
 
     async loadServices() {
         try {
-            const response = await fetch('http://localhost:3000/api/services');
-            const services = await response.json();
-            console.log('Loaded services for form:', services);
+            await window.loadServices(); // Brug den eksisterende funktion
             
             const servicesSelection = document.querySelector('.services-selection');
-            if (!servicesSelection) {
-                console.error('Services selection container not found');
-                return;
-            }
-
-            // Fjern loading indicator
+            if (!servicesSelection) return;
+            
             servicesSelection.querySelector('.loading-indicator')?.remove();
-
-            // Opdater det globale services objekt
-            services.forEach(service => {
-                window.SERVICES[service.ServiceId] = {
-                    id: service.ServiceId,
-                    name: service.ServiceName,
-                    icon: service.Icon
-                };
-            });
-
-            // Render services
-            servicesSelection.innerHTML = services.map(service => `
-                <div class="service-tag service-tag--selectable" data-service="${service.ServiceId}">
-                    <i class='bx ${service.Icon}'></i>
-                    <span>${service.ServiceName}</span>
+            
+            // Render services using existing window.SERVICES
+            servicesSelection.innerHTML = Object.values(window.SERVICES).map(service => `
+                <div class="service-tag service-tag--selectable" data-service="${service.id}">
+                    <i class='bx ${service.icon}'></i>
+                    <span>${service.name}</span>
                 </div>
             `).join('');
 
@@ -713,18 +698,8 @@ window.BaseStepForm = class BaseStepForm {
                     this.updateSelectedServices();
                 });
             });
-
         } catch (error) {
             console.error('Error loading services:', error);
-            const servicesSelection = document.querySelector('.services-selection');
-            if (servicesSelection) {
-                servicesSelection.innerHTML = `
-                    <div class="error-message">
-                        <i class='bx bx-error'></i>
-                        <span>Failed to load services</span>
-                    </div>
-                `;
-            }
         }
     }
 
