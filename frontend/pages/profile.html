@@ -81,31 +81,71 @@
 
     <main>
         <div class="page-container">
-            <h1 class="page-title">Settings</h1>
+            <h1 class="page-title">Profile</h1>
             
-            <div class="settings-container-settings">
-            <div class="settings-option">
-              <label for="dark-mode-toggle" class="option-label">Light/Dark-Mode</label>
-              <input type="checkbox" id="dark-mode-toggle" class="toggle-switch">
-            </div>
-            
-            <div class="settings-option">
-              <span class="option-label">Accessibility</span>
-              <span class="arrow">&#x276F;</span>
-            </div>
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="avatar">
+                        <img src="avatar-placeholder.png" alt="User Avatar">
+                        <span class="edit-icon">✏️</span>
+                    </div>
+                    <h2>Lasse Bisgaard</h2>
+                </div>
+                <div class="profile-details">
+                    <div class="detail">
+                        <label></label>
+                        <div>
+                            <span>Lasse Bisgaard</span>
+                            <span class="edit-icon"></span>
+                        </div>
+                    </div>
 
-            <div class="settings-option">
-              <span class="option-label">Language</span>
-              <span class="arrow">&#x276F;</span>
-            </div>
+                    <div class="detail">
+                        <label></label>
+                        <div>
+                            <span>Lasse@edu.ucl.dk</span>
+                            <span class="edit-icon"></span>
+                        </div>
+                    </div>
 
-            <div class="settings-option">
-              <span class="option-label">Change password</span>
-              <span class="arrow">&#x276F;</span>
+                    <div class="detail">
+                        <label></label>
+                        <div>
+                            <span>+45 23 24 32 22</span>
+                            <span class="edit-icon"></span>
+                        </div>
+                    </div>
+
+                    <div class="detail">
+                        <label></label>
+                        <div>
+                            <span>WUOE24</span>
+                            <span class="edit-icon"></span>
+                        </div>
+                    </div>
+
+                    <div class="detail">
+                        <label></label>
+                        <select>
+                            <option>Role</option>
+                        </select>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn cancel">Fortryd</button>
+                        <button class="btn confirm">Confirm changes</button>
+                    </div>
+                    
+                </div>
+                
+                <div class="danger-zone">
+                    <h3>Danger zone</h3>
+                    <button class="btn delete">Delete profile</button>
+                </div>
+                <div class="logout">
+                    <button>Log out ➡️</button>
+                </div>
             </div>
-          </div> 
-          </div>
-        </div>
     </main>
     
 </body>
@@ -114,15 +154,17 @@
     const toggleSwitch = document.getElementById('dark-mode-toggle');
 const rootElement = document.documentElement;
 
+
 const currentTheme = localStorage.getItem('theme');
 if (currentTheme) {
   rootElement.classList.add(currentTheme);
   toggleSwitch.checked = currentTheme === 'dark-mode'; 
 }
 
+
 toggleSwitch.addEventListener('change', () => {
   if (toggleSwitch.checked) {
-
+  
     rootElement.classList.remove('light-mode');
     rootElement.classList.add('dark-mode');
     localStorage.setItem('theme', 'dark-mode'); 
@@ -130,7 +172,7 @@ toggleSwitch.addEventListener('change', () => {
 
     rootElement.classList.remove('dark-mode');
     rootElement.classList.add('light-mode');
-    localStorage.setItem('theme', 'light-mode');
+    localStorage.setItem('theme', 'light-mode'); 
   }
 });
 </script>
