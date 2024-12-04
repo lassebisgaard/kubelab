@@ -34,73 +34,74 @@
             <div class="content-wrapper">
                 <h1 class="page-title">Create account</h1>
                 <!-- User Information -->
-                    
-                    <div class="form-group">
-                        <label></label>
-                        <input type="text" 
+                   <form onSubmit="return checkPassword (this)"> 
+                        <div class="form-group">
+                            <label></label>
+                            <input type="text" 
                                class="form-control2" 
                                id="user-name-input" 
                                placeholder="Name">
-                    </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label></label>
-                        <input type="email" 
+                        <div class="form-group">
+                            <label></label>
+                            <input type="email" 
                                class="form-control2" 
                                id="user-email-input" 
                                placeholder="Email">
-                    </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label></label>
-                        <div class="custom-select2">
-                            <div class="select-header" tabindex="0">
-                                <span class="selected-option">Select a team</span>
-                                <i class='bx bx-chevron-down'></i>
+                        <div class="form-group">
+                            <label></label>
+                            <div class="custom-select2">
+                                <div class="select-header" tabindex="0">
+                                    <span class="selected-option">Select a team</span>
+                                    <i class='bx bx-chevron-down'></i>
+                                </div>
+                                <ul class="select-options">
+                                    <li class="option" data-value="wuoe24">WUOE24</li>
+                                    <li class="option" data-value="wordpress">Wordpress Kenneth</li>
+                                </ul>
                             </div>
-                            <ul class="select-options">
-                                <li class="option" data-value="wuoe24">WUOE24</li>
-                                <li class="option" data-value="wordpress">Wordpress Kenneth</li>
-                            </ul>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label></label>
-                        <div class="password-container">
-                            <input type="password" 
-                                   class="form-control2 password-input" 
-                                   id="user-password-input" 
-                                   placeholder="Password">
-                            <button type="button" 
-                                    class="toggle-password" onclick="togglePasswordVisibility('user-password-input')">
-                                Show
+                        <div class="form-group">
+                            <label></label>
+                            <div class="password-container">
+                                <input type="password" 
+                                    class="form-control2 password-input" 
+                                    id="user-password-input" 
+                                    placeholder="Password">
+                                <button type="button" 
+                                        class="toggle-password" onclick="togglePasswordVisibility('user-password-input')">
+                                    Show
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label></label>
+                            <div class="password-container">
+                                <input type="password" 
+                                    class="form-control2 password-input" 
+                                    id="user-repeat-password-input" 
+                                    placeholder="Repeat Password">
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('user-repeat-password-input')">
+                                    Show
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="account-create">
+                                Create user
                             </button>
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label></label>
-                        <div class="password-container">
-                            <input type="password" 
-                                   class="form-control2 password-input" 
-                                   id="user-repeat-password-input" 
-                                   placeholder="Repeat Password">
-                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('user-repeat-password-input')">
-                                Show
-                            </button>
+
+                        <div class="form-group">
+                        <p>Already have an account? <a href="login.html" class="login-link">Sign in</a></p>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <button class="account-create">
-                            Create user
-                        </button>
-                    </div>
-
-                    <div class="form-group">
-                    <p>Already have an account? <a href="login.html" class="login-link">Sign in</a></p>
-                    </div>
+                    </form>
             </div>
         </div>
     </main>
@@ -135,6 +136,7 @@
                 });
             });
 
+
         function togglePasswordVisibility(inputId) {
         const input = document.getElementById(inputId);
         const button = input.nextElementSibling;
@@ -147,6 +149,50 @@
             button.textContent = "Show";
         }
     }
+
+    function checkPassword(form) {
+    const password1 = document.getElementById('user-password-input').value;
+    const password2 = document.getElementById('user-repeat-password-input').value;
+
+    if (password1 === '') {
+        alert("Please enter a password.");
+        return false;
+    }
+
+    if (password2 === '') {
+        alert("Please repeat the password.");
+        return false;
+    }
+
+    // Hvis adgangskoderne ikke stemmer overens
+    if (password1 !== password2) {
+        alert("Passwords do not match. Please try again.");
+        return false;
+    }
+
+    return true;
+}
+
+function validateForm(form) {
+    const name = document.getElementById('user-name-input').value.trim();
+    const email = document.getElementById('user-email-input').value.trim();
+
+    if (name === '') {
+        alert("Please enter your name.");
+        return false;
+    }
+
+    if (email === '') {
+        alert("Please enter your email.");
+        return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return false;
+    }
+}
     </script>
 </body>
 </html>
