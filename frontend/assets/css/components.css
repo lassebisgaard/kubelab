@@ -2071,7 +2071,7 @@ textarea.form-control2 {
 }
 
 .accordion-item {
-    border-bottom: 1px solid #1c3b57;
+    border-bottom: 1px solid #193142;
 }
 
 .accordion-header {
@@ -2100,7 +2100,6 @@ textarea.form-control2 {
 
 .accordion-header .edit {
     text-align: center;
-    /* Centers the checkbox */
 }
 
 .accordion-header .members {
@@ -2125,11 +2124,22 @@ textarea.form-control2 {
 .accordion-content {
     display: none;
     padding: 10px 20px;
-    background: #1c3b57;
+    background: #0C242F;
+    border-top: 1px solid #00ffcc; 
 }
 
 .accordion-content p {
     margin: 0;
+}
+
+.accordion-content p {
+    margin: 0;
+    padding: 4px 0; 
+    border-bottom: 1px solid #ffffff; 
+}
+
+.accordion-content p:last-child {
+    border-bottom: none; 
 }
 
 .settings-container {
