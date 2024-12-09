@@ -88,12 +88,12 @@
             <div class="content-wrapper">
                 <!-- Project card template -->
                 <script id="project-details-template" type="text/x-handlebars-template">
-                    <div class="project-card">
+                    <div class="project-card" data-project-id="{{id}}">
                         <!-- Header section med titel, status og controls -->
                         <div class="project-header">
                             <div class="header-left">
                                 <h1>{{name}}</h1>
-                                <span class="status-badge {{status}}">{{status}}</span>
+                                <div class="status-badge {{status}}">{{status}}</div>
                             </div>
                             <div class="project-controls">
                                 <button class="action-button" title="Power">
@@ -185,6 +185,6 @@
     </main>
 
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/pages/projectDetails.js"></script>
+    <script src="../assets/js/pages/projects.js"></script>
 </body>
 </html> 

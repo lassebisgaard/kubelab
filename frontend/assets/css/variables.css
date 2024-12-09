@@ -28,6 +28,14 @@
     --warning-color: #ffc107;
     --error-color: #dc3545;
     --info-color: #17a2b8;
+    --status-online-bg: rgba(46, 204, 113, 0.15);
+    --status-online-text: #2ecc71;
+    --status-offline-bg: rgba(231, 76, 60, 0.15);
+    --status-offline-text: #e74c3c;
+    --status-transitioning-bg: rgba(241, 196, 15, 0.15);
+    --status-transitioning-text: #f1c40f;
+    --power-button-on: #2ecc71;
+    --power-button-off: #e74c3c;
     --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", 
                         Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
