@@ -15,12 +15,14 @@ const projectRoutes = require('./routes/projects');
 const templateRoutes = require('./routes/templates');
 const serviceRoutes = require('./routes/services');
 const userRoutes = require('./routes/users');
+const teamRoutes = require('./routes/teams');
 
 // Use routes
 app.use('/api/projects', projectRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/teams', teamRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

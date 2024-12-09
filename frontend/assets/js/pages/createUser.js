@@ -16,6 +16,9 @@ class UserForm {
         
         // Initialize custom selects
         this.initCustomSelects();
+        
+        // Initialize role select
+        this.initRoleSelect();
 
         // Add submit handler
         const createButton = document.querySelector('.create-user-button');
@@ -24,8 +27,13 @@ class UserForm {
 
     async loadTeams() {
         try {
+            console.log('Starting teams fetch...');
             const response = await fetch('http://localhost:3000/api/teams');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const teams = await response.json();
+            console.log('Loaded teams:', teams);
             
             const teamSelect = document.querySelector('.custom-select[data-type="team"]');
             if (!teamSelect) {
@@ -49,7 +57,7 @@ class UserForm {
                     const selectedText = teamSelect.querySelector('.selected-option');
                     if (selectedText) {
                         selectedText.textContent = option.textContent;
-                        teamSelect.dataset.value = option.dataset.value;
+                        this.formData.teamId = option.dataset.value;
                         teamSelect.classList.remove('open');
                     }
                 });
@@ -63,16 +71,9 @@ class UserForm {
     initCustomSelects() {
         document.querySelectorAll('.custom-select').forEach(select => {
             const header = select.querySelector('.select-header');
-            const options = select.querySelector('.select-options');
-            const selectedText = header?.querySelector('.selected-option');
-
-            if (!header || !options || !selectedText) {
-                console.error('Missing required elements in custom select');
-                return;
-            }
-
-            // Toggle dropdown
-            header.addEventListener('click', () => {
+            
+            // Toggle dropdown on header click
+            header?.addEventListener('click', () => {
                 // Close all other dropdowns
                 document.querySelectorAll('.custom-select').forEach(s => {
                     if (s !== select) s.classList.remove('open');
@@ -80,40 +81,42 @@ class UserForm {
                 select.classList.toggle('open');
             });
 
-            // Handle option selection
-            options.querySelectorAll('.option').forEach(option => {
-                option.addEventListener('click', () => {
-                    selectedText.textContent = option.textContent;
-                    select.dataset.value = option.dataset.value;
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!select.contains(e.target)) {
                     select.classList.remove('open');
-                });
+                }
             });
         });
+    }
 
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.custom-select')) {
-                document.querySelectorAll('.custom-select').forEach(select => 
-                    select.classList.remove('open')
-                );
-            }
+    initRoleSelect() {
+        const roleSelect = document.querySelector('.custom-select[data-type="role"]');
+        if (!roleSelect) return;
+
+        const options = roleSelect.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                const selectedText = roleSelect.querySelector('.selected-option');
+                if (selectedText) {
+                    selectedText.textContent = option.textContent;
+                    this.formData.role = option.dataset.value;
+                    roleSelect.classList.remove('open');
+                }
+            });
         });
     }
 
     validateForm() {
         const nameInput = document.getElementById('user-name-input');
         const emailInput = document.getElementById('user-email-input');
-        const teamSelect = document.querySelector('.custom-select[data-type="team"]');
-        const roleSelect = document.querySelector('.custom-select[data-type="role"]');
         const expirationInput = document.getElementById('user-expiration-input');
 
         // Check if all elements exist
-        if (!nameInput || !emailInput || !teamSelect || !roleSelect || !expirationInput) {
+        if (!nameInput || !emailInput || !expirationInput) {
             console.error('Missing form elements:', {
                 nameInput: !!nameInput,
                 emailInput: !!emailInput,
-                teamSelect: !!teamSelect,
-                roleSelect: !!roleSelect,
                 expirationInput: !!expirationInput
             });
             alert('Form initialization error. Please refresh the page.');
@@ -130,12 +133,12 @@ class UserForm {
             return false;
         }
 
-        if (!teamSelect.dataset.value) {
+        if (!this.formData.teamId) {
             alert('Please select a team');
             return false;
         }
 
-        if (!roleSelect.dataset.value) {
+        if (!this.formData.role) {
             alert('Please select a role');
             return false;
         }
@@ -145,13 +148,10 @@ class UserForm {
             return false;
         }
 
-        this.formData = {
-            name: nameInput.value,
-            email: emailInput.value,
-            teamId: teamSelect.dataset.value,
-            role: roleSelect.dataset.value,
-            expiration: expirationInput.value
-        };
+        // Opdater formData med de sidste værdier
+        this.formData.name = nameInput.value;
+        this.formData.email = emailInput.value;
+        this.formData.expiration = expirationInput.value;
 
         return true;
     }
