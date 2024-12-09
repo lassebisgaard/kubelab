@@ -233,4 +233,24 @@ router.post('/:id/restart', async (req, res) => {
     }
 });
 
+// Get project status
+router.get('/:id/status', async (req, res) => {
+    try {
+        const [project] = await pool.execute(
+            'SELECT ProjectName FROM Projects WHERE ProjectId = ?',
+            [req.params.id]
+        );
+
+        if (!project || project.length === 0) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        const status = await portainerService.getStackStatus(project[0].ProjectName);
+        res.json({ status });
+    } catch (error) {
+        console.error('Error getting project status:', error);
+        res.status(500).json({ error: 'Failed to get project status' });
+    }
+});
+
 module.exports = router; 

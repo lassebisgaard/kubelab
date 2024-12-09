@@ -17,9 +17,16 @@ async function loadProjectDetails() {
         }
         
         const project = await response.json();
-        console.log('Project data:', project); // For debugging
+        console.log('Project data:', project);
 
-        // Render using Handlebars (som vi gør i templates.js og projects.js)
+        // Hent status fra Portainer
+        const portainerResponse = await fetch(`http://localhost:3000/api/projects/${projectId}/status`);
+        if (portainerResponse.ok) {
+            const statusData = await portainerResponse.json();
+            project.Status = statusData.status;
+        }
+
+        // Render using Handlebars
         const templateSource = document.getElementById('project-details-template');
         const templateFunction = Handlebars.compile(templateSource.innerHTML);
 
@@ -40,7 +47,7 @@ async function loadProjectDetails() {
         document.getElementById('project-details-container').innerHTML = 
             templateFunction(templateData);
 
-        // Initialize controls efter rendering (som i templates.js)
+        // Initialize controls efter rendering
         initProjectControls(projectId);
 
     } catch (error) {
