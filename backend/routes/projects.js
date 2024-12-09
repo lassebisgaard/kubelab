@@ -1,67 +1,49 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const PortainerService = require('../services/portainerService');
-const portainerService = new PortainerService();
 
-// Get all projects
+// Get all projects with template info
 router.get('/', async (req, res) => {
     try {
-        const portainer = new PortainerService();
-        const [projects] = await pool.execute('SELECT * FROM Projects');
+        console.log('Fetching projects...');
+        const [projects] = await pool.execute(`
+            SELECT 
+                p.*,
+                t.TemplateName,
+                t.Description as TemplateDescription
+            FROM Projects p
+            LEFT JOIN Templates t ON p.TemplateId = t.TemplateId
+        `);
         
-        // Hent status for hvert projekt
-        const projectsWithStatus = await Promise.all(projects.map(async (project) => {
-            const status = await portainer.getStackStatus(project.ProjectName);
-            return {
-                ...project,
-                Status: status
-            };
-        }));
-        
-        res.json(projectsWithStatus);
+        console.log('Found projects:', projects);
+        res.json(projects);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to fetch projects' });
+        console.error('Database error:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch projects',
+            details: error.message 
+        });
     }
 });
 
-// Get specific project by ID
+// Get specific project with template info
 router.get('/:id', async (req, res) => {
     try {
         const [project] = await pool.execute(`
-            SELECT p.*, 
-                   t.TemplateName,
-                   t.Description as TemplateDescription,
-                   GROUP_CONCAT(ts.service_id) as service_ids,
-                   GROUP_CONCAT(s.ServiceName) as service_names
+            SELECT p.*, t.TemplateName, t.Description as TemplateDescription
             FROM Projects p
-            LEFT JOIN Templates t ON t.ProjectId = p.ProjectId
-            LEFT JOIN template_services ts ON t.TemplateId = ts.template_id
-            LEFT JOIN Services s ON ts.service_id = s.ServiceId
+            LEFT JOIN Templates t ON p.TemplateId = t.TemplateId
             WHERE p.ProjectId = ?
-            GROUP BY p.ProjectId, t.TemplateName, t.Description
         `, [req.params.id]);
 
         if (!project || project.length === 0) {
             return res.status(404).json({ error: 'Project not found' });
         }
 
-        res.json({
-            ProjectId: project[0].ProjectId,
-            ProjectName: project[0].ProjectName,
-            Status: project[0].Status || 'offline',
-            Owner: 'Admin',
-            TeamName: 'Default Team',
-            Domain: project[0].Domain,
-            TemplateName: project[0].TemplateName || project[0].Description,
-            DateCreated: project[0].DateCreated,
-            service_ids: project[0].service_ids
-        });
-        
+        res.json(project[0]);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to fetch project details' });
+        res.status(500).json({ error: 'Failed to fetch project' });
     }
 });
 
@@ -82,9 +64,9 @@ router.post('/', async (req, res) => {
         console.log('Creating project with data:', { name, domain, description, templateId, userId });
         
         const [result] = await connection.execute(
-            `INSERT INTO Projects (ProjectName, Domain, Description, UserId, DateCreated) 
-             VALUES (?, ?, ?, ?, NOW())`,
-            [name, domain, description, userId]
+            `INSERT INTO Projects (ProjectName, Domain, Description, UserId, TemplateId, DateCreated) 
+             VALUES (?, ?, ?, ?, ?, NOW())`,
+            [name, domain, description, userId, templateId]
         );
 
         const portainer = new PortainerService();
