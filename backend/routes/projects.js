@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 const PortainerService = require('../services/portainerService');
+const portainerService = new PortainerService();
 
 // Get all projects
 router.get('/', async (req, res) => {
@@ -76,7 +77,7 @@ router.post('/', async (req, res) => {
         );
 
         const portainer = new PortainerService();
-        await portainer.deployStack({
+        await portainer.createStack({
             name,
             domain,
             templateId
@@ -110,6 +111,19 @@ router.delete('/:id', async (req, res) => {
     try {
         await connection.beginTransaction();
         
+        const [project] = await connection.execute(
+            'SELECT ProjectName FROM Projects WHERE ProjectId = ?',
+            [req.params.id]
+        );
+
+        if (project && project[0]) {
+            try {
+                await portainerService.deleteStack(project[0].ProjectName);
+            } catch (portainerError) {
+                console.error('Portainer deletion failed:', portainerError);
+            }
+        }
+
         const [result] = await connection.execute(
             'DELETE FROM Projects WHERE ProjectId = ?',
             [req.params.id]
