@@ -17,6 +17,7 @@ async function loadProjectDetails() {
         }
         
         const project = await response.json();
+        console.log('Project data:', project); // For debugging
 
         // Render using Handlebars (som vi gør i templates.js og projects.js)
         const templateSource = document.getElementById('project-details-template');
@@ -26,7 +27,7 @@ async function loadProjectDetails() {
             id: project.ProjectId,
             name: project.ProjectName,
             status: project.Status || 'offline',
-            owner: project.Owner || 'Not specified',
+            owner: project.UserName || 'Not specified',
             team: project.TeamName || 'Not specified',
             domain: `${project.Domain}.kubelab.dk`,
             template: project.TemplateName || 'Not specified',
@@ -76,7 +77,6 @@ function initProjectControls(projectId) {
 }
 
 async function handlePowerToggle(projectId, button) {
-    let action;
     try {
         const controls = button.closest('.project-controls');
         controls.querySelectorAll('.action-button').forEach(btn => {
@@ -85,7 +85,7 @@ async function handlePowerToggle(projectId, button) {
         
         const statusBadge = document.querySelector('.status-badge');
         const isRunning = statusBadge.textContent === 'online';
-        action = isRunning ? 'stop' : 'start';
+        const action = isRunning ? 'stop' : 'start';
         
         // Vis transitioning status med animation
         statusBadge.textContent = isRunning ? 'stopping...' : 'starting...';
@@ -108,10 +108,12 @@ async function handlePowerToggle(projectId, button) {
         
     } catch (error) {
         console.error('Error toggling project state:', error);
-        alert(`Failed to ${action} project. Please try again.`);
+        alert(`Failed to toggle project state. Please try again.`);
         // Reset status ved fejl
-        statusBadge.textContent = isRunning ? 'online' : 'offline';
-        statusBadge.className = `status-badge ${isRunning ? 'online' : 'offline'}`;
+        const statusBadge = document.querySelector('.status-badge');
+        const currentStatus = button.classList.contains('active') ? 'online' : 'offline';
+        statusBadge.textContent = currentStatus;
+        statusBadge.className = `status-badge ${currentStatus}`;
     } finally {
         button.classList.remove('transitioning');
         const controls = button.closest('.project-controls');

@@ -1,22 +1,36 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+const PortainerService = require('../services/portainerService');
+const portainerService = new PortainerService();
 
-// Get all projects with template info
+// Get all projects with template, team and user info
 router.get('/', async (req, res) => {
     try {
-        console.log('Fetching projects...');
         const [projects] = await pool.execute(`
             SELECT 
                 p.*,
                 t.TemplateName,
-                t.Description as TemplateDescription
+                t.Description as TemplateDescription,
+                u.Name as UserName,
+                tm.TeamName
             FROM Projects p
             LEFT JOIN Templates t ON p.TemplateId = t.TemplateId
+            LEFT JOIN Users u ON p.UserId = u.UserId
+            LEFT JOIN Teams tm ON u.TeamId = tm.TeamId
         `);
         
-        console.log('Found projects:', projects);
-        res.json(projects);
+        // Hent status for hvert projekt
+        const projectsWithStatus = await Promise.all(projects.map(async (project) => {
+            const status = await portainerService.getStackStatus(project.ProjectName);
+            return {
+                ...project,
+                Status: status
+            };
+        }));
+        
+        console.log('Found projects:', projectsWithStatus);
+        res.json(projectsWithStatus);
     } catch (error) {
         console.error('Database error:', error);
         res.status(500).json({ 
@@ -26,13 +40,20 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get specific project with template info
+// Get specific project with all info
 router.get('/:id', async (req, res) => {
     try {
         const [project] = await pool.execute(`
-            SELECT p.*, t.TemplateName, t.Description as TemplateDescription
+            SELECT 
+                p.*,
+                t.TemplateName,
+                t.Description as TemplateDescription,
+                u.Name as UserName,
+                tm.TeamName
             FROM Projects p
             LEFT JOIN Templates t ON p.TemplateId = t.TemplateId
+            LEFT JOIN Users u ON p.UserId = u.UserId
+            LEFT JOIN Teams tm ON u.TeamId = tm.TeamId
             WHERE p.ProjectId = ?
         `, [req.params.id]);
 
