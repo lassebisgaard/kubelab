@@ -141,6 +141,83 @@ class PortainerService {
             return;
         }
     }
+
+    async getStackStatus(stackName) {
+        try {
+            const stack = await this.getStack(stackName);
+            if (!stack) {
+                return 'offline';
+            }
+            
+            const status = stack.Status;
+            return status === 1 ? 'online' : 'offline';
+        } catch (error) {
+            console.error(`Failed to get status for stack ${stackName}:`, error.message);
+            return 'offline';
+        }
+    }
+
+    async startStack(stackName) {
+        try {
+            console.log(`Attempting to start stack: ${stackName}`);
+            if (!this.token) {
+                await this.authenticate();
+            }
+            const stack = await this.getStack(stackName);
+            console.log('Found stack:', stack);
+            if (!stack) return false;
+
+            // Tjek om stacken allerede kører
+            if (stack.Status === 1) {
+                console.log(`Stack ${stackName} is already running`);
+                return true;
+            }
+
+            console.log(`Making start request for stack ${stack.Id}`);
+            await axios.post(
+                `${this.baseUrl}/stacks/${stack.Id}/start?endpointId=5`,
+                {},
+                { headers: { 'Authorization': `Bearer ${this.token}` } }
+            );
+            console.log('Stack started successfully');
+            return true;
+        } catch (error) {
+            console.error(`Failed to start stack ${stackName}:`, error.response?.data || error.message);
+            console.error('Full error:', error);
+            return false;
+        }
+    }
+
+    async stopStack(stackName) {
+        try {
+            console.log(`Attempting to stop stack: ${stackName}`);
+            if (!this.token) {
+                await this.authenticate();
+            }
+            const stack = await this.getStack(stackName);
+            console.log('Found stack:', stack);
+            if (!stack) return false;
+
+            // Tjek om stacken allerede er stoppet
+            if (stack.Status === 2) {
+                console.log(`Stack ${stackName} is already stopped`);
+                return true;
+            }
+
+            console.log(`Making stop request for stack ${stack.Id}`);
+            await axios.post(
+                `${this.baseUrl}/stacks/${stack.Id}/stop?endpointId=5`,
+                {},
+                { headers: { 'Authorization': `Bearer ${this.token}` } }
+            );
+            console.log('Stack stopped successfully');
+            return true;
+        } catch (error) {
+            console.error(`Failed to stop stack ${stackName}:`, error.response?.data || error.message);
+            console.error('Full error:', error);
+            return false;
+        }
+    }
 }
 
 module.exports = PortainerService; 

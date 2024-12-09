@@ -46,23 +46,32 @@ function initProjectControls() {
 }
 
 async function handlePowerToggle(projectId, button) {
+    let action;
     const isRunning = button.classList.contains('active');
     try {
-        const action = isRunning ? 'stop' : 'start';
+        button.classList.add('loading');
+        action = isRunning ? 'stop' : 'start';
         const response = await fetch(`http://localhost:3000/api/projects/${projectId}/${action}`, {
             method: 'POST'
         });
 
-        if (response.ok) {
-            button.classList.toggle('active');
-            const card = button.closest('.project-card');
-            const statusBadge = card.querySelector('.status-badge');
-            
-            statusBadge.textContent = isRunning ? 'Offline' : 'Online';
-            statusBadge.className = `status-badge ${isRunning ? 'offline' : 'online'}`;
+        if (!response.ok) {
+            throw new Error(`Failed to ${action} project`);
         }
+
+        const result = await response.json();
+        
+        button.classList.toggle('active');
+        const card = button.closest('.project-card');
+        const statusBadge = card.querySelector('.status-badge');
+        
+        statusBadge.textContent = result.status;
+        statusBadge.className = `status-badge ${result.status}`;
     } catch (error) {
         console.error('Error toggling project state:', error);
+        alert(`Failed to ${action} project. Please try again.`);
+    } finally {
+        button.classList.remove('loading');
     }
 }
 
@@ -73,11 +82,20 @@ async function handleRestart(projectId, button) {
             method: 'POST'
         });
 
-        if (response.ok) {
-            setTimeout(() => button.classList.remove('rotating'), 1000);
+        if (!response.ok) {
+            throw new Error('Failed to restart project');
         }
+
+        const result = await response.json();
+        const card = button.closest('.project-card');
+        const statusBadge = card.querySelector('.status-badge');
+        statusBadge.textContent = result.status;
+        statusBadge.className = `status-badge ${result.status}`;
+        
+        setTimeout(() => button.classList.remove('rotating'), 1000);
     } catch (error) {
         console.error('Error restarting project:', error);
+        alert('Failed to restart project. Please try again.');
         button.classList.remove('rotating');
     }
 }

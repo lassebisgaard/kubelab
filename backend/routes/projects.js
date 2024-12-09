@@ -7,8 +7,19 @@ const portainerService = new PortainerService();
 // Get all projects
 router.get('/', async (req, res) => {
     try {
+        const portainer = new PortainerService();
         const [projects] = await pool.execute('SELECT * FROM Projects');
-        res.json(projects);
+        
+        // Hent status for hvert projekt
+        const projectsWithStatus = await Promise.all(projects.map(async (project) => {
+            const status = await portainer.getStackStatus(project.ProjectName);
+            return {
+                ...project,
+                Status: status
+            };
+        }));
+        
+        res.json(projectsWithStatus);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Failed to fetch projects' });
@@ -142,6 +153,80 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete project' });
     } finally {
         connection.release();
+    }
+});
+
+// Start project
+router.post('/:id/start', async (req, res) => {
+    try {
+        const [project] = await pool.execute(
+            'SELECT ProjectName FROM Projects WHERE ProjectId = ?',
+            [req.params.id]
+        );
+
+        if (!project || project.length === 0) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        const success = await portainerService.startStack(project[0].ProjectName);
+        if (success) {
+            res.json({ status: 'online' });
+        } else {
+            res.status(500).json({ error: 'Failed to start project' });
+        }
+    } catch (error) {
+        console.error('Error starting project:', error);
+        res.status(500).json({ error: 'Failed to start project' });
+    }
+});
+
+// Stop project
+router.post('/:id/stop', async (req, res) => {
+    try {
+        const [project] = await pool.execute(
+            'SELECT ProjectName FROM Projects WHERE ProjectId = ?',
+            [req.params.id]
+        );
+
+        if (!project || project.length === 0) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        const success = await portainerService.stopStack(project[0].ProjectName);
+        if (success) {
+            res.json({ status: 'offline' });
+        } else {
+            res.status(500).json({ error: 'Failed to stop project' });
+        }
+    } catch (error) {
+        console.error('Error stopping project:', error);
+        res.status(500).json({ error: 'Failed to stop project' });
+    }
+});
+
+// Restart project
+router.post('/:id/restart', async (req, res) => {
+    try {
+        const [project] = await pool.execute(
+            'SELECT ProjectName FROM Projects WHERE ProjectId = ?',
+            [req.params.id]
+        );
+
+        if (!project || project.length === 0) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        await portainerService.stopStack(project[0].ProjectName);
+        const success = await portainerService.startStack(project[0].ProjectName);
+
+        if (success) {
+            res.json({ status: 'online' });
+        } else {
+            res.status(500).json({ error: 'Failed to restart project' });
+        }
+    } catch (error) {
+        console.error('Error restarting project:', error);
+        res.status(500).json({ error: 'Failed to restart project' });
     }
 });
 

@@ -2416,7 +2416,7 @@ textarea.form-control2 {
 
 .status-badge.online {
     background-color: var(--accent-color);
-    color: var(--text-color);
+    color: var(--background-color);
 }
 
 /* Danger Zone Styling */
@@ -2723,4 +2723,34 @@ textarea.form-control2 {
     color: #19b3b3;
     font-size: 1rem;
     cursor: pointer;
+}
+
+/* Loading indikator for knapper */
+.action-button.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.action-button.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top-color: var(--text-color);
+    border-radius: 50%;
+    animation: button-loading-spinner 0.6s linear infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
 }
