@@ -75,6 +75,30 @@ function initProjectControls(projectId) {
         });
     });
     
+    // Tilføj delete handler
+    const deleteButton = document.querySelector('.button.delete');
+    console.log('Found delete button:', deleteButton);
+    if (deleteButton) {
+        deleteButton.addEventListener('click', async () => {
+            if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to delete project');
+                    }
+
+                    window.location.href = '/pages/projects.html';
+                } catch (error) {
+                    console.error('Error deleting project:', error);
+                    alert('Failed to delete project. Please try again.');
+                }
+            }
+        });
+    }
+    
     // Sæt initial tilstand på power knap
     const powerButton = document.querySelector('.action-button[title="Power"]');
     const statusBadge = document.querySelector('.status-badge');
