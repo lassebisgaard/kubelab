@@ -68,7 +68,8 @@ class PortainerService {
             const configuredStack = stackContent
                 .replace(/CHANGEME01/g, projectData.name)
                 .replace(/CHANGEME02/g, `${projectData.name}-phpmyadmin`)
-                .replace(/SUBDOMAIN/g, projectData.domain)
+                .replace(/SUBDOMAIN01/g, `wp.${projectData.domain}`)
+                .replace(/SUBDOMAIN02/g, `db.${projectData.domain}`)
                 .replace(/CHANGEME/g, projectData.name);
 
             console.log('Configured stack after replacements:', configuredStack);
