@@ -1,0 +1,48 @@
+networks:
+  traefik-proxy:
+    external: true
+  wp-network:
+    driver: overlay
+services:
+  wordpress:
+    image: wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppassword
+      WORDPRESS_DB_NAME: wpdatabase
+    networks:
+      - traefik-proxy
+      - wp-network
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.CHANGEME01.rule=Host(`SUBDOMAIN01.kubelab.dk`)
+        - traefik.http.routers.CHANGEME01.entrypoints=web,websecure
+        - traefik.http.routers.CHANGEME01.tls.certresolver=letsencrypt
+        - traefik.http.services.CHANGEME01.loadbalancer.server.port=80
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wpdatabase
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppassword
+    networks:
+      - wp-network
+  phpmyadmin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: wpuser
+      PMA_PASSWORD: wppassword
+    networks:
+      - traefik-proxy
+      - wp-network
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.CHANGEME02.rule=Host(`SUBDOMAIN02.kubelab.dk`)
+        - traefik.http.routers.CHANGEME02.entrypoints=web,websecure
+        - traefik.http.routers.CHANGEME02.tls.certresolver=letsencrypt
+        - traefik.http.services.CHANGEME02.loadbalancer.server.port=80

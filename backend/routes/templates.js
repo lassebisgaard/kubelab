@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+const multer = require('multer');
+const upload = multer();  // Simpel multer setup uden ekstra config
 
 // Get all templates
 router.get('/', async (req, res) => {
@@ -21,20 +23,29 @@ router.get('/', async (req, res) => {
 });
 
 // Create new template
-router.post('/', async (req, res) => {
+router.post('/', upload.single('yaml'), async (req, res) => {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
         
-        // Insert template
+        // Debug logs
+        console.log('File received:', req.file);
+        console.log('File content:', req.file?.buffer?.toString('utf8'));
+        console.log('Form data:', req.body);
+        
+        // Insert template med YAML
+        const yamlContent = req.file?.buffer?.toString('utf8') || null;
+        console.log('YAML content to be inserted:', yamlContent);
+        
         const [result] = await connection.execute(
-            'INSERT INTO Templates (TemplateName, Description, DateCreated) VALUES (?, ?, NOW())',
-            [req.body.name, req.body.description]
+            'INSERT INTO Templates (TemplateName, Description, YamlContent, DateCreated) VALUES (?, ?, ?, NOW())',
+            [req.body.name, req.body.description, yamlContent]
         );
 
-        // Insert service relations hvis der er nogle
-        if (req.body.services?.length > 0) {
-            const serviceValues = req.body.services.map(serviceId => [result.insertId, serviceId]);
+        // Parse services fra string til array
+        if (req.body.services) {
+            const services = JSON.parse(req.body.services);
+            const serviceValues = services.map(serviceId => [result.insertId, serviceId]);
             await connection.query(
                 'INSERT INTO template_services (template_id, service_id) VALUES ?',
                 [serviceValues]
@@ -46,7 +57,7 @@ router.post('/', async (req, res) => {
             id: result.insertId,
             name: req.body.name,
             description: req.body.description,
-            services: req.body.services || []
+            services: req.body.services ? JSON.parse(req.body.services) : []
         });
     } catch (error) {
         await connection.rollback();

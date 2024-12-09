@@ -17,6 +17,7 @@ async function loadProjectDetails() {
         }
         
         const project = await response.json();
+        console.log('Project data:', project); // For debugging
 
         // Render using Handlebars (som vi gør i templates.js og projects.js)
         const templateSource = document.getElementById('project-details-template');
@@ -26,7 +27,7 @@ async function loadProjectDetails() {
             id: project.ProjectId,
             name: project.ProjectName,
             status: project.Status || 'offline',
-            owner: project.Owner || 'Not specified',
+            owner: project.UserName || 'Not specified',
             team: project.TeamName || 'Not specified',
             domain: `${project.Domain}.kubelab.dk`,
             template: project.TemplateName || 'Not specified',
@@ -55,26 +56,112 @@ async function loadProjectDetails() {
 }
 
 function initProjectControls(projectId) {
-    // Power button
-    document.querySelector('[title="Power"]')?.addEventListener('click', () => {
-        console.log('Power toggle clicked');
+    document.querySelectorAll('.project-controls .action-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            if (button.title === 'Power') {
+                handlePowerToggle(projectId, button);
+            } else if (button.title === 'Restart') {
+                handleRestart(projectId, button);
+            }
+        });
     });
+    
+    // Sæt initial tilstand på power knap
+    const powerButton = document.querySelector('.action-button[title="Power"]');
+    const statusBadge = document.querySelector('.status-badge');
+    if (powerButton && statusBadge) {
+        powerButton.classList.toggle('active', statusBadge.textContent === 'online');
+    }
+}
 
-    // Restart button
-    document.querySelector('[title="Restart"]')?.addEventListener('click', () => {
-        console.log('Restart clicked');
-    });
+async function handlePowerToggle(projectId, button) {
+    try {
+        const controls = button.closest('.project-controls');
+        controls.querySelectorAll('.action-button').forEach(btn => {
+            btn.disabled = true;
+        });
+        
+        const statusBadge = document.querySelector('.status-badge');
+        const isRunning = statusBadge.textContent === 'online';
+        const action = isRunning ? 'stop' : 'start';
+        
+        // Vis transitioning status med animation
+        statusBadge.textContent = isRunning ? 'stopping...' : 'starting...';
+        statusBadge.className = 'status-badge transitioning';
+        button.classList.add('transitioning');
+        
+        const response = await fetch(`http://localhost:3000/api/projects/${projectId}/${action}`, {
+            method: 'POST'
+        });
 
-    // Delete button
-    document.querySelector('.button.delete')?.addEventListener('click', () => {
-        if (window.showDeleteConfirmation) {
-            window.showDeleteConfirmation(
-                'Delete Project',
-                'Are you sure you want to delete this project?',
-                () => deleteProject(projectId)
-            );
+        if (!response.ok) {
+            throw new Error(`Failed to ${action} project`);
         }
-    });
+
+        const result = await response.json();
+        button.classList.toggle('active', result.status === 'online');
+        
+        statusBadge.textContent = result.status;
+        statusBadge.className = `status-badge ${result.status}`;
+        
+    } catch (error) {
+        console.error('Error toggling project state:', error);
+        alert(`Failed to toggle project state. Please try again.`);
+        // Reset status ved fejl
+        const statusBadge = document.querySelector('.status-badge');
+        const currentStatus = button.classList.contains('active') ? 'online' : 'offline';
+        statusBadge.textContent = currentStatus;
+        statusBadge.className = `status-badge ${currentStatus}`;
+    } finally {
+        button.classList.remove('transitioning');
+        const controls = button.closest('.project-controls');
+        controls.querySelectorAll('.action-button').forEach(btn => {
+            btn.disabled = false;
+        });
+    }
+}
+
+async function handleRestart(projectId, button) {
+    try {
+        const controls = button.closest('.project-controls');
+        controls.querySelectorAll('.action-button').forEach(btn => {
+            btn.disabled = true;
+        });
+        
+        const statusBadge = document.querySelector('.status-badge');
+        statusBadge.textContent = 'restarting...';
+        statusBadge.className = 'status-badge transitioning';
+        
+        button.classList.add('rotating');
+        const response = await fetch(`http://localhost:3000/api/projects/${projectId}/restart`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to restart project');
+        }
+
+        const result = await response.json();
+        statusBadge.textContent = result.status;
+        statusBadge.className = `status-badge ${result.status}`;
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (error) {
+        console.error('Error restarting project:', error);
+        alert('Failed to restart project. Please try again.');
+        // Reset status ved fejl
+        const statusBadge = document.querySelector('.status-badge');
+        statusBadge.textContent = 'offline';
+        statusBadge.className = 'status-badge offline';
+    } finally {
+        button.classList.remove('rotating');
+        const controls = button.closest('.project-controls');
+        controls.querySelectorAll('.action-button').forEach(btn => {
+            btn.disabled = false;
+        });
+    }
 }
 
 async function deleteProject(projectId) {

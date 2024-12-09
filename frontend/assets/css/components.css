@@ -1497,8 +1497,7 @@ textarea.form-control2 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    cursor: pointer;
+    gap: 8px;
 }
 
 .upload-area i {
@@ -1867,7 +1866,7 @@ textarea.form-control2 {
 }
 
 .delete-confirmation-dialog .button.delete {
-    background-color: var(--secondary-color-dark);
+    background-color: var(--secondary-color);
     color: var(--text-color);
 }
 
@@ -1879,10 +1878,13 @@ textarea.form-control2 {
     padding: 6px 12px;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
-    border-radius: 40px;
+    border-radius: 50px;
     font-size: 12px;
     color: var(--text-color);
     position: relative;
+    min-width: 80px;
+    justify-content: center;
+    text-transform: capitalize;
 }
 
 /* Selectable service tags */
@@ -2413,20 +2415,39 @@ textarea.form-control2 {
 
 /* Status Badge Styling */
 .status-badge {
+    display: inline-flex;
+    align-items: center;
     padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 14px;
+    border-radius: 50px;
+    font-size: 12px;
     font-weight: 500;
-}
-
-.status-badge.offline {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
+    transition: all 0.3s ease;
+    min-width: 80px;
+    justify-content: center;
+    text-transform: capitalize;
+    margin: 0;
 }
 
 .status-badge.online {
-    background-color: var(--accent-color);
-    color: var(--text-color);
+    background-color: var(--status-online-bg);
+    color: var(--status-online-text);
+}
+
+.status-badge.offline {
+    background-color: var(--status-offline-bg);
+    color: var(--status-offline-text);
+}
+
+.status-badge.transitioning {
+    background-color: var(--status-transitioning-bg);
+    color: var(--status-transitioning-text);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
 }
 
 /* Danger Zone Styling */
@@ -2733,4 +2754,77 @@ textarea.form-control2 {
     color: #19b3b3;
     font-size: 1rem;
     cursor: pointer;
+}
+
+/* Loading indikator for knapper */
+.action-button.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.action-button.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top-color: var(--text-color);
+    border-radius: 50%;
+    animation: button-loading-spinner 0.6s linear infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+.action-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Power button styles */
+.action-button[title="Power"] {
+    transition: all 0.3s ease;
+}
+
+.action-button[title="Power"].active {
+    color: var(--power-button-on);
+}
+
+.action-button[title="Power"]:not(.active) {
+    color: var(--power-button-off);
+}
+
+/* Restart button animation */
+.action-button[title="Restart"].rotating i {
+    animation: rotate-bounce 1.5s ease infinite;
+}
+
+@keyframes rotate-bounce {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(180deg); }
+    40% { transform: rotate(360deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Project card specific status badge */
+.project-card .project-header .status-badge {
+    margin-left: 12px;
+}
+
+/* Project details specific status badge */
+.project-details .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
