@@ -1748,9 +1748,20 @@ textarea.form-control2 {
 
 .template-meta {
     display: flex;
-    justify-content: space-between;
-    margin-top: 12px;
-    font-size: 12px;
+    gap: 1rem;
+    margin-top: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.template-author, .template-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.template-author i, .template-date i {
+    font-size: 1.1rem;
 }
 
 /* === Service Tags Container === */

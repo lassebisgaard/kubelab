@@ -17,9 +17,10 @@ async function loadTemplates() {
             id: template.TemplateId,
             name: template.TemplateName,
             description: template.Description || 'No description',
-            image: template.PreviewImage || '../assets/images/placeholder.webp',
-            author: template.Owner || 'Unknown',
-            service_ids: template.service_ids,
+            image: template.PreviewImage ? 
+                `http://localhost:3000/uploads/images/${template.PreviewImage}` : 
+                '../assets/images/placeholder.webp',
+            author: template.UserName || 'Unknown',
             dateCreated: new Date(template.DateCreated).toLocaleDateString(),
             serviceTagsHtml: template.service_ids ? 
                 window.renderServiceTags(template.service_ids.split(','), { isStatic: true }) : 

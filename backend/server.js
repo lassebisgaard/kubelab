@@ -9,6 +9,7 @@ app.use(express.json());
 
 // Serve static files from frontend directory
 app.use(express.static(path.join(__dirname, '../frontend')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Import routes
 const projectRoutes = require('./routes/projects');

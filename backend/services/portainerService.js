@@ -21,6 +21,30 @@ class PortainerService {
         }
     }
 
+    async makeAuthenticatedRequest(method, url, data = null) {
+        const config = {
+            method,
+            url: `${this.baseUrl}${url}`,
+            headers: { 'Authorization': `Bearer ${this.token}` },
+            data
+        };
+
+        try {
+            if (!this.token) {
+                await this.authenticate();
+            }
+            return (await axios(config)).data;
+        } catch (error) {
+            if (error.response?.status === 401) {
+                console.log('Token expired, re-authenticating...');
+                await this.authenticate();
+                return (await axios(config)).data;
+            }
+            console.error(`Failed to make ${method} request to ${url}:`, error);
+            throw error;
+        }
+    }
+
     async getStackConfig(templateId) {
         const [rows] = await pool.execute(
             'SELECT YamlContent FROM Templates WHERE TemplateId = ?', 
@@ -35,19 +59,7 @@ class PortainerService {
     }
 
     async getStacks() {
-        try {
-            if (!this.token) {
-                await this.authenticate();
-            }
-            const response = await axios.get(
-                `${this.baseUrl}/stacks`,
-                { headers: { 'Authorization': `Bearer ${this.token}` } }
-            );
-            return response.data;
-        } catch (error) {
-            console.error('Failed to get stacks:', error);
-            throw error;
-        }
+        return this.makeAuthenticatedRequest('get', '/stacks');
     }
 
     async getStack(stackName) {

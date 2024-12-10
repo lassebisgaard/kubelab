@@ -2,21 +2,40 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 const multer = require('multer');
-const upload = multer();
+const path = require('path');
+
+// Konfigurer multer til at gemme filer
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        if (file.fieldname === 'preview') {
+            cb(null, 'uploads/images/');
+        } else {
+            cb(null, 'uploads/yaml/');
+        }
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now();
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 
 // Get all templates
 router.get('/', async (req, res) => {
     try {
         const [templates] = await pool.execute(`
             SELECT t.*, 
-                   GROUP_CONCAT(ts.service_id) as service_ids
+                   GROUP_CONCAT(ts.service_id) as service_ids,
+                   u.Name as UserName
             FROM Templates t
             LEFT JOIN template_services ts ON t.TemplateId = ts.template_id
+            LEFT JOIN Users u ON t.UserId = u.UserId
             GROUP BY t.TemplateId
         `);
         res.json(templates);
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching templates:', error);
         res.status(500).json({ error: 'Failed to fetch templates' });
     }
 });
@@ -46,7 +65,8 @@ router.get('/:id', async (req, res) => {
 
 // Create new template
 router.post('/', upload.fields([
-    { name: 'yaml', maxCount: 1 }
+    { name: 'yaml', maxCount: 1 },
+    { name: 'preview', maxCount: 1 }
 ]), async (req, res) => {
     const connection = await pool.getConnection();
     try {
@@ -59,12 +79,12 @@ router.post('/', upload.fields([
         
         // Håndter YAML fil
         const yamlContent = req.files?.yaml?.[0]?.buffer?.toString('utf8') || null;
-        const previewBase64 = req.body.preview || null;
+        const previewPath = req.files?.preview?.[0]?.filename || null;
         
         // Insert template
         const [result] = await connection.execute(
             'INSERT INTO Templates (TemplateName, Description, YamlContent, PreviewImage, DateCreated) VALUES (?, ?, ?, ?, NOW())',
-            [req.body.name, req.body.description, yamlContent, previewBase64]
+            [req.body.name, req.body.description, yamlContent, previewPath]
         );
 
         // Parse services fra string til array
@@ -95,7 +115,8 @@ router.post('/', upload.fields([
 
 // Update template
 router.put('/:id', upload.fields([
-    { name: 'yaml', maxCount: 1 }
+    { name: 'yaml', maxCount: 1 },
+    { name: 'preview', maxCount: 1 }
 ]), async (req, res) => {
     const connection = await pool.getConnection();
     try {
@@ -103,6 +124,14 @@ router.put('/:id', upload.fields([
         
         const updates = [];
         const values = [];
+        
+        // Mere detaljeret debug logging
+        console.log('Update request:', {
+            body: req.body,
+            files: req.files,
+            preview: req.files?.preview?.[0]?.filename,
+            yaml: req.files?.yaml?.[0]?.filename
+        });
         
         if (req.body.name) {
             updates.push('TemplateName = ?');
@@ -112,22 +141,24 @@ router.put('/:id', upload.fields([
             updates.push('Description = ?');
             values.push(req.body.description);
         }
-        if (req.files?.yaml) {
+        if (req.files?.yaml?.[0]) {
             updates.push('YamlContent = ?');
-            values.push(req.files.yaml[0].buffer.toString('utf8'));
+            values.push(req.files.yaml[0].buffer?.toString('utf8'));
         }
-        if (req.body.preview) {
+        if (req.files?.preview?.[0]) {
+            const filename = req.files.preview[0].filename;
+            console.log('Preview filename:', filename); // Debug log
             updates.push('PreviewImage = ?');
-            values.push(req.body.preview);
+            values.push(filename);
         }
         
         values.push(req.params.id);
         
         if (updates.length > 0) {
-            await connection.execute(
-                `UPDATE Templates SET ${updates.join(', ')} WHERE TemplateId = ?`,
-                values
-            );
+            const query = `UPDATE Templates SET ${updates.join(', ')} WHERE TemplateId = ?`;
+            console.log('Final update query:', query);
+            console.log('Final values:', values);
+            await connection.execute(query, values);
         }
         
         if (req.body.services) {
