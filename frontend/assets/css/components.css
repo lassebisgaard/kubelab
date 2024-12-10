@@ -2899,3 +2899,8 @@ body.frontpages .top-left-container {
 .detail:has(.actions)::after {
     display: none;
 }
+
+body.frontpages .content-wrapper h1.page-title {
+    align-self: flex-start;
+    margin-bottom: 24px;
+}
