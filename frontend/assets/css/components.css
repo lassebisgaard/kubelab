@@ -412,14 +412,14 @@ textarea.form-control {
 
 .form-control2 {
     width: 404px;
-    padding: 12px;
+    padding: 5px;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     color: var(--text-color);
     font-size: 14px;
     font-family: inherit;
-    transition: border-color 0.2s ease;
+    opacity: 1;
 }
 
 .form-control2::placeholder {
@@ -431,7 +431,7 @@ textarea.form-control {
 
 /* Specifikt for textarea */
 textarea.form-control2 {
-    line-height: 1.5;
+    line-height: 1;
     resize: vertical;
 }
 
@@ -2077,14 +2077,14 @@ textarea.form-control2 {
 
 .accordion {
     width: 100%;
-    background: #001724;
+    background: var(--card-background-dark);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 20px;
 }
 
 .accordion-item {
-    border-bottom: 1px solid #193142;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .accordion-header {
@@ -2135,10 +2135,41 @@ textarea.form-control2 {
 }
 
 .accordion-content {
-    display: none;
+    display: block;
     padding: 10px 20px;
-    background: #0C242F;
-    border-top: 1px solid #00ffcc; 
+    background: var(--border-color-dark);
+    border-top: 1px solid var(--accent-color-dark);
+}
+
+.content-row {
+    display: flex;
+    justify-content: space-between;
+    /* Fordeler elementerne jævnt */
+    padding: 4px 0;
+    border-bottom: 1px solid var(--text-color-dark);
+}
+
+.content-row:last-child {
+    border-bottom: none;
+}
+
+.content-row .name,
+.content-row .team,
+.content-row .email {
+    flex: 1;
+    /* Sikrer ensartet pladsfordeling */
+    text-align: left;
+    /* Justerer tekst til venstre */
+}
+
+.content-row .team {
+    text-align: center;
+    /* Centrerer holdnavn */
+}
+
+.content-row .email {
+    text-align: right;
+    /* Justerer e-mail til højre */
 }
 
 .accordion-content p {
@@ -2147,12 +2178,12 @@ textarea.form-control2 {
 
 .accordion-content p {
     margin: 0;
-    padding: 4px 0; 
-    border-bottom: 1px solid #ffffff; 
+    padding: 4px 0;
+    border-bottom: 1px solid var(--text-color-dark);
 }
 
 .accordion-content p:last-child {
-    border-bottom: none; 
+    border-bottom: none;
 }
 
 .settings-container {
@@ -2175,7 +2206,8 @@ textarea.form-control2 {
     justify-content: space-between;
     align-items: center;
     padding: 15px 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid var(--border-color);
+    /* Ændret til variabel */
     cursor: pointer;
     margin-top: 50px;
 }
@@ -2186,13 +2218,15 @@ textarea.form-control2 {
 
 .option-label {
     font-size: 1rem;
-    color: var(--text-color-dark);
+    color: var(--text-color);
+    /* Ændret fra var(--text-color-dark) */
     text-transform: none;
 }
 
 .arrow {
     font-size: 1.2rem;
-    color: var(--text-color-dark);
+    color: var(--text-color);
+    /* Ændret fra var(--text-color-dark) */
 }
 
 /* Toggle Switch */
@@ -2200,7 +2234,8 @@ textarea.form-control2 {
     appearance: none;
     width: 40px;
     height: 20px;
-    background-color: var(--text-color-dark);
+    background-color: var(--border-color);
+    /* Ændret */
     border-radius: 10px;
     position: relative;
     cursor: pointer;
@@ -2208,7 +2243,8 @@ textarea.form-control2 {
 }
 
 .toggle-switch:checked {
-    background-color: var(--primary-color-dark);
+    background-color: var(--accent-color);
+    /* Ændret */
 }
 
 .toggle-switch::before {
@@ -2218,14 +2254,16 @@ textarea.form-control2 {
     left: 2px;
     width: 16px;
     height: 16px;
-    background-color: #142a43;
+    background-color: var(--background-color);
+    /* Ændret */
     border-radius: 50%;
     transition: 0.2s ease-in-out;
 }
 
 .toggle-switch:checked::before {
     left: 22px;
-    background-color: var(--text-color-dark);
+    background-color: var(--background-color);
+    /* Ændret */
 }
 
 .settings-container-settings {
@@ -2456,9 +2494,17 @@ textarea.form-control2 {
 }
 
 @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Danger Zone Styling */
@@ -2469,8 +2515,6 @@ textarea.form-control2 {
     align-items: start;
     align-items: center;
     margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
     gap: 8rem;
     margin-top: 20px;
 }
@@ -2624,7 +2668,7 @@ textarea.form-control2 {
     height: 84px;
     overflow: hidden;
     border-radius: 50%;
-    border: 1px solid var(--text-color-dark);
+    border: 1px solid var(--border-color);
 }
 
 .avatar img {
@@ -2669,7 +2713,7 @@ textarea.form-control2 {
     left: 0;
     width: 404px;
     height: 2px;
-    background-color: var(--border-color-dark)
+    background-color: var(--border-color);
 }
 
 .detail:last-child::after {
@@ -2679,19 +2723,23 @@ textarea.form-control2 {
 .detail label {
     font-weight: bold;
     margin-bottom: 5px;
-    color: #a9c6d8;
+    color: var(--text-color);
+    opacity: 0.7;
 }
 
 .detail div {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #fff;
+    color: var(--text-color);
+    padding-bottom: 20px;
+    width: 404px;
 }
 
 .detail .edit-icon {
-    color: #19b3b3;
+    color: var(--accent-color);
     cursor: pointer;
+    margin-bottom: -2px;
 }
 
 
@@ -2762,7 +2810,7 @@ textarea.form-control2 {
 .logout button {
     background: none;
     border: none;
-    color: #19b3b3;
+    color: var(--accent-color);
     font-size: 1rem;
     cursor: pointer;
 }
@@ -2792,6 +2840,7 @@ textarea.form-control2 {
     from {
         transform: rotate(0turn);
     }
+
     to {
         transform: rotate(1turn);
     }
@@ -2822,10 +2871,21 @@ textarea.form-control2 {
 }
 
 @keyframes rotate-bounce {
-    0% { transform: rotate(0deg); }
-    20% { transform: rotate(180deg); }
-    40% { transform: rotate(360deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    20% {
+        transform: rotate(180deg);
+    }
+
+    40% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Project card specific status badge */
@@ -2853,4 +2913,52 @@ textarea.form-control2 {
     margin: 16px 0;
     border-radius: 8px;
     background-color: var(--card-background);
+}
+
+body.frontpages main {
+    margin-left: 0;
+    width: 100%;
+    padding: 0;
+}
+
+body.frontpages .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+body.frontpages .top-left-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1;
+}
+
+.form-control2 option {
+    color: var(--text-color);
+    opacity: 1;
+}
+
+/* Fjern stregen kun for detail der indeholder select eller actions */
+.detail:has(select)::after,
+.detail:has(.actions)::after {
+    display: none;
+}
+
+body.frontpages .content-wrapper h1.page-title {
+    align-self: flex-start;
+    margin-bottom: 24px;
+}
+
+.option-label,
+label.option-label {
+    font-size: 1rem;
+    color: var(--text-color);
+    text-transform: none;
+    opacity: 1;
 }

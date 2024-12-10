@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
-<body class="dark-mode">
+<body class="dark-mode frontpages">
 
     <main>
 
@@ -33,7 +33,6 @@
             
             <div class="content-wrapper">
                 <h1 class="page-title">Create account</h1>
-                <!-- User Information -->
                    <form onSubmit="return checkPassword (this)"> 
                         <div class="form-group">
                             <label></label>
@@ -109,34 +108,6 @@
 
     <script>
 
-            // Initialize custom selects
-            document.querySelectorAll('.custom-select').forEach(select => {
-                const header = select.querySelector('.select-header');
-                const options = select.querySelector('.select-options');
-                const selectedText = header.querySelector('.selected-option');
-
-                // Toggle dropdown
-                header.addEventListener('click', () => {
-                    select.classList.toggle('open');
-                });
-
-                // Handle option selection
-                options.querySelectorAll('.option').forEach(option => {
-                    option.addEventListener('click', () => {
-                        selectedText.textContent = option.textContent;
-                        select.classList.remove('open');
-                    });
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!select.contains(e.target)) {
-                        select.classList.remove('open');
-                    }
-                });
-            });
-
-
         function togglePasswordVisibility(inputId) {
         const input = document.getElementById(inputId);
         const button = input.nextElementSibling;
@@ -193,6 +164,34 @@ function validateForm(form) {
         return false;
     }
 }
+
+// Initialize custom selects
+document.querySelectorAll('.custom-select2').forEach(select => {
+    const header = select.querySelector('.select-header');
+    const options = select.querySelector('.select-options');
+    const selectedText = header.querySelector('.selected-option');
+
+    // Toggle dropdown
+    header.addEventListener('click', () => {
+        select.classList.toggle('open');
+    });
+
+    // Handle option selection
+    options.querySelectorAll('.option').forEach(option => {
+        option.addEventListener('click', () => {
+            selectedText.textContent = option.textContent;
+            select.classList.remove('open');
+            selectedText.style.color = 'var(--text-color-dark)'; // Fjerner den grå farve efter valg
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!select.contains(e.target)) {
+            select.classList.remove('open');
+        }
+    });
+});
     </script>
 </body>
 </html>

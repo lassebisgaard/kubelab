@@ -74,7 +74,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="profile-link">
+                    <a href="profile.html" class="profile-link">
                         <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
                         <span>Lasse Bisgaard</span>
                     </a>
@@ -90,7 +90,7 @@
             <div class="settings-container-settings">
             <div class="settings-option">
               <label for="dark-mode-toggle" class="option-label">Light/Dark-Mode</label>
-              <input type="checkbox" id="dark-mode-toggle" class="toggle-switch">
+              <input type="checkbox" id="dark-mode-toggle" class="toggle-switch" checked>
             </div>
             
             <div class="settings-option">
@@ -113,29 +113,4 @@
     </main>
     
 </body>
-
-<script>
-    const toggleSwitch = document.getElementById('dark-mode-toggle');
-const rootElement = document.documentElement;
-
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme) {
-  rootElement.classList.add(currentTheme);
-  toggleSwitch.checked = currentTheme === 'dark-mode'; 
-}
-
-toggleSwitch.addEventListener('change', () => {
-  if (toggleSwitch.checked) {
-
-    rootElement.classList.remove('light-mode');
-    rootElement.classList.add('dark-mode');
-    localStorage.setItem('theme', 'dark-mode'); 
-  } else {
-
-    rootElement.classList.remove('dark-mode');
-    rootElement.classList.add('light-mode');
-    localStorage.setItem('theme', 'light-mode');
-  }
-});
-</script>
 </html>
