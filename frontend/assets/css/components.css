@@ -2132,7 +2132,8 @@ textarea.form-control2 {
 
 .content-row {
     display: flex;
-    justify-content: space-between; /* Fordeler elementerne jævnt */
+    justify-content: space-between;
+    /* Fordeler elementerne jævnt */
     padding: 4px 0;
     border-bottom: 1px solid #ffffff;
 }
@@ -2141,19 +2142,23 @@ textarea.form-control2 {
     border-bottom: none;
 }
 
-.content-row .name, 
-.content-row .team, 
+.content-row .name,
+.content-row .team,
 .content-row .email {
-    flex: 1; /* Sikrer ensartet pladsfordeling */
-    text-align: left; /* Justerer tekst til venstre */
+    flex: 1;
+    /* Sikrer ensartet pladsfordeling */
+    text-align: left;
+    /* Justerer tekst til venstre */
 }
 
 .content-row .team {
-    text-align: center; /* Centrerer holdnavn */
+    text-align: center;
+    /* Centrerer holdnavn */
 }
 
 .content-row .email {
-    text-align: right; /* Justerer e-mail til højre */
+    text-align: right;
+    /* Justerer e-mail til højre */
 }
 
 .accordion-content p {
@@ -2929,4 +2934,12 @@ body.frontpages .top-left-container {
 body.frontpages .content-wrapper h1.page-title {
     align-self: flex-start;
     margin-bottom: 24px;
+}
+
+.option-label,
+label.option-label {
+    font-size: 1rem;
+    color: var(--text-color-dark);
+    text-transform: none;
+    opacity: 1;
 }
