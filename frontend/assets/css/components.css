@@ -2138,7 +2138,7 @@ textarea.form-control2 {
 }
 
 .accordion-content {
-    display: none;
+    display: block;
     padding: 10px 20px;
     background: var(--border-color);
     border-top: 1px solid var(--accent-color);
@@ -2173,6 +2173,32 @@ textarea.form-control2 {
 .content-row .email {
     text-align: right;
     /* Justerer e-mail til højre */
+}
+
+.content-row {
+    display: flex;
+    justify-content: space-between; /* Fordeler elementerne jævnt */
+    padding: 4px 0;
+    border-bottom: 1px solid #ffffff;
+}
+
+.content-row:last-child {
+    border-bottom: none;
+}
+
+.content-row .name, 
+.content-row .team, 
+.content-row .email {
+    flex: 1; /* Sikrer ensartet pladsfordeling */
+    text-align: left; /* Justerer tekst til venstre */
+}
+
+.content-row .team {
+    text-align: center; /* Centrerer holdnavn */
+}
+
+.content-row .email {
+    text-align: right; /* Justerer e-mail til højre */
 }
 
 .accordion-content p {
