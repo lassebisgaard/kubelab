@@ -8,40 +8,36 @@ async function loadTemplates() {
         const templateGrid = document.querySelector('.project-template-grid');
         if (!templateGrid) return;
 
-        templateGrid.innerHTML = templates.map(template => `
-            <div class="project-template-card" 
-                 data-id="${template.TemplateId}" 
-                 data-services="${template.service_ids || ''}">
-                <div class="template-header">
-                    <h3>${template.TemplateName}</h3>
-                    <div class="template-actions">
-                        <button class="action-button edit-button" title="Edit template">
-                            <i class='bx bx-edit'></i>
-                        </button>
-                        <button class="action-button delete-button" title="Delete template">
-                            <i class='bx bx-trash'></i>
-                        </button>
-                    </div>
-                </div>
-                <p class="text-secondary">${template.Description || 'No description'}</p>
-                <div class="preview-container preview-container--template">
-                    <img src="${template.Image || '../assets/images/placeholder.webp'}" alt="Template preview">
-                </div>
-                <div class="author text-secondary">By: ${template.Owner || 'Unknown'}</div>
-                <div class="included-services text-secondary">Included services:</div>
-                <div class="service-tags-container">
-                    ${template.service_ids ? window.renderServiceTags(template.service_ids.split(','), { isStatic: true }) : 
-                    '<span class="text-secondary">No services added</span>'}
-                </div>
-                <div class="template-meta text-secondary">
-                    <span>Created: ${new Date(template.DateCreated).toLocaleDateString()}</span>
-                </div>
-            </div>
-        `).join('');
+        // Compile Handlebars template
+        const templateSource = document.getElementById('template-card-template');
+        const templateFunction = Handlebars.compile(templateSource.innerHTML);
+
+        // Map templates data til template format
+        const templatesHtml = templates.map(template => ({
+            id: template.TemplateId,
+            name: template.TemplateName,
+            description: template.Description || 'No description',
+            image: template.PreviewImage || '../assets/images/placeholder.webp',
+            author: template.Owner || 'Unknown',
+            service_ids: template.service_ids,
+            dateCreated: new Date(template.DateCreated).toLocaleDateString(),
+            serviceTagsHtml: template.service_ids ? 
+                window.renderServiceTags(template.service_ids.split(','), { isStatic: true }) : 
+                '<span class="text-secondary">No services added</span>'
+        })).map(templateFunction).join('');
+
+        templateGrid.innerHTML = templatesHtml;
+
+        // Fjern loading indicator
+        const loadingIndicator = templateGrid.querySelector('.loading-indicator');
+        if (loadingIndicator) {
+            loadingIndicator.remove();
+        }
 
         initTemplateActions();
     } catch (error) {
         console.error('Error loading templates:', error);
+        const templateGrid = document.querySelector('.project-template-grid');
         templateGrid.innerHTML = `
             <div class="error-message">
                 <i class='bx bx-error'></i>
@@ -73,11 +69,32 @@ function initTemplateActions() {
     document.querySelectorAll('.project-template-card').forEach(card => {
         const templateId = card.dataset.id;
         
-        card.querySelector('.edit-button')?.addEventListener('click', (e) => {
+        // Edit knap handler
+        card.querySelector('.edit-button')?.addEventListener('click', async (e) => {
             e.stopPropagation();
-            window.location.href = `create_template.html?edit=${templateId}`;
+            try {
+                const response = await fetch(`http://localhost:3000/api/templates/${templateId}`);
+                if (!response.ok) throw new Error('Failed to fetch template');
+                
+                const template = await response.json();
+                
+                // Gem template data i localStorage
+                localStorage.setItem('editTemplate', JSON.stringify({
+                    name: template.TemplateName,
+                    description: template.Description,
+                    services: template.service_ids ? template.service_ids.split(',') : [],
+                    previewImage: template.PreviewImage,
+                    yamlContent: template.YamlContent
+                }));
+                
+                // Redirect til edit side
+                window.location.href = `create_template.html?edit=${templateId}`;
+            } catch (error) {
+                console.error('Error fetching template:', error);
+            }
         });
         
+        // Delete knap handler (uændret)
         card.querySelector('.delete-button')?.addEventListener('click', (e) => {
             e.stopPropagation();
             if (window.showDeleteConfirmation) {
@@ -103,4 +120,8 @@ function initTemplateActions() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', loadTemplates); 
+// Initialiser søgning og templates når siden loades
+document.addEventListener('DOMContentLoaded', () => {
+    loadTemplates();
+    initSearch();
+}); 

@@ -10,9 +10,20 @@ window.BaseStepForm = class BaseStepForm {
         this.currentStep = 1;
         this.maxSteps = this.steps.length;
         
-        // Check if we're editing
+        // Check for edit mode
         const urlParams = new URLSearchParams(window.location.search);
-        this.isEditing = urlParams.has('edit');
+        this.editMode = urlParams.has('edit');
+        this.editId = urlParams.get('edit');
+        
+        // Load edit data hvis det findes
+        if (this.editMode) {
+            const savedData = localStorage.getItem('editTemplate');
+            if (savedData) {
+                this.formData = JSON.parse(savedData);
+                this.populateFormFields();
+                localStorage.removeItem('editTemplate'); // Ryd data efter brug
+            }
+        }
         
         // Form data
         this.formData = {
@@ -36,7 +47,7 @@ window.BaseStepForm = class BaseStepForm {
         this.nextButton?.addEventListener('click', () => this.handleNext());
         
         // Load edit data if editing
-        if (this.isEditing) {
+        if (this.editMode) {
             this.loadEditData();
         }
         
@@ -519,75 +530,38 @@ window.BaseStepForm = class BaseStepForm {
 
     async handleSubmission() {
         try {
-            const endpoint = this.type === 'template' ? '/api/templates' : '/api/projects';
+            const formData = new FormData();
+            formData.append('name', this.formData.name);
+            formData.append('description', this.formData.description);
+            formData.append('services', JSON.stringify(this.formData.services || []));
             
-            this.showLoadingOverlay();
-            
-            if (this.type === 'template') {
-                const formData = new FormData();
-                formData.append('name', this.formData.name);
-                formData.append('description', this.formData.description);
-                formData.append('services', JSON.stringify(this.formData.services || []));
-                
-                // Brug den gemte YAML fil fra formData
-                if (this.formData.yamlFile) {
-                    formData.append('yaml', this.formData.yamlFile);
-                    console.log('Appending YAML file:', this.formData.yamlFile);
-                } else {
-                    console.error('No YAML file found in formData');
-                    throw new Error('YAML file is required');
-                }
-
-                const response = await fetch(`http://localhost:3000${endpoint}`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to create template');
-                }
-
-                const result = await response.json();
-                
-                this.hideLoadingOverlay();
-                this.showSuccessOverlay();
-                
-                setTimeout(() => {
-                    window.location.href = '/pages/templates.html';
-                }, 2000);
-            } else {  // Projekt logik
-                let submitData = {
-                    name: this.formData.name,
-                    domain: this.formData.domain,
-                    description: this.formData.description,
-                    templateId: this.formData.template?.id
-                };
-                console.log('Project data being sent:', submitData);
-                
-                const response = await fetch(`http://localhost:3000${endpoint}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(submitData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to create project');
-                }
-
-                const result = await response.json();
-                
-                this.hideLoadingOverlay();
-                this.showSuccessOverlay();
-                
-                setTimeout(() => {
-                    window.location.href = '/pages/projects.html';
-                }, 2000);
+            if (this.formData.previewImage) {
+                formData.append('preview', this.formData.previewImage);
             }
+            
+            if (this.formData.yamlFile) {
+                formData.append('yaml', this.formData.yamlFile);
+            }
+
+            const method = this.editMode ? 'PUT' : 'POST';
+            const url = this.editMode 
+                ? `http://localhost:3000/api/templates/${this.editId}`
+                : 'http://localhost:3000/api/templates';
+
+            const response = await fetch(url, {
+                method: method,
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Failed to save template');
+
+            this.showSuccessOverlay();
+            setTimeout(() => {
+                window.location.href = '/pages/templates.html';
+            }, 2000);
         } catch (error) {
-            this.hideLoadingOverlay();
-            this.showErrorMessage(error.message);
+            console.error('Error:', error);
+            this.showErrorMessage('Failed to save template');
         }
     }
 
@@ -822,6 +796,160 @@ window.BaseStepForm = class BaseStepForm {
             // Fjern eksisterende fejlmeddelelser
             activeStep.querySelectorAll('.error-message').forEach(el => el.remove());
             activeStep.insertBefore(errorDiv, activeStep.firstChild);
+        }
+    }
+
+    populateFormFields() {
+        if (this.formData.name) {
+            document.getElementById('template-name-input').value = this.formData.name;
+        }
+        if (this.formData.description) {
+            document.getElementById('template-description-input').value = this.formData.description;
+        }
+        
+        // Vis eksisterende YAML med faktisk indhold
+        if (this.formData.yamlContent) {
+            const yamlUpload = document.querySelector('.yaml-upload');
+            yamlUpload.innerHTML = `
+                <div class="yaml-file-display">
+                    <i class='bx bx-file'></i>
+                    <span class="filename">template_${this.editId}.yml</span>
+                    <div class="yaml-content" style="display: none;">${this.formData.yamlContent}</div>
+                    <button class="remove-file" type="button">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+            `;
+
+            // Tilføj event listener til remove button
+            yamlUpload.querySelector('.remove-file')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.formData.yamlContent = null;
+                yamlUpload.innerHTML = `
+                    <input type="file" 
+                           id="yaml-file" 
+                           hidden 
+                           accept=".yaml,.yml"
+                           required>
+                    <label for="yaml-file" class="upload-area">
+                        <i class='bx bx-file'></i>
+                        <span>Drop your YAML file here or click to browse</span>
+                    </label>
+                `;
+                this.initFileUploads();
+            });
+        }
+
+        // Vis eksisterende preview billede
+        if (this.formData.previewImage) {
+            const previewUpload = document.querySelector('.preview-container--upload');
+            previewUpload.innerHTML = `
+                <img src="${this.formData.previewImage}" alt="Preview">
+                <button class="remove-file">
+                    <i class='bx bx-x'></i>
+                </button>
+            `;
+
+            // Tilføj event listener til remove button
+            previewUpload.querySelector('.remove-file')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.formData.previewImage = null;
+                previewUpload.innerHTML = `
+                    <input type="file" 
+                           id="preview-image" 
+                           hidden 
+                           accept="image/*">
+                    <label for="preview-image" class="upload-area">
+                        <i class='bx bx-image'></i>
+                        <span>Click to upload preview image</span>
+                    </label>
+                `;
+                this.initFileUploads();
+            });
+        }
+
+        // Marker valgte services
+        if (this.formData.services?.length > 0) {
+            document.querySelectorAll('.service-tag--selectable').forEach(tag => {
+                if (this.formData.services.includes(tag.dataset.service)) {
+                    tag.classList.add('active');
+                }
+            });
+        }
+
+        // Opdater page title
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.textContent = 'Edit template';
+        }
+    }
+
+    async loadExistingTemplate() {
+        try {
+            const response = await fetch(`http://localhost:3000/api/templates/${this.editId}`);
+            if (!response.ok) throw new Error('Failed to fetch template');
+            
+            const template = await response.json();
+            
+            // Udfyld form med eksisterende data
+            this.formData = {
+                name: template.TemplateName,
+                description: template.Description || '',
+                services: template.service_ids ? template.service_ids.split(',') : [],
+                yamlContent: template.YamlContent,
+                previewImage: template.PreviewImage
+            };
+
+            // Opdater UI elementer
+            document.getElementById('template-name-input').value = this.formData.name;
+            document.getElementById('template-description-input').value = this.formData.description;
+
+            // Vis eksisterende YAML
+            if (this.formData.yamlContent) {
+                const yamlUpload = document.querySelector('.yaml-upload');
+                yamlUpload.innerHTML = `
+                    <div class="yaml-file-display">
+                        <i class='bx bx-file'></i>
+                        <span class="filename">Current YAML file</span>
+                        <button class="remove-file" type="button">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Vis eksisterende preview billede
+            if (this.formData.previewImage) {
+                const previewUpload = document.querySelector('.preview-container--upload');
+                previewUpload.innerHTML = `
+                    <img src="${this.formData.previewImage}" alt="Preview">
+                    <button class="remove-file">
+                        <i class='bx bx-x'></i>
+                    </button>
+                `;
+            }
+
+            // Marker valgte services
+            if (this.formData.services.length > 0) {
+                document.querySelectorAll('.service-tag--selectable').forEach(tag => {
+                    if (this.formData.services.includes(tag.dataset.service)) {
+                        tag.classList.add('active');
+                    }
+                });
+            }
+
+            // Opdater page title
+            const pageTitle = document.querySelector('.page-title');
+            if (pageTitle) {
+                pageTitle.textContent = 'Edit template';
+            }
+
+        } catch (error) {
+            console.error('Error loading template:', error);
+            // Vis fejlbesked til brugeren
+            this.showErrorMessage('Failed to load template');
         }
     }
 }

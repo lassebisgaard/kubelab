@@ -132,7 +132,10 @@
             </div>
             <p class="text-secondary">{{description}}</p>
             <div class="preview-container preview-container--template">
-                <img src="{{image}}" alt="Template preview" onerror="this.style.display='none'">
+                <img src="{{image}}" 
+                     alt="Template preview" 
+                     onerror="this.src='../assets/images/placeholder.webp'"
+                     class="template-preview-image">
             </div>
             <div class="author text-secondary">By: {{author}}</div>
             <div class="included-services text-secondary">Included services:</div>
