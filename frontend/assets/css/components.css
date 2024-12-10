@@ -412,14 +412,14 @@ textarea.form-control {
 
 .form-control2 {
     width: 404px;
-    padding: 12px;
+    padding: 5px;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     color: var(--text-color);
     font-size: 14px;
     font-family: inherit;
-    transition: border-color 0.2s ease;
+    opacity: 1;
 }
 
 .form-control2::placeholder {
@@ -431,7 +431,7 @@ textarea.form-control {
 
 /* Specifikt for textarea */
 textarea.form-control2 {
-    line-height: 1.5;
+    line-height: 1;
     resize: vertical;
 }
 
@@ -2492,8 +2492,6 @@ textarea.form-control2 {
     align-items: start;
     align-items: center;
     margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
     gap: 8rem;
     margin-top: 20px;
 }
@@ -2692,7 +2690,7 @@ textarea.form-control2 {
     left: 0;
     width: 404px;
     height: 2px;
-    background-color: var(--border-color-dark)
+    background-color: var(--border-color-dark);
 }
 
 .detail:last-child::after {
@@ -2710,11 +2708,14 @@ textarea.form-control2 {
     justify-content: space-between;
     align-items: center;
     color: #fff;
+    padding-bottom: 20px;
+    width: 404px;
 }
 
 .detail .edit-icon {
     color: #19b3b3;
     cursor: pointer;
+    margin-bottom: -2px;
 }
 
 
@@ -2912,4 +2913,20 @@ body.frontpages .top-left-container {
     top: 20px;
     left: 20px;
     z-index: 1;
+}
+
+.form-control2 option {
+    color: var(--text-color);
+    opacity: 1;
+}
+
+/* Fjern stregen kun for detail der indeholder select eller actions */
+.detail:has(select)::after,
+.detail:has(.actions)::after {
+    display: none;
+}
+
+body.frontpages .content-wrapper h1.page-title {
+    align-self: flex-start;
+    margin-bottom: 24px;
 }

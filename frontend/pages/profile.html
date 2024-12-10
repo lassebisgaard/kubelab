@@ -8,7 +8,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create - Kubelab</title>
+    <title>Profile - Kubelab</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../assets/css/variables.css">
     <link rel="stylesheet" href="../assets/css/main.css">
@@ -88,66 +88,64 @@
             <h1 class="page-title">Profile</h1>
             
             <div class="profile-container">
-                <div class="profile-header">
-                    <div class="avatar">
-                        <img src="avatar-placeholder.png" alt="User Avatar">
-                        <span class="edit-icon">✏️</span>
-                    </div>
-                    <h2>Lasse Bisgaard</h2>
+                <div class="avatar">
+                    <img src="../assets/images/profil.png" alt="Profile Picture">
                 </div>
+                <i class='bx bx-pencil edit-icon'></i>
+                <h2>Lasse Bisgaard</h2>
+
                 <div class="profile-details">
                     <div class="detail">
-                        <label></label>
                         <div>
                             <span>Lasse Bisgaard</span>
-                            <span class="edit-icon"></span>
+                            <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
-                        <label></label>
                         <div>
                             <span>Lasse@edu.ucl.dk</span>
-                            <span class="edit-icon"></span>
+                            <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
-                        <label></label>
                         <div>
                             <span>+45 23 24 32 22</span>
-                            <span class="edit-icon"></span>
+                            <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
-                        <label></label>
                         <div>
                             <span>WUOE24</span>
-                            <span class="edit-icon"></span>
+                            <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
-                        <label></label>
-                        <select>
-                            <option>Role</option>
+                        <select class="form-control2">
+                            <option value="role">Role</option>
                         </select>
                     </div>
 
                     <div class="actions">
-                        <button class="btn cancel">Fortryd</button>
+                        <button class="btn cancel">Cancel</button>
                         <button class="btn confirm">Confirm changes</button>
                     </div>
-                    
                 </div>
                 
                 <div class="danger-zone">
-                    <h3>Danger zone</h3>
-                    <button class="btn delete">Delete profile</button>
+                    <div class="danger-zone-content">
+                        <h2>Danger zone</h2>
+                        <button class="button delete">Delete profile</button>
+                    </div>
                 </div>
                 <div class="logout">
-                    <button>Log out ➡️</button>
+                    <button>
+                        <span>Log out</span>
+                        <i class='bx bx-log-out'></i>
+                    </button>
                 </div>
             </div>
     </main>
