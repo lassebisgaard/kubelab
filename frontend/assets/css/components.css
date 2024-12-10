@@ -1501,7 +1501,7 @@ textarea.form-control2 {
 }
 
 .upload-area i {
-    font-size: 32px;
+    font-size: 24px;
     color: var(--accent-color);
 }
 
@@ -2066,7 +2066,7 @@ textarea.form-control2 {
 
 .accordion {
     width: 100%;
-    background: var(--card-background-dark);
+    background: var(--card-background);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 20px;
@@ -2126,7 +2126,7 @@ textarea.form-control2 {
 .accordion-content {
     display: block;
     padding: 10px 20px;
-    background: var(--border-color-dark);
+    background: var(--card-background);
     border-top: 1px solid var(--accent-color-dark);
 }
 
@@ -2657,7 +2657,7 @@ textarea.form-control2 {
     height: 84px;
     overflow: hidden;
     border-radius: 50%;
-    border: 1px solid var(--text-color-dark);
+    border: 1px solid var(--border-color);
 }
 
 .avatar img {
@@ -2702,7 +2702,7 @@ textarea.form-control2 {
     left: 0;
     width: 404px;
     height: 2px;
-    background-color: var(--border-color-dark);
+    background-color: var(--border-color);
 }
 
 .detail:last-child::after {
@@ -2712,20 +2712,21 @@ textarea.form-control2 {
 .detail label {
     font-weight: bold;
     margin-bottom: 5px;
-    color: #a9c6d8;
+    color: var(--text-color);
+    opacity: 0.7;
 }
 
 .detail div {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #fff;
+    color: var(--text-color);
     padding-bottom: 20px;
     width: 404px;
 }
 
 .detail .edit-icon {
-    color: #19b3b3;
+    color: var(--accent-color);
     cursor: pointer;
     margin-bottom: -2px;
 }
@@ -2798,7 +2799,7 @@ textarea.form-control2 {
 .logout button {
     background: none;
     border: none;
-    color: #19b3b3;
+    color: var(--accent-color);
     font-size: 1rem;
     cursor: pointer;
 }
