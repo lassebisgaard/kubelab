@@ -2066,14 +2066,14 @@ textarea.form-control2 {
 
 .accordion {
     width: 100%;
-    background: #001724;
+    background: var(--card-background-dark);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 20px;
 }
 
 .accordion-item {
-    border-bottom: 1px solid #193142;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .accordion-header {
@@ -2126,15 +2126,15 @@ textarea.form-control2 {
 .accordion-content {
     display: block;
     padding: 10px 20px;
-    background: #0C242F;
-    border-top: 1px solid #00ffcc;
+    background: var(--border-color-dark);
+    border-top: 1px solid var(--accent-color-dark);
 }
 
 .content-row {
     display: flex;
-    justify-content: space-between; /* Fordeler elementerne jævnt */
+    justify-content: space-between; 
     padding: 4px 0;
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid var(--text-color-dark);
 }
 
 .content-row:last-child {
@@ -2144,16 +2144,16 @@ textarea.form-control2 {
 .content-row .name, 
 .content-row .team, 
 .content-row .email {
-    flex: 1; /* Sikrer ensartet pladsfordeling */
-    text-align: left; /* Justerer tekst til venstre */
+    flex: 1; 
+    text-align: left; 
 }
 
 .content-row .team {
-    text-align: center; /* Centrerer holdnavn */
+    text-align: center; 
 }
 
 .content-row .email {
-    text-align: right; /* Justerer e-mail til højre */
+    text-align: right; 
 }
 
 .accordion-content p {
@@ -2163,7 +2163,7 @@ textarea.form-control2 {
 .accordion-content p {
     margin: 0;
     padding: 4px 0;
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid var(--text-color-dark);
 }
 
 .accordion-content p:last-child {
