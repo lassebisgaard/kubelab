@@ -1501,7 +1501,7 @@ textarea.form-control2 {
 }
 
 .upload-area i {
-    font-size: 24px;
+    font-size: 32px;
     color: var(--accent-color);
 }
 
@@ -2066,7 +2066,7 @@ textarea.form-control2 {
 
 .accordion {
     width: 100%;
-    background: var(--card-background);
+    background: var(--card-background-dark);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 20px;
@@ -2126,7 +2126,7 @@ textarea.form-control2 {
 .accordion-content {
     display: block;
     padding: 10px 20px;
-    background: var(--card-background);
+    background: var(--border-color-dark);
     border-top: 1px solid var(--accent-color-dark);
 }
 
