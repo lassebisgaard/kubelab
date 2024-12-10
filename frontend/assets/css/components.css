@@ -2077,7 +2077,7 @@ textarea.form-control2 {
 
 .accordion {
     width: 100%;
-    background: var(--card-background-dark);
+    background: var(--card-background);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 20px;
@@ -2137,8 +2137,8 @@ textarea.form-control2 {
 .accordion-content {
     display: block;
     padding: 10px 20px;
-    background: var(--border-color-dark);
-    border-top: 1px solid var(--accent-color-dark);
+    background: var(--border-color);
+    border-top: 1px solid var(--accent-color);
 }
 
 .content-row {
@@ -2146,7 +2146,7 @@ textarea.form-control2 {
     justify-content: space-between;
     /* Fordeler elementerne jævnt */
     padding: 4px 0;
-    border-bottom: 1px solid var(--text-color-dark);
+    border-bottom: 1px solid var(--text-color);
 }
 
 .content-row:last-child {
@@ -2179,7 +2179,7 @@ textarea.form-control2 {
 .accordion-content p {
     margin: 0;
     padding: 4px 0;
-    border-bottom: 1px solid var(--text-color-dark);
+    border-bottom: 1px solid var(--text-color);
 }
 
 .accordion-content p:last-child {
