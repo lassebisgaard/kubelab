@@ -2864,13 +2864,13 @@ textarea.form-control2 {
     background-color: var(--card-background);
 }
 
-body.account-creation main {
+body.frontpages main {
     margin-left: 0;
     width: 100%;
     padding: 0;
 }
 
-body.account-creation .content-wrapper {
+body.frontpages .content-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2881,7 +2881,7 @@ body.account-creation .content-wrapper {
     padding: 0 24px;
 }
 
-body.account-creation .top-left-container {
+body.frontpages .top-left-container {
     position: absolute;
     top: 20px;
     left: 20px;
