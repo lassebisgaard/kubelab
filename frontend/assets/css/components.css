@@ -2195,7 +2195,8 @@ textarea.form-control2 {
     justify-content: space-between;
     align-items: center;
     padding: 15px 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid var(--border-color);
+    /* Ændret til variabel */
     cursor: pointer;
     margin-top: 50px;
 }
@@ -2206,13 +2207,15 @@ textarea.form-control2 {
 
 .option-label {
     font-size: 1rem;
-    color: var(--text-color-dark);
+    color: var(--text-color);
+    /* Ændret fra var(--text-color-dark) */
     text-transform: none;
 }
 
 .arrow {
     font-size: 1.2rem;
-    color: var(--text-color-dark);
+    color: var(--text-color);
+    /* Ændret fra var(--text-color-dark) */
 }
 
 /* Toggle Switch */
@@ -2220,7 +2223,8 @@ textarea.form-control2 {
     appearance: none;
     width: 40px;
     height: 20px;
-    background-color: var(--text-color-dark);
+    background-color: var(--border-color);
+    /* Ændret */
     border-radius: 10px;
     position: relative;
     cursor: pointer;
@@ -2228,7 +2232,8 @@ textarea.form-control2 {
 }
 
 .toggle-switch:checked {
-    background-color: var(--primary-color-dark);
+    background-color: var(--accent-color);
+    /* Ændret */
 }
 
 .toggle-switch::before {
@@ -2238,14 +2243,16 @@ textarea.form-control2 {
     left: 2px;
     width: 16px;
     height: 16px;
-    background-color: #142a43;
+    background-color: var(--background-color);
+    /* Ændret */
     border-radius: 50%;
     transition: 0.2s ease-in-out;
 }
 
 .toggle-switch:checked::before {
     left: 22px;
-    background-color: var(--text-color-dark);
+    background-color: var(--background-color);
+    /* Ændret */
 }
 
 .settings-container-settings {
@@ -2939,7 +2946,7 @@ body.frontpages .content-wrapper h1.page-title {
 .option-label,
 label.option-label {
     font-size: 1rem;
-    color: var(--text-color-dark);
+    color: var(--text-color);
     text-transform: none;
     opacity: 1;
 }

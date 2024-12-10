@@ -218,3 +218,57 @@ document.querySelector('.mobile-nav-overlay')?.addEventListener('click', () => {
 });
 
 
+
+// Funktion til at skifte mellem light og dark mode
+function toggleTheme(isDark) {
+    const root = document.documentElement;
+    const body = document.body;
+    
+    if (isDark) {
+        root.classList.remove('light-mode');
+        root.classList.add('dark-mode');
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark-mode');
+    } else {
+        root.classList.remove('dark-mode');
+        root.classList.add('light-mode');
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        localStorage.setItem('theme', 'light-mode');
+    }
+}
+
+// Indlæs gemt theme preference når siden loader
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleSwitch = document.getElementById('dark-mode-toggle');
+    if (!toggleSwitch) {
+        console.error('Toggle switch not found');
+        return;
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'dark-mode';
+    console.log('Saved theme:', savedTheme); // Debug log
+    
+    // Sæt initial theme
+    toggleTheme(savedTheme === 'dark-mode');
+    toggleSwitch.checked = savedTheme === 'dark-mode';
+
+    // Lyt efter ændringer på toggle switch
+    toggleSwitch.addEventListener('change', (e) => {
+        console.log('Toggle changed:', e.target.checked); // Debug log
+        toggleTheme(e.target.checked);
+    });
+});
+
+// Kør theme check med det samme i tilfælde af at DOMContentLoaded allerede er fyret
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeTheme);
+} else {
+    initializeTheme();
+}
+
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark-mode';
+    toggleTheme(savedTheme === 'dark-mode');
+}
