@@ -102,7 +102,7 @@
             <div class="content-wrapper">
                 <div class="login-wrapper">
                 <h1 class="page-title">Create account</h1>
-                   <form onSubmit="return checkPassword (this)"> 
+                   <form id="createUserForm" onSubmit="return checkPassword(this)"> 
                         <div class="form-group">
                             <label></label>
                             <input type="text" 
@@ -233,35 +233,113 @@ function validateForm(form) {
         alert("Please enter a valid email address.");
         return false;
     }
+
+    return true;
 }
+    </script>
 
-// Initialize custom selects
-document.querySelectorAll('.custom-select2').forEach(select => {
-    const header = select.querySelector('.select-header');
-    const options = select.querySelector('.select-options');
-    const selectedText = header.querySelector('.selected-option');
+    <script>
+        // Hent teams når siden indlæses
+        async function loadTeams() {
+            try {
+                const response = await fetch('/api/teams');
+                const teams = await response.json();
+                const optionsList = document.querySelector('.select-options');
+                optionsList.innerHTML = teams.map(team => 
+                    `<li class="option" data-value="${team.TeamId}">${team.TeamName}</li>`
+                ).join('');
+                
+                // Geninitialisér custom select efter teams er indlæst
+                const select = document.querySelector('.custom-select2');
+                const header = select.querySelector('.select-header');
+                const options = select.querySelector('.select-options');
+                const selectedText = header.querySelector('.selected-option');
 
-    // Toggle dropdown
-    header.addEventListener('click', () => {
-        select.classList.toggle('open');
-    });
+                // Toggle dropdown
+                header.addEventListener('click', () => {
+                    console.log('Header clicked');  // Debug log
+                    select.classList.toggle('open');
+                });
 
-    // Handle option selection
-    options.querySelectorAll('.option').forEach(option => {
-        option.addEventListener('click', () => {
-            selectedText.textContent = option.textContent;
-            select.classList.remove('open');
-            selectedText.style.color = 'var(--text-color-dark)'; // Fjerner den grå farve efter valg
-        });
-    });
+                // Handle option selection
+                options.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        console.log('Option clicked:', option.textContent);  // Debug log
+                        selectedText.textContent = option.textContent;
+                        selectedText.dataset.value = option.dataset.value;
+                        select.classList.remove('open');
+                        selectedText.style.color = 'var(--text-color-dark)';
+                    });
+                });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!select.contains(e.target)) {
-            select.classList.remove('open');
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!select.contains(e.target)) {
+                        select.classList.remove('open');
+                    }
+                });
+            } catch (error) {
+                console.error('Fejl ved indlæsning af teams:', error);
+            }
         }
-    });
-});
+
+        // Kald loadTeams når siden indlæses
+        document.addEventListener('DOMContentLoaded', loadTeams);
+
+        // Opdater form submission
+        document.getElementById('createUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Form submitted'); // Debug log
+            
+            if (!checkPassword(this) || !validateForm(this)) {
+                console.log('Validation failed'); // Debug log
+                return;
+            }
+
+            const selectedTeam = document.querySelector('.selected-option');
+            if (!selectedTeam.dataset.value) {
+                alert('Vælg venligst et team');
+                console.log('No team selected'); // Debug log
+                return;
+            }
+
+            const userData = {
+                name: document.getElementById('user-name-input').value,
+                email: document.getElementById('user-email-input').value,
+                password: document.getElementById('user-password-input').value,
+                teamId: parseInt(selectedTeam.dataset.value),
+                role: 'studerende',
+                expiration: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            };
+
+            console.log('Sending user data:', userData); // Debug log
+
+            try {
+                const response = await fetch('/api/account-creation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                console.log('Response status:', response.status); // Debug log
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Success response:', result); // Debug log
+                    alert('Konto oprettet succesfuldt!');
+                    window.location.href = '/pages/login.html';
+                } else {
+                    const error = await response.json();
+                    console.error('Error response:', error); // Debug log
+                    alert(error.error || 'Der skete en fejl ved oprettelse af kontoen');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                alert('Der skete en fejl ved oprettelse af kontoen');
+            }
+        });
     </script>
 </body>
 </html>
