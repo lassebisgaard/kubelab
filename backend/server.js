@@ -19,6 +19,7 @@ const userRoutes = require('./routes/users');
 const teamRoutes = require('./routes/teams');
 const accountCreationRoutes = require('./routes/account_creation');
 const loginRoutes = require('./routes/login');
+const usersPageRoutes = require('./routes/users_page');
 
 // Use routes
 app.use('/api/projects', projectRoutes);
@@ -28,6 +29,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/account-creation', accountCreationRoutes);
 app.use('/api/login', loginRoutes);
+app.use('/api/users-page', usersPageRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

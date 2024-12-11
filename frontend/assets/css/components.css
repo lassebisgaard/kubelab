@@ -2138,7 +2138,7 @@ textarea.form-control2 {
 }
 
 .accordion-content {
-    display: block;
+    display: none;
     padding: 10px 20px;
     background: var(--border-color);
     border-top: 1px solid var(--accent-color);
