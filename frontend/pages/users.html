@@ -96,7 +96,7 @@
 
             <div class="content-wrapper">
                 <div class="search-bar">
-                    <input type="text" placeholder="Søg ...">
+                    <input type="text" id="searchInput" placeholder="Søg ...">
                 </div>
 
                 <!-- Header for column alignment -->
@@ -179,22 +179,135 @@
     </main>
 
     <script>
-        document.querySelectorAll('.accordion-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const content = header.nextElementSibling;
-                const isVisible = content?.style.display === 'block';
+        // Funktion til at hente brugere
+        async function fetchUsers() {
+            try {
+                console.log('Starter hentning af brugere...'); // Debug log
+                const response = await fetch('http://localhost:3000/api/users-page');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const users = await response.json();
+                console.log('Modtaget brugerdata:', users); // Debug log
+                
+                if (!Array.isArray(users)) {
+                    throw new Error('Modtaget data er ikke et array');
+                }
+                
+                const accordionContainer = document.getElementById('usersAccordion');
+                if (!accordionContainer) {
+                    throw new Error('Kunne ikke finde accordion container');
+                }
+                
+                accordionContainer.innerHTML = ''; // Ryd eksisterende indhold
+                
+                if (users.length === 0) {
+                    accordionContainer.innerHTML = '<p class="no-data">Ingen brugere fundet</p>';
+                    return;
+                }
+                
+                users.forEach(user => {
+                    console.log('Behandler bruger:', user); // Debug log
+                    const accordionItem = `
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <div class="team-info">
+                                    <img src="../assets/Icons/Teams.svg" alt="Teams" />
+                                    <span>${user.Name || 'N/A'}</span>
+                                </div>
+                                <div class="edit">
+                                    <span>${user.TeamName || 'Intet Team'}</span>
+                                </div>
+                                <div class="members">
+                                    <span>${user.ProjectCount || 0}</span>
+                                    <button class="toggle-button">▼</button>
+                                </div>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="content-row header">
+                                    <span class="name">Email</span>
+                                    <span class="email">${user.Mail || 'N/A'}</span>
+                                </div>
+                                <div class="content-row">
+                                    <span class="name">Udløbsdato</span>
+                                    <span class="email">${new Date(user.Expiration).toLocaleDateString('da-DK') || 'N/A'}</span>
+                                </div>
+                                
+                                <!-- Projekter sektion -->
+                                <div class="projects-section">
+                                    <h3>Projekter</h3>
+                                    <div class="projects-list">
+                                        ${user.Projects && user.Projects.length > 0 ? 
+                                            user.Projects.map(project => `
+                                                <div class="project-row">
+                                                    <span class="project-name">${project.ProjectName}</span>
+                                                </div>
+                                            `).join('')
+                                            : '<p class="no-projects">Ingen projekter</p>'
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    accordionContainer.innerHTML += accordionItem;
+                });
 
-                // Close all accordion items
-                document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
-                document.querySelectorAll('.toggle-button').forEach(btn => btn.textContent = '▼');
+                // Genaktiver accordion funktionalitet
+                setupAccordion();
+                
+            } catch (error) {
+                console.error('Fejl ved hentning af brugere:', error);
+                const accordionContainer = document.getElementById('usersAccordion');
+                if (accordionContainer) {
+                    accordionContainer.innerHTML = `
+                        <div class="error-message">
+                            Der opstod en fejl ved hentning af brugere: ${error.message}
+                        </div>
+                    `;
+                }
+            }
+        }
 
-                // Toggle current item
-                if (!isVisible && content) {
-                    content.style.display = 'block';
-                    header.querySelector('.toggle-button').textContent = '▲';
+        // Funktion til at håndtere accordion funktionalitet
+        function setupAccordion() {
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const isVisible = content?.style.display === 'block';
+
+                    // Luk alle accordion items
+                    document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
+                    document.querySelectorAll('.toggle-button').forEach(btn => btn.textContent = '▼');
+
+                    // Toggle nuværende item
+                    if (!isVisible && content) {
+                        content.style.display = 'block';
+                        header.querySelector('.toggle-button').textContent = '▲';
+                    }
+                });
+            });
+        }
+
+        // Tilføj søgefunktionalitet
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                const userName = item.querySelector('.team-info span').textContent.toLowerCase();
+                const teamName = item.querySelector('.edit span').textContent.toLowerCase();
+                
+                if (userName.includes(searchTerm) || teamName.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
                 }
             });
         });
+
+        // Hent brugere når siden loader
+        document.addEventListener('DOMContentLoaded', fetchUsers);
     </script>
 </body>
 </html>
