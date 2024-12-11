@@ -114,85 +114,9 @@
                     </div>
                 </div>
 
-                <!-- Accordion items -->
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>Lasse Bisgaard</span>
-                            </div>
-                            <div class="edit">
-                                <span>WUOE23</span>
-                            </div>
-                            <div class="members">
-                                <span>1</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="content-row">
-                                <span class="name">Projekter</span>
-                                <span class="email">Status</span>
-                            </div>
-                            <div class="content-row">
-                                <span class="name">Lasssefedeside </span>
-                                <span class="email">on</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>James Portainer</span>
-                            </div>
-                            <div class="edit">
-                                <span>WUOF23</span>
-                            </div>
-                            <div class="members">
-                                <span>12</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="content-row">
-                                <span class="name">Projekter</span>
-                                <span class="email">Status</span>
-                            </div>
-                            <div class="content-row">
-                                <span class="name">Lasssefedeside </span>
-                                <span class="email">on</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>Sarah English</span>
-                            </div>
-                            <div class="edit">
-                                <span>WUOE23</span>
-                            </div>
-                            <div class="members">
-                                <span>8</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="content-row">
-                                <span class="name">Projekter</span>
-                                <span class="email">Status</span>
-                            </div>
-                            <div class="content-row">
-                                <span class="name">Lasssefedeside </span>
-                                <span class="email">on</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Accordion items will be inserted here -->
+                <div id="usersAccordion" class="accordion">
+                    <!-- Users will be dynamically inserted here -->
                 </div>
             </div>
         </div>
@@ -261,6 +185,28 @@
                                         `).join('')
                                         : '<p class="no-projects">No projects</p>'
                                     }
+                                <div class="content-row header">
+                                    <span class="name">Email</span>
+                                    <span class="email">${user.Mail || 'N/A'}</span>
+                                </div>
+                                <div class="content-row">
+                                    <span class="name">Udløbsdato</span>
+                                    <span class="email">${new Date(user.Expiration).toLocaleDateString('da-DK') || 'N/A'}</span>
+                                </div>
+                                
+                                <!-- Projekter sektion -->
+                                <div class="projects-section">
+                                    <h3>Projekter</h3>
+                                    <div class="projects-list">
+                                        ${user.Projects && user.Projects.length > 0 ? 
+                                            user.Projects.map(project => `
+                                                <div class="project-row">
+                                                    <span class="project-name">${project.ProjectName}</span>
+                                                </div>
+                                            `).join('')
+                                            : '<p class="no-projects">Ingen projekter</p>'
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
