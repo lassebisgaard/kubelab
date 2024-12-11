@@ -2381,7 +2381,6 @@ textarea.form-control2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--secondary-color);
 }
 
 .custom-select2 .select-header i {
