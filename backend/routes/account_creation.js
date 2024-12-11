@@ -19,39 +19,44 @@ router.get('/', async (req, res) => {
 
 // Create new user
 router.post('/', async (req, res) => {
+    console.log('Received request body:', req.body); // Debug log
+    
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
         
-        const { name, email, teamId, role, expiration } = req.body;
+        const { name, email, password, teamId, role, expiration } = req.body;
+        
+        console.log('Extracted data:', { name, email, teamId, role, expiration }); // Debug log
         
         // Validér input data
-        if (!name || !email || !teamId || !role || !expiration) {
+        if (!name || !email || !password || !teamId) {
+            console.log('Validation failed:', { name, email, password, teamId }); // Debug log
             return res.status(400).json({ 
-                error: 'Missing required fields',
+                error: 'Manglende påkrævede felter',
                 missing: {
                     name: !name,
                     email: !email,
-                    teamId: !teamId,
-                    role: !role,
-                    expiration: !expiration
+                    password: !password,
+                    teamId: !teamId
                 }
             });
         }
+
+        console.log('Attempting to create user...'); // Debug log
         
-        // Generate a random default password
-        const defaultPassword = Math.random().toString(36).slice(-8);
-        
-        // Create user
+        // Opret bruger
         const [userResult] = await connection.execute(
-            'INSERT INTO Users (Name, Mail, TeamId, Password, Expiration) VALUES (?, ?, ?, ?, ?)',
-            [name, email, teamId, defaultPassword, expiration]
+            'INSERT INTO Users (Name, Mail, Password, TeamId, Expiration) VALUES (?, ?, ?, ?, ?)',
+            [name, email, password, teamId, expiration]
         );
+        
+        console.log('User created:', userResult); // Debug log
         
         // Opret rolle for brugeren
         const [roleResult] = await connection.execute(
             'INSERT INTO Roles (UserId, IsAdmin) VALUES (?, ?)',
-            [userResult.insertId, role === 'admin' ? 1 : 0]
+            [userResult.insertId, role === 'studerende' ? 0 : 1]
         );
         
         await connection.commit();
@@ -66,22 +71,22 @@ router.post('/', async (req, res) => {
         
         res.status(201).json({
             ...newUser[0],
-            role: role,
-            defaultPassword
+            role: role
         });
         
     } catch (error) {
         await connection.rollback();
-        console.error('Error creating user:', error);
+        console.error('Detailed error:', error); // Mere detaljeret error logging
+        console.error('Fejl ved oprettelse af bruger:', error);
         
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ 
-                error: 'A user with this email already exists'
+                error: 'En bruger med denne email findes allerede'
             });
         }
         
         res.status(500).json({ 
-            error: 'Failed to create user',
+            error: 'Kunne ikke oprette bruger',
             details: error.message 
         });
     } finally {
