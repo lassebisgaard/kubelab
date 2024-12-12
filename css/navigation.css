@@ -1,0 +1,345 @@
+/* === Sidebar === */
+aside {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 280px;
+    background-color: var(--card-background);
+    border-right: 1px solid var(--border-color);
+    transition: width 0.6s ease;
+    overflow: visible;
+    z-index: 100;
+}
+
+/* === Navigation === */
+nav {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+
+/* Navigation Lists */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Logo Container */
+nav > ul:first-of-type > li:first-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+nav > ul:first-of-type > li:first-child img {
+    width: 34px;
+    height: 34px;
+    min-width: 32px;
+    margin: 10px;
+}
+
+nav > ul:first-of-type > li:first-child span {
+    color: var(--text-color);
+    font-size: 26px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Navigation Links & Items */
+nav a, 
+.nav-bottom a,
+.create-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-color);
+    text-decoration: none;
+    margin-bottom: 26px;
+    font-size: 16px;
+    overflow: hidden;
+    padding: 8px 8px 8px 24px;
+    width: 100%;
+    position: relative;
+}
+
+nav a img,
+.nav-bottom a img {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+}
+
+/* Create Button */
+.create-button {
+    width: 206px;
+    height: 41px;
+    margin-bottom: 24px;
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 4px;
+    color: var(--background-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.6s ease;
+    text-decoration: none;
+    padding: 0;
+}
+
+.create-button img {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+}
+
+.create-button span {
+    color: var(--background-color);
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+/* Bottom Navigation */
+.nav-bottom {
+    margin-top: auto;
+    padding-top: 31px;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+}
+
+/* Collapsed State */
+:root:not(.sb-expanded) aside {
+    width: 89px;
+}
+
+:root:not(.sb-expanded) nav {
+    align-items: center;
+    padding: 16px 12px;
+}
+
+:root:not(.sb-expanded) nav ul {
+    align-items: center;
+}
+
+:root:not(.sb-expanded) nav a,
+:root:not(.sb-expanded) .nav-bottom a {
+    justify-content: center;
+    width: 38px;
+    padding: 8px;
+}
+
+:root:not(.sb-expanded) nav a span,
+:root:not(.sb-expanded) .nav-bottom a span,
+:root:not(.sb-expanded) nav ul li:first-child span {
+    display: none;
+}
+
+:root:not(.sb-expanded) .create-button {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+}
+
+:root:not(.sb-expanded) .create-button span {
+    display: none;
+}
+
+/* Profile Image Styling */
+.profile-image {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Ensure other nav images don't get rounded corners */
+nav a img:not(.profile-image),
+.nav-bottom a img:not(.profile-image) {
+    border-radius: 0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    /* Eksisterende mobile styles... */
+
+    /* Juster main content layout */
+    main {
+        margin-left: 0;
+    }
+
+    /* Juster page container */
+    .page-container {
+        padding: 24px;
+        margin-top: 72px;
+        margin-left: 0;
+    }
+
+    /* Juster page header */
+    .page-header {
+        margin-top: 72px;
+        padding: 0;
+        margin-left: 0;
+    }
+
+    /* Juster section title */
+    .section-title {
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    /* Burger menu styling */
+    .burger-menu {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 1001;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        padding: 8px;
+    }
+
+    /* Burger menu ikon */
+    .burger-menu i {
+        color: #FFFFFF;
+        font-size: 24px;
+    }
+
+    /* Når menuen er åben */
+    aside.mobile-nav-open + .burger-menu {
+        transform: translateX(240px);
+    }
+
+    /* Skjul resize knap */
+    [data-resize-btn],
+    nav > ul:first-of-type > li:nth-child(2) {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+
+    /* Resten af mobile styles forbliver uændret */
+    aside {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 280px !important;
+    }
+
+    aside.mobile-nav-open {
+        transform: translateX(0);
+    }
+
+    /* Juster main content layout */
+    main {
+        padding-left: 0;
+        padding-top: 72px; /* Gør plads til burger menu */
+    }
+
+    /* Juster page container */
+    .page-container {
+        padding: 24px;
+        padding-top: 0; /* Fjern top padding da vi har padding-top på main */
+    }
+
+    /* Juster page header */
+    .page-header {
+        margin-top: 0;
+    }
+
+    /* Juster content wrapper */
+    .content-wrapper {
+        padding-left: 48px; /* Gør plads til burger menu */
+    }
+}
+
+/* Alle spans i navigation */
+nav a span,
+.nav-bottom a span,
+.create-button span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Remove any conflicting styles */
+nav a.create-button {
+    padding: 0;
+    margin-bottom: 24px;
+    margin-top: 20px;
+}
+
+/* Resize Button */
+[data-resize-btn] {
+    position: absolute !important;
+    right: -16px;
+    top: 32px;
+    width: 32px !important;
+    height: 32px !important;
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 101;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-resize-btn] i {
+    font-size: 18px !important;
+    color: var(--text-color);
+    transition: transform 0.3s ease;
+}
+
+:root:not(.sb-expanded) [data-resize-btn] i {
+    transform: rotate(180deg);
+}
+
+/* Hover effect */
+[data-resize-btn]:hover {
+    background: var(--hover-background) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Active State Indicator */
+nav a.active {
+    background: none;
+    color: var(--text-color);
+    position: relative;
+}
+
+nav a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background-color: var(--accent-color);
+}
+
+/* Adjust for collapsed state */
+:root:not(.sb-expanded) nav a,
+:root:not(.sb-expanded) .nav-bottom a {
+    justify-content: center;
+    width: 38px;
+    padding: 8px;
+}
+
+/* Make sure create button doesn't get the active indicator */
+nav a.create-button.active::before {
+    display: none;
+}
