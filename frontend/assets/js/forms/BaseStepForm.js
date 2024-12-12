@@ -531,37 +531,66 @@ window.BaseStepForm = class BaseStepForm {
     async handleSubmission() {
         try {
             const formData = new FormData();
-            formData.append('name', this.formData.name);
-            formData.append('description', this.formData.description);
-            formData.append('services', JSON.stringify(this.formData.services || []));
             
-            if (this.formData.previewImage) {
-                formData.append('preview', this.formData.previewImage);
+            if (this.type === 'template') {
+                // Template data
+                formData.append('name', this.formData.name);
+                formData.append('description', this.formData.description);
+                formData.append('services', JSON.stringify(this.formData.services || []));
+                
+                if (this.formData.previewImage) {
+                    formData.append('preview', this.formData.previewImage);
+                }
+                
+                if (this.formData.yamlFile) {
+                    formData.append('yaml', this.formData.yamlFile);
+                }
+
+                const method = this.editMode ? 'PUT' : 'POST';
+                const url = this.editMode 
+                    ? `http://localhost:3000/api/templates/${this.editId}`
+                    : 'http://localhost:3000/api/templates';
+
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Failed to save template');
+            } else {
+                // Project data
+                const projectData = {
+                    name: this.formData.name,
+                    description: this.formData.description,
+                    templateId: this.formData.template.id,
+                    domain: this.formData.domain
+                };
+
+                const response = await fetch('http://localhost:3000/api/projects', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(projectData)
+                });
+
+                if (!response.ok) throw new Error('Failed to create project');
             }
+
+            // Vis success overlay og vent på animation
+            await this.showSuccessOverlay();
             
-            if (this.formData.yamlFile) {
-                formData.append('yaml', this.formData.yamlFile);
-            }
-
-            const method = this.editMode ? 'PUT' : 'POST';
-            const url = this.editMode 
-                ? `http://localhost:3000/api/templates/${this.editId}`
-                : 'http://localhost:3000/api/templates';
-
-            const response = await fetch(url, {
-                method: method,
-                body: formData
-            });
-
-            if (!response.ok) throw new Error('Failed to save template');
-
-            this.showSuccessOverlay();
-            setTimeout(() => {
-                window.location.href = '/pages/templates.html';
-            }, 2000);
+            // Vent 1.5 sekunder så brugeren kan se success beskeden
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Redirect til den korrekte side
+            window.location.href = this.type === 'template' 
+                ? '/pages/templates.html' 
+                : '/pages/projects.html';
+            
         } catch (error) {
             console.error('Error:', error);
-            this.showErrorMessage('Failed to save template');
+            this.showErrorMessage(`Failed to save ${this.type}`);
         }
     }
 
@@ -574,7 +603,12 @@ window.BaseStepForm = class BaseStepForm {
     }
 
     showSuccessOverlay() {
-        document.querySelector('.success-overlay')?.classList.add('show');
+        return new Promise(resolve => {
+            const overlay = document.querySelector('.success-overlay');
+            overlay.classList.add('active');
+            // Vent på at animation er færdig
+            setTimeout(resolve, 500);
+        });
     }
 
     initFileUploads() {
@@ -953,5 +987,4 @@ window.BaseStepForm = class BaseStepForm {
         }
     }
 }
-
 
