@@ -76,7 +76,7 @@
                 <li>
                     <a href="profile.html" class="profile-link">
                         <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
-                        <span>Lasse Bisgaard</span>
+                        <span></span>
                     </a>
                 </li>
             </ul>
@@ -92,26 +92,26 @@
                     <img src="../assets/images/profil.png" alt="Profile Picture">
                 </div>
                 <i class='bx bx-pencil edit-icon'></i>
-                <h2>Lasse Bisgaard</h2>
+                <h2 class="profile-header-name"></h2>
 
                 <div class="profile-details">
                     <div class="detail">
                         <div>
-                            <span>Lasse Bisgaard</span>
+                            <span class="profile-detail-name"></span>
                             <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
                         <div>
-                            <span>Lasse@edu.ucl.dk</span>
+                            <span class="profile-detail-email"></span>
                             <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
                         <div>
-                            <span>+45 23 24 32 22</span>
+                            <span class="profile-detail-team"></span>
                             <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
@@ -148,6 +148,7 @@
                     </button>
                 </div>
             </div>
+        </div>
     </main>
     
 </body>
@@ -176,6 +177,35 @@ toggleSwitch.addEventListener('change', () => {
     rootElement.classList.add('light-mode');
     localStorage.setItem('theme', 'light-mode'); 
   }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Hent bruger data fra localStorage
+    const userString = localStorage.getItem('user');
+    if (userString) {
+        const user = JSON.parse(userString);
+        
+        // Opdater profilsiden med brugerens information
+        const headerNameElement = document.querySelector('.profile-header-name');
+        const detailNameElement = document.querySelector('.profile-detail-name');
+        const detailEmailElement = document.querySelector('.profile-detail-email');
+        const teamElement = document.querySelector('.profile-detail-team');
+        const roleElement = document.querySelector('.profile-role');
+        
+        if (headerNameElement) headerNameElement.textContent = user.Name;
+        if (detailNameElement) detailNameElement.textContent = user.Name;
+        if (detailEmailElement) detailEmailElement.textContent = user.Mail;
+        if (teamElement) teamElement.textContent = user.TeamName || 'Ikke tildelt et hold';
+        if (roleElement) roleElement.textContent = user.role === 'admin' ? 'Administrator' : 'Student';
+        
+        // Opdater også navnet i sidebaren
+        const sidebarNameElement = document.querySelector('.profile-link span');
+        if (sidebarNameElement) {
+            sidebarNameElement.textContent = user.Name;
+        }
+    }
 });
 </script>
 </html>

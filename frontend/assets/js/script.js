@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize other functionality
     initServiceFilters();
     loadServices();
+    updateUserInfo();
+    checkAuth();
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
@@ -271,4 +273,29 @@ if (document.readyState === 'loading') {
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark-mode';
     toggleTheme(savedTheme === 'dark-mode');
+}
+
+function updateUserInfo() {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+        const user = JSON.parse(userString);
+        const profileNameElement = document.querySelector('.profile-link span');
+        if (profileNameElement) {
+            profileNameElement.textContent = user.Name || 'Unknown User';
+        }
+    }
+}
+
+function logout() {
+    localStorage.removeItem('user');
+    window.location.href = '/pages/login.html';
+}
+
+function checkAuth() {
+    const user = localStorage.getItem('user');
+    const publicPages = ['/pages/login.html', '/pages/account_creation.html'];
+    
+    if (!user && !publicPages.some(page => window.location.pathname.endsWith(page))) {
+        window.location.href = '/pages/login.html';
+    }
 }

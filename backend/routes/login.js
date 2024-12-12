@@ -12,8 +12,16 @@ router.post('/', async (req, res) => {
 
     try {
         // Check if user exists and password matches
-        const [users] = await pool.execute(
-            'SELECT UserId, Name, Mail, TeamId FROM Users WHERE Mail = ? AND Password = ?',
+        const [users] = await pool.execute(`
+            SELECT 
+                u.UserId, 
+                u.Name, 
+                u.Mail, 
+                u.TeamId,
+                t.TeamName
+            FROM Users u
+            LEFT JOIN Teams t ON u.TeamId = t.TeamId
+            WHERE u.Mail = ? AND u.Password = ?`,
             [email, password]
         );
 
