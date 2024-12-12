@@ -2822,3 +2822,146 @@ textarea.form-control2 {
     align-items: center;
     gap: 12px;
 }
+
+.template-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.preview-container--template {
+    height: 200px;
+    overflow: hidden;
+    margin: 16px 0;
+    border-radius: 8px;
+    background-color: var(--card-background);
+}
+
+body.frontpages main {
+    margin-left: 0;
+    width: 100%;
+    padding: 0;
+}
+
+body.frontpages .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+body.frontpages .top-left-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1;
+}
+
+.form-control2 option {
+    color: var(--text-color);
+    opacity: 1;
+}
+
+/* Fjern stregen kun for detail der indeholder select eller actions */
+.detail:has(select)::after,
+.detail:has(.actions)::after {
+    display: none;
+}
+
+body.frontpages .content-wrapper h1.page-title {
+    align-self: flex-start;
+    margin-bottom: 24px;
+}
+
+.option-label,
+label.option-label {
+    font-size: 1rem;
+    color: var(--text-color);
+    text-transform: none;
+    opacity: 1;
+}
+
+.projects-section {
+    padding: 10px 0;
+}
+
+.project-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.project-row:last-child {
+    border-bottom: none;
+}
+
+.project-name {
+    color: var(--text-color);
+}
+
+.project-status {
+    color: var(--accent-color);
+}
+
+.no-projects {
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.7;
+    padding: 10px 0;
+}
+
+.content-row.header {
+    font-weight: bold;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 8px;
+}
+
+.member-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.member-row:last-child {
+    border-bottom: none;
+}
+
+.member-row span {
+    flex: 2;
+}
+
+.member-row .member-name {
+    flex: 3;
+}
+
+.member-row .member-email {
+    text-align: right;
+}
+
+.content-row.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.content-row.header span {
+    flex: 2;
+}
+
+.content-row.header .name {
+    flex: 3;
+}
+
+.content-row.header .email {
+    text-align: right;
+}

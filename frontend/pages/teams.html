@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <script>
-        // Check for saved sidebar state
         const isSidebarExpanded = localStorage.getItem('sidebarExpanded') !== 'false';
         document.documentElement.classList.toggle('sb-expanded', isSidebarExpanded);
     </script>
@@ -18,7 +17,7 @@
     <script src="../assets/js/script.js" defer></script>
 </head>
 <body class="dark-mode">
-    <button class="burger-menu"></button>
+    <button class="burger-menu">
         <i class='bx bx-menu'></i>
     </button>
     <div class="mobile-nav-overlay"></div>
@@ -88,7 +87,7 @@
             <div class="page-header">
                 <div class="title-section">
                     <h1 class="page-title">Teams</h1>
-                    <a href="create_template.html" class="button primary">
+                    <a href="create_team.html" class="button primary">
                         <i class='bx bx-plus'></i>
                     </a>
                 </div>
@@ -96,7 +95,7 @@
 
             <div class="content-wrapper">
                 <div class="search-bar">
-                    <input type="text" placeholder="Søg ...">
+                    <input type="text" id="searchInput" placeholder="Søg ...">
                 </div>
 
                 <!-- Header for column alignment -->
@@ -107,6 +106,10 @@
                         </div>
                         <div class="edit">
                             <span>Edit</span>
+                            <span>Team Name</span>
+                        </div>
+                        <div class="edit">
+                            <span>Expiration Date</span>
                         </div>
                         <div class="members">
                             <span>Members</span>
@@ -114,88 +117,121 @@
                     </div>
                 </div>
 
-                <!-- Accordion items -->
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>WUOE24</span>
-                            </div>
-                            <div class="edit">
-                                <input type="checkbox" checked>
-                            </div>
-                            <div class="members">
-                                <span>23</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <p>James Portainer</p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>WUOF23</span>
-                            </div>
-                            <div class="edit">
-                                <input type="checkbox" checked>
-                            </div>
-                            <div class="members">
-                                <span>12</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Sarah English</p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>WUOE23</span>
-                            </div>
-                            <div class="edit">
-                                <input type="checkbox">
-                            </div>
-                            <div class="members">
-                                <span>8</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Lasse Bisgaard</p>
-                            <p>Sarah English</p>
-
-                        </div>
-                    </div>
+                <!-- Teams accordion container -->
+                <div class="accordion" id="teamsAccordion">
+                    <!-- Teams vil blive indsat her dynamisk -->
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        document.querySelectorAll('.accordion-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const content = header.nextElementSibling;
-                const isVisible = content?.style.display === 'block';
+        async function fetchTeams() {
+            try {
+                const response = await fetch('http://localhost:3000/api/teams-page');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch teams');
+                }
+                
+                const teams = await response.json();
+                console.log('Modtaget team data:', teams);
+                
+                const accordionContainer = document.getElementById('teamsAccordion');
+                if (!accordionContainer) {
+                    throw new Error('Kunne ikke finde accordion container');
+                }
+                
+                accordionContainer.innerHTML = '';
+                
+                if (teams.length === 0) {
+                    accordionContainer.innerHTML = '<p class="no-data">Ingen teams fundet</p>';
+                    return;
+                }
+                
+                teams.forEach(team => {
+                    const accordionItem = `
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <div class="team-info">
+                                    <img src="../assets/Icons/Teams.svg" alt="Teams" />
+                                    <span>${team.TeamName || 'N/A'}</span>
+                                </div>
+                                <div class="edit">
+                                    <span>${new Date(team.Expiration).toLocaleDateString() || 'N/A'}</span>
+                                </div>
+                                <div class="members">
+                                    <span>${team.MemberCount || 0}</span>
+                                    <button class="toggle-button">▼</button>
+                                </div>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="members-section">
+                                    <div class="content-row header">
+                                        <span class="name">Member Name</span>
+                                        <span class="email">Email</span>
+                                    </div>
+                                    ${team.Members && team.Members.length > 0 ? 
+                                        team.Members.map(member => `
+                                            <div class="member-row">
+                                                <span class="member-name">${member.Name}</span>
+                                                <span class="member-email">${member.Mail}</span>
+                                            </div>
+                                        `).join('')
+                                        : '<p class="no-members">No members</p>'
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    accordionContainer.innerHTML += accordionItem;
+                });
 
-                // Close all accordion items
-                document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
-                document.querySelectorAll('.toggle-button').forEach(btn => btn.textContent = '▼');
+                setupAccordion();
+                
+            } catch (error) {
+                console.error('Fejl ved hentning af teams:', error);
+                const accordionContainer = document.getElementById('teamsAccordion');
+                if (accordionContainer) {
+                    accordionContainer.innerHTML = `
+                        <div class="error-message">
+                            Der opstod en fejl ved hentning af teams: ${error.message}
+                        </div>
+                    `;
+                }
+            }
+        }
 
-                // Toggle current item
-                if (!isVisible && content) {
-                    content.style.display = 'block';
-                    header.querySelector('.toggle-button').textContent = '▲';
+        function setupAccordion() {
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const isVisible = content?.style.display === 'block';
+
+                    document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
+                    document.querySelectorAll('.toggle-button').forEach(btn => btn.textContent = '▼');
+
+                    if (!isVisible && content) {
+                        content.style.display = 'block';
+                        header.querySelector('.toggle-button').textContent = '▲';
+                    }
+                });
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                const teamName = item.querySelector('.team-info span').textContent.toLowerCase();
+                
+                if (teamName.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
                 }
             });
         });
+
+        document.addEventListener('DOMContentLoaded', fetchTeams);
     </script>
 </body>
 </html>

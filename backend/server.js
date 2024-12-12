@@ -19,6 +19,7 @@ const teamRoutes = require('./routes/teams');
 const accountCreationRoutes = require('./routes/account_creation');
 const loginRoutes = require('./routes/login');
 const usersPageRoutes = require('./routes/users_page');
+const teamsPageRoutes = require('./routes/teams_page');
 
 // Use routes
 app.use('/api/projects', projectRoutes);
