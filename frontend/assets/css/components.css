@@ -414,14 +414,15 @@ textarea.form-control {
 .password-container input,
 .custom-select2 .select-header {
     width: 404px;
-    padding: 5px;
+    padding-left: 15px;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     color: var(--text-color);
     font-size: 14px;
     font-family: inherit;
-    opacity: 1;
+    height: 48px;
+    box-sizing: border-box;
 }
 
 .form-control2::placeholder {
@@ -2137,7 +2138,7 @@ textarea.form-control2 {
 }
 
 .accordion-content {
-    display: block;
+    display: none;
     padding: 10px 20px;
     background: var(--border-color);
     border-top: 1px solid var(--accent-color);
@@ -2384,7 +2385,7 @@ textarea.form-control2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--secondary-color);
+    box-sizing: border-box;
 }
 
 .custom-select2 .select-header i {
