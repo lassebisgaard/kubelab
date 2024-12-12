@@ -530,10 +530,8 @@ window.BaseStepForm = class BaseStepForm {
 
     async handleSubmission() {
         try {
-            const formData = new FormData();
-            
             if (this.type === 'template') {
-                // Template data
+                const formData = new FormData();
                 formData.append('name', this.formData.name);
                 formData.append('description', this.formData.description);
                 formData.append('services', JSON.stringify(this.formData.services || []));
@@ -577,13 +575,7 @@ window.BaseStepForm = class BaseStepForm {
                 if (!response.ok) throw new Error('Failed to create project');
             }
 
-            // Vis success overlay og vent på animation
-            await this.showSuccessOverlay();
-            
-            // Vent 1.5 sekunder så brugeren kan se success beskeden
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Redirect til den korrekte side
+            // Redirect med det samme efter success
             window.location.href = this.type === 'template' 
                 ? '/pages/templates.html' 
                 : '/pages/projects.html';
