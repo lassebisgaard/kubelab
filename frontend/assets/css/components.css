@@ -3003,3 +3003,47 @@ label.option-label {
     border-bottom: 2px solid var(--border-color);
     margin-bottom: 8px;
 }
+
+.member-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.member-row:last-child {
+    border-bottom: none;
+}
+
+.member-row span {
+    flex: 2;
+}
+
+.member-row .member-name {
+    flex: 3;
+}
+
+.member-row .member-email {
+    text-align: right;
+}
+
+.content-row.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.content-row.header span {
+    flex: 2;
+}
+
+.content-row.header .name {
+    flex: 3;
+}
+
+.content-row.header .email {
+    text-align: right;
+}
