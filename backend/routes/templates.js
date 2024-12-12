@@ -90,13 +90,11 @@ router.post('/', upload.fields([
         // Parse services fra string til array
         if (req.body.services) {
             const services = JSON.parse(req.body.services);
-            if (services && services.length > 0) {
-                const serviceValues = services.map(serviceId => [result.insertId, serviceId]);
-                await connection.query(
-                    'INSERT INTO template_services (template_id, service_id) VALUES ?',
-                    [serviceValues]
-                );
-            }
+            const serviceValues = services.map(serviceId => [result.insertId, serviceId]);
+            await connection.query(
+                'INSERT INTO template_services (template_id, service_id) VALUES ?',
+                [serviceValues]
+            );
         }
 
         await connection.commit();
