@@ -410,7 +410,9 @@ textarea.form-control {
     transition: background-color 5000s ease-in-out 0s;
 }
 
-.form-control2 {
+.form-control2,
+.password-container input,
+.custom-select2 .select-header {
     width: 404px;
     padding: 5px;
     background-color: var(--card-background);
@@ -2368,7 +2370,6 @@ textarea.form-control2 {
 .custom-select2 {
     position: relative;
     width: 404px;
-    padding: 12px;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -2377,6 +2378,8 @@ textarea.form-control2 {
 }
 
 .custom-select2 .select-header {
+    padding: 15px;
+    height: 48px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -2629,9 +2632,10 @@ textarea.form-control2 {
 
 .password-container .password-input {
     width: 100%;
+    padding: 15px;
     padding-right: 60px;
     box-sizing: border-box;
-    height: 40px;
+    height: 48px;
     font-size: 14px;
 }
 
@@ -2961,4 +2965,84 @@ label.option-label {
     color: var(--text-color);
     text-transform: none;
     opacity: 1;
+}
+
+.projects-section {
+    padding: 10px 0;
+}
+
+.project-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.project-row:last-child {
+    border-bottom: none;
+}
+
+.project-name {
+    color: var(--text-color);
+}
+
+.project-status {
+    color: var(--accent-color);
+}
+
+.no-projects {
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.7;
+    padding: 10px 0;
+}
+
+.content-row.header {
+    font-weight: bold;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 8px;
+}
+
+.member-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.member-row:last-child {
+    border-bottom: none;
+}
+
+.member-row span {
+    flex: 2;
+}
+
+.member-row .member-name {
+    flex: 3;
+}
+
+.member-row .member-email {
+    text-align: right;
+}
+
+.content-row.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.content-row.header span {
+    flex: 2;
+}
+
+.content-row.header .name {
+    flex: 3;
+}
+
+.content-row.header .email {
+    text-align: right;
 }

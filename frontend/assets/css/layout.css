@@ -1,9 +1,18 @@
 /* === Page Layout === */
 main {
-    margin-left: var(--sb-width);
     padding: 3rem;
     transition: margin-left 0.5s ease-in-out;
     padding-bottom: 100px;
+}
+
+/* Tilføj margin-left kun på sider med sidebar */
+body:not(.no-sidebar) main {
+    margin-left: var(--sb-width);
+}
+
+/* Fjern margin-left på sider uden sidebar */
+body.no-sidebar main {
+    margin-left: 0;
 }
 
 /* === Content Wrapper === */
