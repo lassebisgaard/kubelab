@@ -817,20 +817,28 @@ window.BaseStepForm = class BaseStepForm {
     }
 
     showErrorMessage(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.innerHTML = `
-            <i class='bx bx-error'></i>
-            <p>${message}</p>
+        const errorOverlay = document.createElement('div');
+        errorOverlay.className = 'error-overlay';
+        errorOverlay.innerHTML = `
+            <div class="error-content">
+                <div class="error-icon">
+                    <i class='bx bx-x'></i>
+                </div>
+                <h2>Error</h2>
+                <p>${message}</p>
+            </div>
         `;
-
-        // Find det aktive step content og indsæt fejlmeddelelsen
-        const activeStep = document.querySelector('.step-content.active');
-        if (activeStep) {
-            // Fjern eksisterende fejlmeddelelser
-            activeStep.querySelectorAll('.error-message').forEach(el => el.remove());
-            activeStep.insertBefore(errorDiv, activeStep.firstChild);
-        }
+        
+        document.body.appendChild(errorOverlay);
+        
+        // Vis overlay
+        setTimeout(() => errorOverlay.classList.add('active'), 10);
+        
+        // Fjern overlay efter 3 sekunder
+        setTimeout(() => {
+            errorOverlay.classList.remove('active');
+            setTimeout(() => errorOverlay.remove(), 300);
+        }, 3000);
     }
 
     populateFormFields() {
