@@ -6,51 +6,81 @@ window.saveService = function(service) {
     window.SERVICES[service.id] = service;
 };
 
-// Update the sidebar toggle initialization
-function initSidebarToggle() {
-    const resizeBtn = document.querySelector('[data-resize-btn]');
-    if (resizeBtn) {
-        resizeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            document.documentElement.classList.toggle('sb-expanded');
-            localStorage.setItem('sidebarExpanded', 
-                document.documentElement.classList.contains('sb-expanded'));
+// Add this function to initialize services
+window.initializeServices = async function() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/services', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
+        
+        if (response.status === 401) {
+            window.location.href = '/pages/login.html';
+            return;
+        }
+
+        const services = await response.json();
+        services.forEach(service => {
+            window.SERVICES[service.ServiceId] = {
+                id: service.ServiceId,
+                name: service.ServiceName,
+                icon: service.Icon
+            };
+        });
+        return services;
+    } catch (error) {
+        console.error('Error initializing services:', error);
+        throw error;
     }
+};
+
+// Update initServiceFilters function
+function initServiceFilters() {
+    const filterContainer = document.querySelector('.services-filter');
+    const templateGrid = document.querySelector('.project-template-grid');
+    
+    if (!filterContainer || !templateGrid) return;
+
+    // Remove any existing event listeners
+    const newFilterContainer = filterContainer.cloneNode(true);
+    filterContainer.parentNode.replaceChild(newFilterContainer, filterContainer);
+    
+    newFilterContainer.addEventListener('click', (e) => {
+        const tag = e.target.closest('.service-tag');
+        if (!tag) return;
+        
+        // Toggle active state
+        tag.classList.toggle('active');
+        
+        // Get all active filters
+        const activeFilters = Array.from(newFilterContainer.querySelectorAll('.service-tag.active'))
+            .map(tag => tag.dataset.service);
+        
+        console.log('Active filters:', activeFilters); // Debug log
+        
+        // Filter template cards
+        templateGrid.querySelectorAll('.project-template-card').forEach(card => {
+            const cardServices = (card.dataset.services || '').split(',').filter(Boolean);
+            console.log('Card services:', cardServices); // Debug log
+            
+            const isVisible = activeFilters.length === 0 || 
+                            activeFilters.some(filter => cardServices.includes(filter));
+            
+            card.style.display = isVisible ? '' : 'none';
+        });
+    });
 }
 
 // Update the DOMContentLoaded event handler
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize sidebar toggle
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize services first
+    await window.initializeServices();
+    
+    // Then initialize other components
     initSidebarToggle();
-
-    // Theme toggle setup
-    const toggleSwitch = document.getElementById('dark-mode-toggle');
-    const rootElement = document.documentElement;
-
-    if (toggleSwitch) {
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme) {
-            rootElement.classList.add(currentTheme);
-            toggleSwitch.checked = currentTheme === 'dark-mode';
-        }
-
-        toggleSwitch.addEventListener('change', () => {
-            if (toggleSwitch.checked) {
-                rootElement.classList.remove('light-mode');
-                rootElement.classList.add('dark-mode');
-                localStorage.setItem('theme', 'dark-mode'); 
-            } else {
-                rootElement.classList.remove('dark-mode');
-                rootElement.classList.add('light-mode');
-                localStorage.setItem('theme', 'light-mode'); 
-            }
-        });
-    }
-
-    // Initialize other functionality
     initServiceFilters();
-    loadServices();
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
@@ -125,74 +155,12 @@ function showDeleteConfirmation(title, message, onConfirm) {
     });
 }
 
-function initServiceFilters() {
-    const filterContainer = document.querySelector('.services-filter');
-    const templateGrid = document.querySelector('.project-template-grid');
-    
-    if (filterContainer && templateGrid) {
-        filterContainer.innerHTML = window.renderServiceTags(
-            Object.keys(window.SERVICES),
-            { isSelectable: true }
-        );
-
-        const filterTags = filterContainer.querySelectorAll('.service-tag');
-        filterTags.forEach(tag => {
-            tag.addEventListener('click', () => {
-                tag.classList.toggle('active');
-                
-                const activeFilters = Array.from(filterTags)
-                    .filter(t => t.classList.contains('active'))
-                    .map(t => t.dataset.service);
-
-                templateGrid.querySelectorAll('.project-template-card').forEach(card => {
-                    const cardServices = Array.from(card.querySelectorAll('.service-tag'))
-                        .map(t => t.dataset.service);
-                    
-                    if (activeFilters.length === 0 || 
-                        activeFilters.some(filter => cardServices.includes(filter))) {
-                        card.style.display = '';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        });
-    }
-}
-
 function handlePageTransition(url) {
     document.body.classList.add('transition-active');
     
     setTimeout(() => {
         window.location.href = url;
     }, 300);
-}
-// Fetch services from database
-async function loadServices() {
-    try {
-        console.log('Starting service fetch...');
-        const response = await fetch('http://localhost:3000/api/services');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const services = await response.json();
-        
-        // Update global services object
-        services.forEach(service => {
-            window.SERVICES[service.ServiceId] = {
-                id: service.ServiceId,
-                name: service.ServiceName,
-                icon: service.Icon
-            };
-        });
-        
-        // Initialize service filters if they exist
-        initServiceFilters();
-    } catch (error) {
-        console.error('Failed to load services:', error);
-    }
 }
 
 // Mobile navigation

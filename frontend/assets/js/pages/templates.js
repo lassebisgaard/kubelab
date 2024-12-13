@@ -31,6 +31,7 @@ async function loadTemplates() {
                 '../assets/images/placeholder.webp',
             author: template.UserName || 'Unknown',
             dateCreated: new Date(template.DateCreated).toLocaleDateString(),
+            services: template.service_ids || '',
             serviceTagsHtml: template.service_ids ? 
                 window.renderServiceTags(template.service_ids.split(','), { isStatic: true }) : 
                 '<span class="text-secondary">No services added</span>'
@@ -48,6 +49,36 @@ async function loadTemplates() {
     } catch (error) {
         console.error('Error:', error);
         showErrorMessage('Failed to load templates');
+    }
+}
+
+async function loadServices() {
+    try {
+        const services = await window.initializeServices();
+        console.log('Loaded services:', services);
+
+        const servicesContainer = document.querySelector('.services-filter');
+        if (!servicesContainer) {
+            console.error('Services container not found');
+            return;
+        }
+
+        servicesContainer.innerHTML = services.map(service => `
+            <div class="service-tag service-tag--selectable" 
+                 data-service="${service.ServiceId}"
+                 role="button"
+                 tabindex="0">
+                <i class='bx ${service.Icon}'></i>
+                <span>${service.ServiceName}</span>
+            </div>
+        `).join('');
+
+        // Initialize service filters
+        window.initServiceFilters();
+
+    } catch (error) {
+        console.error('Error loading services:', error);
+        showErrorMessage('Failed to load services');
     }
 }
 
@@ -124,7 +155,8 @@ function initTemplateActions() {
 }
 
 // Initialiser søgning og templates når siden loades
-document.addEventListener('DOMContentLoaded', () => {
-    loadTemplates();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadServices();
+    await loadTemplates();
     initSearch();
 }); 

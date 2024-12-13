@@ -21,9 +21,12 @@ async function loadTemplates() {
             return;
         }
 
-        // Brug samme template struktur som templates.html
         templateGrid.innerHTML = templates.map(template => `
-            <div class="project-template-card" data-id="${template.TemplateId}">
+            <div class="project-template-card" 
+                 data-id="${template.TemplateId}"
+                 data-services="${template.service_ids || ''}"
+                 role="button"
+                 tabindex="0">
                 <div class="template-header">
                     <h3>${template.TemplateName}</h3>
                 </div>
@@ -39,19 +42,32 @@ async function loadTemplates() {
                 <div class="included-services text-secondary">Included services:</div>
                 <div class="service-tags-container">
                     ${template.service_ids ? 
-                        renderServiceTags(template.service_ids.split(','), { isStatic: true }) : 
+                        window.renderServiceTags(template.service_ids.split(','), { isStatic: true }) : 
                         '<span class="text-secondary">No services</span>'
                     }
-                </div>
-                <div class="template-meta text-secondary">
-                    <span>Created: ${new Date(template.DateCreated).toLocaleDateString()}</span>
                 </div>
             </div>
         `).join('');
 
         // Add click handlers
-        document.querySelectorAll('.project-template-card').forEach(card => {
-            card.addEventListener('click', () => selectTemplate(card.dataset.id));
+        templateGrid.querySelectorAll('.project-template-card').forEach(card => {
+            card.addEventListener('click', () => {
+                templateGrid.querySelectorAll('.project-template-card')
+                    .forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                
+                if (window.projectForm) {
+                    window.projectForm.formData = {
+                        template: {
+                            id: card.dataset.id,
+                            name: card.querySelector('h3').textContent,
+                            description: card.querySelector('p').textContent,
+                            services: card.dataset.services?.split(',') || []
+                        }
+                    };
+                    window.projectForm.nextButton.disabled = false;
+                }
+            });
         });
 
     } catch (error) {
@@ -62,20 +78,8 @@ async function loadTemplates() {
 
 async function loadServices() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/services', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.status === 401) {
-            window.location.href = '/pages/login.html';
-            return;
-        }
-
-        const services = await response.json();
-        console.log('Loaded services:', services); // Debug log
+        const services = await window.initializeServices();
+        console.log('Loaded services:', services);
 
         const servicesContainer = document.querySelector('.services-filter');
         if (!servicesContainer) {
@@ -84,11 +88,17 @@ async function loadServices() {
         }
 
         servicesContainer.innerHTML = services.map(service => `
-            <div class="service-tag service-tag--selectable" data-service="${service.ServiceId}">
+            <div class="service-tag service-tag--selectable" 
+                 data-service="${service.ServiceId}"
+                 role="button"
+                 tabindex="0">
                 <i class='bx ${service.Icon}'></i>
                 <span>${service.ServiceName}</span>
             </div>
         `).join('');
+
+        // Initialize service filters
+        window.initServiceFilters();
 
     } catch (error) {
         console.error('Error loading services:', error);
@@ -96,8 +106,8 @@ async function loadServices() {
     }
 }
 
-// Kald loadTemplates når siden loader
-document.addEventListener('DOMContentLoaded', () => {
-    loadTemplates();
-    loadServices();
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadServices();
+    await loadTemplates();
 }); 

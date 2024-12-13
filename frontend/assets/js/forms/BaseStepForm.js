@@ -683,58 +683,49 @@ window.BaseStepForm = class BaseStepForm {
 
     async loadServices() {
         try {
-            await window.loadServices();
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/services', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.status === 401) {
+                window.location.href = '/pages/login.html';
+                return;
+            }
+
+            const services = await response.json();
             
             const servicesSelection = document.querySelector('.services-selection');
             if (!servicesSelection) return;
             
             servicesSelection.querySelector('.loading-indicator')?.remove();
             
-            servicesSelection.innerHTML = Object.values(window.SERVICES).map(service => `
-                <div class="service-tag service-tag--selectable" data-service="${service.id}">
-                    <i class='bx ${service.icon}'></i>
-                    <span>${service.name}</span>
+            // Store services in window.SERVICES for later use
+            services.forEach(service => {
+                window.SERVICES[service.ServiceId] = {
+                    id: service.ServiceId,
+                    name: service.ServiceName,
+                    icon: service.Icon
+                };
+            });
+            
+            servicesSelection.innerHTML = services.map(service => `
+                <div class="service-tag service-tag--selectable" data-service="${service.ServiceId}">
+                    <i class='bx ${service.Icon}'></i>
+                    <span>${service.ServiceName}</span>
                     <button class="service-tag--remove" title="Remove service">
                         <i class='bx bx-x'></i>
                     </button>
                 </div>
             `).join('');
 
-            servicesSelection.querySelectorAll('.service-tag--selectable').forEach(tag => {
-                tag.addEventListener('click', async (e) => {
-                    if (e.target.closest('.service-tag--remove')) {
-                        const serviceId = tag.dataset.service;
-                        const serviceName = tag.querySelector('span').textContent;
-                        
-                        // Brug window.showDeleteConfirmation fra script.js
-                        window.showDeleteConfirmation(
-                            'Delete Service',
-                            `Are you sure you want to delete the service "${serviceName}"?`,
-                            async () => {
-                                try {
-                                    const response = await fetch(`http://localhost:3000/api/services/${serviceId}`, {
-                                        method: 'DELETE'
-                                    });
-                                    
-                                    if (!response.ok) throw new Error('Failed to delete service');
-                                    
-                                    tag.remove();
-                                    this.updateSelectedServices();
-                                } catch (error) {
-                                    console.error('Error deleting service:', error);
-                                    alert('Failed to delete service');
-                                }
-                            }
-                        );
-                        return;
-                    }
-                    
-                    tag.classList.toggle('active');
-                    this.updateSelectedServices();
-                });
-            });
+            // Add click handlers
+            this.initServiceHandlers();
         } catch (error) {
             console.error('Error loading services:', error);
+            this.showErrorMessage('Failed to load services');
         }
     }
 
@@ -752,7 +743,18 @@ window.BaseStepForm = class BaseStepForm {
         if (!templateGrid) return;
 
         try {
-            const response = await fetch('http://localhost:3000/api/templates');
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/templates', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.status === 401) {
+                window.location.href = '/pages/login.html';
+                return;
+            }
+
             const templates = await response.json();
             
             templateGrid.innerHTML = templates.map(t => `
@@ -766,9 +768,12 @@ window.BaseStepForm = class BaseStepForm {
                     </div>
                     <p class="text-secondary">${t.Description || 'No description'}</p>
                     <div class="preview-container preview-container--template">
-                        <img src="${t.Image || '../assets/images/placeholder.webp'}" alt="Template preview">
+                        <img src="${t.PreviewImage ? 
+                            `http://localhost:3000/uploads/images/${t.PreviewImage}` : 
+                            '../assets/images/placeholder.webp'}" 
+                             alt="Template preview">
                     </div>
-                    <div class="author text-secondary">By: ${t.Owner || 'Unknown'}</div>
+                    <div class="author text-secondary">By: ${t.UserName || 'Unknown'}</div>
                     <div class="included-services text-secondary">Included services:</div>
                     <div class="service-tags-container">
                         ${t.service_ids ? window.renderServiceTags(t.service_ids.split(','), { isStatic: true }) : 
@@ -780,7 +785,7 @@ window.BaseStepForm = class BaseStepForm {
                 </div>
             `).join('');
 
-            // Tilføj click på templates
+            // Add click handlers
             templateGrid.querySelectorAll('.project-template-card').forEach(card => {
                 card.addEventListener('click', () => {
                     templateGrid.querySelectorAll('.project-template-card')
@@ -799,6 +804,7 @@ window.BaseStepForm = class BaseStepForm {
             });
 
         } catch (error) {
+            console.error('Error loading templates:', error);
             templateGrid.innerHTML = `
                 <div class="error-message">
                     <i class='bx bx-error'></i>
