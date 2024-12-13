@@ -269,14 +269,11 @@ router.get('/:id/status', async (req, res) => {
         }
 
         const projectName = project[0].ProjectName;
-        console.log(`Checking status for project: ${projectName}`);
         
         const status = await portainerService.getStackStatus(projectName);
-        console.log(`Status returned for ${projectName}:`, status);
 
         res.json({ status });
     } catch (error) {
-        console.error('Error getting project status:', error);
         res.status(500).json({ error: 'Failed to get project status' });
     }
 });

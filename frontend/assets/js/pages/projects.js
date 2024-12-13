@@ -41,7 +41,6 @@ class ProjectManager {
             this.projects = await response.json();
             const user = JSON.parse(localStorage.getItem('user'));
 
-            // Hent status for alle projekter først
             await Promise.all(this.projects.map(async (project) => {
                 try {
                     const statusResponse = await fetch(`http://localhost:3000/api/projects/${project.ProjectId}/status`, {
@@ -56,19 +55,16 @@ class ProjectManager {
                         project.isRunning = statusData.status === 'online';
                     }
                 } catch (error) {
-                    console.error(`Error fetching status for project ${project.ProjectId}:`, error);
                     project.Status = 'unknown';
                     project.isRunning = false;
                 }
             }));
 
-            // Kategoriser projekter
             this.projects.forEach(project => {
                 project.ProjectType = project.UserId === user.UserId ? 'own' : 'other';
             });
 
         } catch (error) {
-            console.error('Error loading projects:', error);
             showErrorMessage('Failed to load projects');
         }
     }
@@ -200,7 +196,6 @@ class ProjectManager {
                 return statusData.status;
             }
         } catch (error) {
-            console.error(`Error updating status for project ${projectId}:`, error);
         }
         return 'unknown';
     }
@@ -236,7 +231,6 @@ class ProjectManager {
             await this.updateProjectStatus(projectId);
             
         } catch (error) {
-            console.error('Error:', error);
             alert(`Failed to ${action} project. Please try again.`);
             statusBadge.textContent = isRunning ? 'online' : 'offline';
             statusBadge.className = `status-badge ${isRunning ? 'online' : 'offline'}`;

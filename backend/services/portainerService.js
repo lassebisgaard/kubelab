@@ -43,13 +43,10 @@ class PortainerService {
 
     async getStackConfig(templateId) {
         try {
-            console.log('Getting stack config for templateId:', templateId);
             const [rows] = await pool.execute(
                 'SELECT YamlContent FROM Templates WHERE TemplateId = ?', 
                 [templateId]
             );
-
-            console.log('Template result:', rows);
 
             if (!rows?.[0]?.YamlContent) {
                 throw new Error('No YAML found for template');
@@ -98,15 +95,12 @@ class PortainerService {
     }
 
     async createStack(projectData) {
-        console.log('Creating stack with config:', projectData);
         try {
             const stackContent = await this.getStackConfig(projectData.templateId);
             if (!stackContent) {
                 throw new Error('Failed to get stack configuration');
             }
 
-            console.log('Project data received:', projectData);
-            
             const configuredStack = stackContent
                 .replace(/CHANGEME01/g, projectData.name)
                 .replace(/CHANGEME02/g, `${projectData.name}-phpmyadmin`)
@@ -114,8 +108,6 @@ class PortainerService {
                 .replace(/SUBDOMAIN02/g, `db.${projectData.domain}`)
                 .replace(/CHANGEME/g, projectData.name)
                 .replace(/SUBDOMAIN/g, projectData.domain);
-
-            console.log('Configured stack after replacements:', configuredStack);
 
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/create/swarm/string?endpointId=5`,
@@ -143,7 +135,6 @@ class PortainerService {
         try {
             const stack = await this.getStack(stackName);
             if (!stack) {
-                console.log(`Stack ${stackName} not found in Portainer`);
                 return;
             }
             const response = await this.client.delete(
@@ -152,11 +143,9 @@ class PortainerService {
                     headers: await this.getAuthHeaders()
                 }
             );
-            console.log(`Stack ${stackName} deleted from Portainer`);
             return response.data;
         } catch (error) {
             if (error.response?.status === 403) {
-                console.log(`No permission to delete stack ${stackName} from Portainer - continuing with database deletion`);
                 return;
             }
             console.error('Failed to delete stack from Portainer:', error.message);
@@ -168,14 +157,9 @@ class PortainerService {
         try {
             const stack = await this.getStack(stackName);
             if (!stack) {
-                console.log(`Stack ${stackName} not found in Portainer`);
                 return 'offline';
             }
 
-            // Log for debugging
-            console.log(`Stack ${stackName} status:`, stack.Status);
-
-            // Portainer status mapping
             const statusMap = {
                 1: 'online',     // Active
                 2: 'offline',    // Inactive
@@ -184,11 +168,9 @@ class PortainerService {
             };
 
             const status = statusMap[stack.Status] || 'unknown';
-            console.log(`Mapped status for ${stackName}:`, status);
             return status;
 
         } catch (error) {
-            console.error(`Error getting status for stack ${stackName}:`, error);
             return 'unknown';
         }
     }
@@ -199,11 +181,9 @@ class PortainerService {
             if (!stack) return false;
 
             if (stack.Status === 1) {
-                console.log(`Stack ${stackName} is already running`);
                 return true;
             }
 
-            console.log('Making start request for stack', stack.Id);
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/${stack.Id}/start?endpointId=5`,
                 {},
@@ -214,7 +194,6 @@ class PortainerService {
             
             return response.status === 200;
         } catch (error) {
-            console.error(`Failed to start stack ${stackName}:`, error);
             return false;
         }
     }
@@ -225,11 +204,9 @@ class PortainerService {
             if (!stack) return false;
 
             if (stack.Status === 2) {
-                console.log(`Stack ${stackName} is already stopped`);
                 return true;
             }
 
-            console.log('Making stop request for stack', stack.Id);
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/${stack.Id}/stop?endpointId=5`,
                 {},
@@ -240,7 +217,6 @@ class PortainerService {
 
             return response.status === 200;
         } catch (error) {
-            console.error(`Failed to stop stack ${stackName}:`, error);
             return false;
         }
     }
