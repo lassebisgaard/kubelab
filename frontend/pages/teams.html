@@ -82,7 +82,7 @@
                     <div class="accordion-item">
                         <div class="accordion-header">
                             <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
+                                <i class="bx bx-group"></i>
                                 <span>WUOE24</span>
                             </div>
                             <div class="edit">
@@ -90,7 +90,9 @@
                             </div>
                             <div class="members">
                                 <span>23</span>
-                                <button class="toggle-button">▼</button>
+                                <button class="toggle-button">
+                                    <i class="bx bx-chevron-down"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="accordion-content">
@@ -198,7 +200,7 @@
                         <div class="accordion-item">
                             <div class="accordion-header">
                                 <div class="team-info">
-                                    <img src="../assets/Icons/Teams.svg" alt="Teams" />
+                                    <i class="bx bx-group"></i>
                                     <span>${team.TeamName || 'N/A'}</span>
                                 </div>
                                 <div class="edit">
@@ -206,7 +208,9 @@
                                 </div>
                                 <div class="members">
                                     <span>${team.MemberCount || 0}</span>
-                                    <button class="toggle-button">▼</button>
+                                    <button class="toggle-button">
+                                        <i class="bx bx-chevron-down"></i>
+                                    </button>
                                 </div>
                             </div>
                             <div class="accordion-content">
@@ -253,11 +257,14 @@
                     const isVisible = content?.style.display === 'block';
 
                     document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
-                    document.querySelectorAll('.toggle-button').forEach(btn => btn.textContent = '▼');
+                    document.querySelectorAll('.toggle-button i').forEach(icon => {
+                        icon.classList.remove('bx-chevron-up');
+                        icon.classList.add('bx-chevron-down');
+                    });
 
                     if (!isVisible && content) {
                         content.style.display = 'block';
-                        header.querySelector('.toggle-button').textContent = '▲';
+                        header.querySelector('.toggle-button i').classList.replace('bx-chevron-down', 'bx-chevron-up');
                     }
                 });
             });
