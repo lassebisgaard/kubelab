@@ -364,15 +364,10 @@ button.action-button i {
     padding: 16px 24px;
 }
 
-.table-header {
-    background: var(--card-background);
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 500;
-}
-
 .table-row {
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .table-row:last-child {
@@ -380,11 +375,24 @@ button.action-button i {
 }
 
 .table-row:hover {
-    background-color: var(--card-background);
+    background-color: var(--hover-background);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-header {
+    background: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 500;
 }
 
 .table-row .project-controls {
     justify-content: flex-end;
+}
+
+.table-row .project-controls button {
+    position: relative;
+    z-index: 1;
 }
 
 /* Responsive design */
