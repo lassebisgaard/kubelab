@@ -267,29 +267,56 @@ function initializeTheme() {
 async function renderNavigation() {
     try {
         const currentPath = window.location.pathname;
-        const publicPages = ['/', '/index.html', '/pages/login.html', '/pages/account_creation.html'];
+        const publicPages = [
+            '/', 
+            '/index.html', 
+            '/pages/login.html', 
+            '/pages/account_creation.html'
+        ];
         
-        // Don't render navigation for public pages
+        // Hvis vi er på en offentlig side, skal vi ikke tjekke auth
         if (publicPages.some(page => currentPath.endsWith(page))) {
+            document.body.classList.add('no-sidebar');
             return;
         }
 
+        // Check auth for beskyttede sider
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/pages/login.html';
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/verify', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Invalid token');
+            }
+        } catch (error) {
+            console.error('Auth verification failed:', error);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/pages/login.html';
+            return;
+        }
+
+        // Hvis auth er ok, render navigation
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (!user) {
-            return;
-        }
-
-        // Rest of your existing renderNavigation code...
         const response = await fetch('../templates/navigation.html');
         const templateText = await response.text();
         
         const template = Handlebars.compile(templateText);
         const navigationHtml = template({
             user: user,
-            isProjectsPage: currentPath === 'projects.html',
-            isTemplatesPage: currentPath === 'templates.html',
-            isTeamsPage: currentPath === 'teams.html',
-            isUsersPage: currentPath === 'users.html'
+            isProjectsPage: currentPath.includes('projects.html'),
+            isTemplatesPage: currentPath.includes('templates.html'),
+            isTeamsPage: currentPath.includes('teams.html'),
+            isUsersPage: currentPath.includes('users.html')
         });
         
         document.querySelector('aside').innerHTML = navigationHtml;
