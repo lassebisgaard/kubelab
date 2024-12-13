@@ -18,7 +18,18 @@ async function loadTeams() {
         }
 
         const teams = await response.json();
-        // ... resten af din eksisterende kode
+        const teamsContainer = document.querySelector('.teams-grid');
+        if (!teamsContainer) return;
+
+        teamsContainer.innerHTML = teams.map(team => `
+            <div class="card team-card">
+                <div class="card-content">
+                    <h2>${team.TeamName}</h2>
+                    <p>Users: ${team.UserCount || 0}</p>
+                </div>
+            </div>
+        `).join('');
+
     } catch (error) {
         console.error('Error:', error);
         showErrorMessage('Failed to load teams');

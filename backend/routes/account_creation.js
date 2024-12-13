@@ -21,21 +21,16 @@ router.get('/', async (req, res) => {
 
 // Create new user
 router.post('/', async (req, res) => {
-    console.log('Received request body:', req.body); // Debug log
-    
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
         
         const { name, email, password, teamId, role, expiration } = req.body;
         
-        console.log('Extracted data:', { name, email, teamId, role, expiration }); // Debug log
-        
         // Validér input data
         if (!name || !email || !password || !teamId) {
-            console.log('Validation failed:', { name, email, password, teamId }); // Debug log
             return res.status(400).json({ 
-                error: 'Manglende påkrævede felter',
+                error: 'Missing required fields',
                 missing: {
                     name: !name,
                     email: !email,
@@ -45,8 +40,6 @@ router.post('/', async (req, res) => {
             });
         }
 
-        console.log('Attempting to create user...'); // Debug log
-        
         // Hash password før det gemmes
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         
@@ -55,8 +48,6 @@ router.post('/', async (req, res) => {
             'INSERT INTO Users (Name, Mail, Password, TeamId, Expiration) VALUES (?, ?, ?, ?, ?)',
             [name, email, hashedPassword, teamId, expiration]
         );
-        
-        console.log('User created:', userResult); // Debug log
         
         // Opret rolle for brugeren
         const [roleResult] = await connection.execute(
@@ -81,17 +72,16 @@ router.post('/', async (req, res) => {
         
     } catch (error) {
         await connection.rollback();
-        console.error('Detailed error:', error); // Mere detaljeret error logging
-        console.error('Fejl ved oprettelse af bruger:', error);
+        console.error('Error creating user:', error);
         
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ 
-                error: 'En bruger med denne email findes allerede'
+                error: 'A user with this email already exists'
             });
         }
         
         res.status(500).json({ 
-            error: 'Kunne ikke oprette bruger',
+            error: 'Could not create user',
             details: error.message 
         });
     } finally {

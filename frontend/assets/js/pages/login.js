@@ -70,3 +70,14 @@ function showErrorMessage(message) {
         errorElement.style.display = 'block';
     }
 }
+
+async function handleForgotPassword() {
+    const email = document.getElementById('email').value;
+    
+    if (!email) {
+        showErrorMessage('Please enter your email');
+        return;
+    }
+    
+    showErrorMessage('Password reset function is not implemented in the prototype');
+}

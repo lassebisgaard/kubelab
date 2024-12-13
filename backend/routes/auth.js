@@ -4,6 +4,7 @@ const pool = require('../config/database');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { verifyToken, JWT_SECRET } = require('../middleware/auth');
+const crypto = require('crypto');
 
 // Verify token endpoint
 router.get('/verify', verifyToken, (req, res) => {
@@ -62,5 +63,9 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'An error occurred during login' });
     }
 });
+
+// Fjern eller udkommenter disse routes da de ikke bruges i prototypen
+// router.post('/forgot-password', async (req, res) => { ... });
+// router.post('/reset-password', async (req, res) => { ... });
 
 module.exports = router; 

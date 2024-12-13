@@ -1,22 +1,9 @@
 async function loadServices() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/services', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.status === 401) {
-            window.location.href = '/pages/login.html';
-            return;
-        }
-
-        const services = await response.json();
+        const services = await fetchServices();
         renderServices(services);
     } catch (error) {
-        console.error('Error:', error);
-        showErrorMessage('Failed to load services');
+        console.error('Failed to load services:', error);
     }
 }
 
