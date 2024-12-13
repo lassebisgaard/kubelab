@@ -1,41 +1,129 @@
-# Kubelab Frontend Guide
+# Kubelab Guide
+
+## Hurtig Start
+### Forudsætninger
+- Node.js installeret
+- Git installeret
+- Docker Desktop installeret og kørende
+
+### Database Setup
+1. Opret en ny database kaldet `Kubelab` i MySQL
+   - Via phpMyAdmin:
+     - Åbn phpMyAdmin
+     - Klik "Ny" i venstre sidebar
+     - Indtast `Kubelab` som databasenavn
+     - Vælg `utf8mb4_general_ci` som collation
+     - Klik "Opret"
+2. Importér database struktur og data
+   - Find `Kubelab.sql` i projektets rod
+   - I phpMyAdmin, vælg den nye `Kubelab` database
+   - Gå til "Importér" fanen
+   - Vælg `Kubelab.sql` filen
+   - Klik "Udfør"
+
+### Projekt Setup
+1. Klon projektet og installer dependencies
+   ```bash
+   git clone <projekt-url>
+   cd backend
+   npm install
+   ```
+
+### Start Projektet
+2. Start backend: `npm run dev` i `/backend`
+3. Åbn frontend i browser: `/frontend/pages/index.html`
+
+### Test Brugere
+4. Log ind med en af følgende test brugere:
+   ### Admin bruger:
+   - Email: admin@live.dk
+   - Password: admin
+   
+   ### Standard bruger:
+   - Email: user@live.dk
+   - Password: user
 
 ## Projektstruktur
-- `/css` - Alle stylesheets
-- `/js` - JavaScript filer
-- `/pages` - Alle sider
-- `assets/Icons` - SVG ikoner og billeder
+### Frontend (`/frontend`)
+- `/assets` - Statiske filer (CSS, JS, Icons)
+- `/pages` - HTML sider
+- `/templates` - Genbrugelige templates
 
-## Kom i gang
-1. Brug `page-template.html` som udgangspunkt for nye sider
-2. Tilpas title, overskrift og indhold efter behov
-3. Vælg mellem grid layouts (2x2, 3x3 eller list)
+### Backend (`/backend`)
+- `/routes` - API endpoints
+- `/config` - Database og server konfiguration
+- `/middleware` - Authentication og validering
+- `/utils` - Hj��lpefunktioner
 
-## CSS Struktur
-- `variables.css` - Farver og grundlæggende variabler
-- `main.css` - Basis styling og reset
-- `layout.css` - Side layout og grid system
-- `navigation.css` - Sidebar og navigation
-- `components.css` - Genbrugelige komponenter
+### Database
+- MySQL database med følgende tabeller:
+  - `Users` - Brugerdata og teams
+  - `Teams` - Team information
+  - `Projects` - Projekt konfigurationer
+  - `Templates` - YAML templates
+  - `Services` - Tilgængelige services
+  - `Roles` - Brugerrettigheder
 
-## Design System
+## Kernekoncepter
 
-### Farver
-Alle farver er defineret som CSS variabler i `variables.css`. Brug altid disse variabler frem for hardcodede farver: 
+### Database Setup
+- MySQL som primær database
+- Automatisk backup system
+- Relationel struktur mellem users, teams og projekter
+- YAML configs gemmes i database
 
-## Komponenter
-Eksisterende komponenter findes i `components.css`:
-- `.card` - Kort med hover effekt
-- `.create-button` - Grøn action knap
-- `.theme-toggle` - Tema skifter
+### Templates
+- Foruddefinerede Docker stacks
+- Kan indeholde multiple services
+- Bruges som basis for nye projekter
+- Konfigureres gennem brugervenlig formular
+
+### Projekter
+- Oprettes fra templates
+- Kører som Docker stacks
+- Har unik subdomain
+- Tilhører én specifik bruger
+
+### Teams
+- Administrativ gruppering af brugere
+- Styres af admin
+- Har udløbsdato
+
+## Hovedfunktioner
+1. **Projekt Management**
+   - Vælg template
+   - Start projekt
+   - Stop projekt
+   - Slet projekt
+
+2. **Template System**
+   - For undervisere:
+     - Opret templates
+     - Administrer templates
+   - For studerende:
+     - Vælg mellem eksisterende templates
+     - Start projekt fra template
+
+## API Endpoints
+### Vigtigste endpoints:
+- `POST /api/auth/login` - Login
+- `GET /api/projects` - List projekter
+- `POST /api/projects` - Opret projekt
+- `GET /api/templates` - List templates
+- `GET /api/teams` - List teams
+
+## Sikkerhed
+- Login påkrævet
+- JWT authentication
+- Role-based access
+- Sikre passwords
 
 ## Best Practices
-1. Brug CSS variabler til farver og spacing
-2. Opret nye komponenter i `components.css`
-3. Hold sidebar og navigation konsistent på tværs af sider
-4. Brug grid systemet til layout
-5. Følg den eksisterende HTML struktur fra templaten
+1. Vælg den rigtige template til dit behov
+2. Husk at stoppe projekter der ikke bruges
+3. Kontakt administrator ved problemer
 
-## Dark/Light Mode
-Temaer styres via `.dark-mode` og `.light-mode` klasser på body elementet. 
-Alle farver tilpasses automatisk via CSS variabler.
+## Fejlfinding
+- Kontakt administrator hvis projektet ikke virker
+- Tjek at projektet er startet
+- Prøv at genstarte projektet
