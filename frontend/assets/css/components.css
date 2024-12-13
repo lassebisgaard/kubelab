@@ -3191,36 +3191,3 @@ label.option-label {
     margin-bottom: 16px;
 }
 
-/* Selected members styling in step 2 */
-.services-selection .service-tag {
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    padding: 8px 12px;
-    border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: 4px;
-}
-
-.services-selection .service-tag i {
-    color: var(--accent-color);
-}
-
-.services-selection .service-tag .service-tag--remove {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    opacity: 0.7;
-    cursor: pointer;
-    padding: 0;
-    margin-left: 4px;
-    display: flex;
-    align-items: center;
-}
-
-.services-selection .service-tag .service-tag--remove:hover {
-    opacity: 1;
-    color: var(--secondary-color);
-}
-

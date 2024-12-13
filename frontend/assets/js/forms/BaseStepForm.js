@@ -596,34 +596,75 @@ window.BaseStepForm = class BaseStepForm {
     async loadServices() {
         try {
             const services = await window.initializeServices();
-            console.log('Loaded services:', services);
-
-            const servicesSelection = document.querySelector('.services-selection');
-            if (!servicesSelection) {
-                console.error('Services selection container not found');
-                return;
-            }
+            const servicesContainer = document.querySelector('.services-selection');
+            if (!servicesContainer) return;
 
             // Fjern loading indicator
-            servicesSelection.querySelector('.loading-indicator')?.remove();
+            servicesContainer.querySelector('.loading-indicator')?.remove();
 
-            // Tilføj service tags
-            services.forEach(service => {
-                const serviceTag = document.createElement('div');
-                serviceTag.className = 'service-tag service-tag--selectable';
-                serviceTag.dataset.service = service.ServiceId;
-                serviceTag.innerHTML = `
+            // Brug samme HTML struktur som i templates.js
+            servicesContainer.innerHTML = services.map(service => `
+                <div class="service-tag service-tag--selectable" 
+                     data-service="${service.ServiceId}"
+                     role="button"
+                     tabindex="0">
                     <i class='bx ${service.Icon}'></i>
                     <span>${service.ServiceName}</span>
-                `;
+                    ${this.type === 'template' ? `
+                        <button class="service-tag--remove" title="Remove service">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
 
-                // Tilføj click handler
-                serviceTag.addEventListener('click', () => {
-                    serviceTag.classList.toggle('active');
-                    this.updateSelectedServices();
+            // Tilføj click handlers som i templates.js
+            servicesContainer.querySelectorAll('.service-tag--selectable').forEach(tag => {
+                // Handle service selection
+                tag.addEventListener('click', (e) => {
+                    if (!e.target.closest('.service-tag--remove')) {
+                        tag.classList.toggle('active');
+                        this.updateSelectedServices();
+                    }
                 });
 
-                servicesSelection.appendChild(serviceTag);
+                // Handle remove button hvis det er en template
+                if (this.type === 'template') {
+                    const removeBtn = tag.querySelector('.service-tag--remove');
+                    removeBtn?.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (window.showDeleteConfirmation) {
+                            window.showDeleteConfirmation(
+                                'Delete Service',
+                                'Are you sure you want to delete this service?',
+                                async () => {
+                                    try {
+                                        const token = localStorage.getItem('token');
+                                        const response = await fetch(`http://localhost:3000/api/services/${tag.dataset.service}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'Authorization': `Bearer ${token}`
+                                            }
+                                        });
+                                        
+                                        if (response.status === 409) {
+                                            this.showErrorMessage('Cannot delete service as it is being used by one or more templates');
+                                            return;
+                                        }
+                                        
+                                        if (!response.ok) throw new Error('Failed to delete service');
+                                        
+                                        tag.remove();
+                                        this.updateSelectedServices();
+                                    } catch (error) {
+                                        console.error('Error deleting service:', error);
+                                        this.showErrorMessage('Failed to delete service');
+                                    }
+                                }
+                            );
+                        }
+                    });
+                }
             });
 
         } catch (error) {
@@ -953,13 +994,7 @@ window.BaseStepForm = class BaseStepForm {
 
                     const newService = await response.json();
                     
-                    // Add to services selection and window.SERVICES
-                    window.SERVICES[newService.ServiceId] = {
-                        id: newService.ServiceId,
-                        name: newService.ServiceName,
-                        icon: newService.Icon
-                    };
-
+                    // Add to services selection
                     const servicesSelection = document.querySelector('.services-selection');
                     if (servicesSelection) {
                         const serviceTag = document.createElement('div');
@@ -973,43 +1008,59 @@ window.BaseStepForm = class BaseStepForm {
                             </button>
                         `;
 
-                        servicesSelection.appendChild(serviceTag);
-                        
                         // Add click handlers
-                        serviceTag.addEventListener('click', async (e) => {
-                            if (e.target.closest('.service-tag--remove')) {
-                                if (confirm('Are you sure you want to delete this service?')) {
-                                    try {
-                                        const token = localStorage.getItem('token');
-                                        const response = await fetch(`http://localhost:3000/api/services/${newService.ServiceId}`, {
-                                            method: 'DELETE',
-                                            headers: {
-                                                'Authorization': `Bearer ${token}`
-                                            }
-                                        });
-
-                                        if (response.status === 409) {
-                                            this.showErrorMessage('Cannot delete service as it is being used by one or more templates');
-                                            return;
-                                        }
-                                        
-                                        if (!response.ok) throw new Error('Failed to delete service');
-                                        
-                                        serviceTag.remove();
-                                        delete window.SERVICES[newService.ServiceId];
-                                        this.updateSelectedServices();
-                                    } catch (error) {
-                                        console.error('Error deleting service:', error);
-                                        this.showErrorMessage('Failed to delete service');
-                                    }
-                                }
-                                return;
+                        serviceTag.addEventListener('click', (e) => {
+                            if (!e.target.closest('.service-tag--remove')) {
+                                serviceTag.classList.toggle('active');
+                                this.updateSelectedServices();
                             }
-                            
-                            serviceTag.classList.toggle('active');
-                            this.updateSelectedServices();
                         });
+
+                        // Add remove button handler
+                        const removeBtn = serviceTag.querySelector('.service-tag--remove');
+                        removeBtn?.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            if (window.showDeleteConfirmation) {
+                                window.showDeleteConfirmation(
+                                    'Delete Service',
+                                    `Are you sure you want to delete the service "${newService.ServiceName}"?`,
+                                    async () => {
+                                        try {
+                                            const token = localStorage.getItem('token');
+                                            const response = await fetch(`http://localhost:3000/api/services/${newService.ServiceId}`, {
+                                                method: 'DELETE',
+                                                headers: {
+                                                    'Authorization': `Bearer ${token}`
+                                                }
+                                            });
+                                            
+                                            if (response.status === 409) {
+                                                this.showErrorMessage('Cannot delete service as it is being used by one or more templates');
+                                                return;
+                                            }
+                                            
+                                            if (!response.ok) throw new Error('Failed to delete service');
+                                            
+                                            serviceTag.remove();
+                                            this.updateSelectedServices();
+                                        } catch (error) {
+                                            console.error('Error deleting service:', error);
+                                            this.showErrorMessage('Failed to delete service');
+                                        }
+                                    }
+                                );
+                            }
+                        });
+
+                        servicesSelection.appendChild(serviceTag);
                     }
+
+                    // Add to window.SERVICES
+                    window.SERVICES[newService.ServiceId] = {
+                        id: newService.ServiceId,
+                        name: newService.ServiceName,
+                        icon: newService.Icon
+                    };
 
                     closeModal();
                 } catch (error) {
