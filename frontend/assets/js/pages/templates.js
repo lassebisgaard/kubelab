@@ -13,7 +13,6 @@ async function loadTemplates() {
         }
         
         const templates = await response.json();
-        
         const templateGrid = document.querySelector('.project-template-grid');
         if (!templateGrid) return;
 
@@ -38,17 +37,20 @@ async function loadTemplates() {
         })).map(templateFunction).join('');
 
         templateGrid.innerHTML = templatesHtml;
-
-        // Fjern loading indicator
-        const loadingIndicator = templateGrid.querySelector('.loading-indicator');
-        if (loadingIndicator) {
-            loadingIndicator.remove();
-        }
-
+        
+        // Initialize template actions
         initTemplateActions();
+        
+        // Hide loading indicator
+        document.querySelector('.loading-indicator')?.classList.add('hidden');
     } catch (error) {
         console.error('Error:', error);
-        showErrorMessage('Failed to load templates');
+        document.querySelector('.loading-indicator')?.classList.add('hidden');
+        // Vis fejlbesked til brugeren
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'error-message';
+        errorMessage.textContent = 'Failed to load templates';
+        document.querySelector('.content-wrapper')?.appendChild(errorMessage);
     }
 }
 
@@ -107,7 +109,13 @@ function initTemplateActions() {
         card.querySelector('.edit-button')?.addEventListener('click', async (e) => {
             e.stopPropagation();
             try {
-                const response = await fetch(`http://localhost:3000/api/templates/${templateId}`);
+                const token = localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3000/api/templates/${templateId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
                 if (!response.ok) throw new Error('Failed to fetch template');
                 
                 const template = await response.json();
@@ -128,7 +136,7 @@ function initTemplateActions() {
             }
         });
         
-        // Delete knap handler (uændret)
+        // Delete knap handler
         card.querySelector('.delete-button')?.addEventListener('click', (e) => {
             e.stopPropagation();
             if (window.showDeleteConfirmation) {
@@ -137,8 +145,12 @@ function initTemplateActions() {
                     'Are you sure you want to delete this template?',
                     async () => {
                         try {
+                            const token = localStorage.getItem('token');
                             const response = await fetch(`http://localhost:3000/api/templates/${templateId}`, {
-                                method: 'DELETE'
+                                method: 'DELETE',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
                             });
                             
                             if (!response.ok) throw new Error('Failed to delete template');
