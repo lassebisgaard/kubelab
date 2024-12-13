@@ -74,32 +74,44 @@ router.post('/', upload.fields([
         
         // Debug logs
         console.log('File received:', req.files);
-        console.log('File content:', req.files?.yaml?.[0]?.buffer?.toString('utf8'));
         console.log('Form data:', req.body);
         
-        // Håndter YAML fil
-        const yamlContent = req.files?.yaml?.[0]?.buffer?.toString('utf8') || req.body.yamlContent || null;
+        // Handle YAML content
+        const yamlContent = req.body.yamlContent || null;
         const previewPath = req.files?.preview?.[0]?.filename || null;
+        const userId = req.body.userId || null;
         
-        // Insert template med UserId og YamlContent
+        // Insert template with UserId and YamlContent
         const [result] = await connection.execute(
             'INSERT INTO Templates (TemplateName, Description, YamlContent, PreviewImage, DateCreated, UserId) VALUES (?, ?, ?, ?, NOW(), ?)',
-            [req.body.name, req.body.description, yamlContent, previewPath, req.body.userId]
+            [
+                req.body.name || '', 
+                req.body.description || '', 
+                yamlContent,
+                previewPath,
+                userId
+            ]
         );
 
-        // Parse services fra string til array
+        // Handle services
         if (req.body.services) {
-            const services = JSON.parse(req.body.services);
-            const serviceValues = services.map(serviceId => [result.insertId, serviceId]);
-            await connection.query(
-                'INSERT INTO template_services (template_id, service_id) VALUES ?',
-                [serviceValues]
-            );
+            try {
+                const services = JSON.parse(req.body.services);
+                if (Array.isArray(services) && services.length > 0) {
+                    const serviceValues = services.map(serviceId => [result.insertId, serviceId]);
+                    await connection.query(
+                        'INSERT INTO template_services (template_id, service_id) VALUES ?',
+                        [serviceValues]
+                    );
+                }
+            } catch (e) {
+                console.error('Error parsing services:', e);
+            }
         }
 
         await connection.commit();
         
-        // Hent den oprettede template med alle detaljer
+        // Fetch the created template with all details
         const [newTemplate] = await connection.execute(`
             SELECT t.*, u.Name as UserName
             FROM Templates t
@@ -111,7 +123,10 @@ router.post('/', upload.fields([
     } catch (error) {
         await connection.rollback();
         console.error('Error creating template:', error);
-        res.status(500).json({ error: 'Failed to create template' });
+        res.status(500).json({ 
+            error: 'Failed to create template',
+            details: error.message 
+        });
     } finally {
         connection.release();
     }

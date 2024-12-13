@@ -547,26 +547,26 @@ window.BaseStepForm = class BaseStepForm {
         formData.append('description', this.formData.description);
         formData.append('services', JSON.stringify(this.formData.services || []));
         
-        // Tilføj bruger ID fra localStorage
+        // Add user ID from localStorage
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         formData.append('userId', user.UserId);
         
+        if (this.formData.yamlFile) {
+            formData.append('yaml', this.formData.yamlFile);
+            // Also append the YAML content as text
+            const yamlContent = await this.formData.yamlFile.text();
+            formData.append('yamlContent', yamlContent);
+        }
+        
         if (this.formData.previewImage) {
-            // Hvis previewImage er en base64 string, konverter til fil
-            if (this.formData.previewImage.startsWith('data:')) {
+            // If previewImage is a base64 string, convert to blob
+            if (typeof this.formData.previewImage === 'string' && this.formData.previewImage.startsWith('data:')) {
                 const response = await fetch(this.formData.previewImage);
                 const blob = await response.blob();
                 formData.append('preview', blob, 'preview.png');
             } else {
                 formData.append('preview', this.formData.previewImage);
             }
-        }
-        
-        if (this.formData.yamlFile) {
-            // Læs YAML filens indhold før vi sender den
-            const yamlContent = await this.formData.yamlFile.text();
-            formData.append('yaml', this.formData.yamlFile);
-            formData.append('yamlContent', yamlContent); // Tilføj selve indholdet som separat felt
         }
 
         const method = this.editMode ? 'PUT' : 'POST';
