@@ -32,14 +32,13 @@
                 <!-- Project card template -->
                 <script id="project-details-template" type="text/x-handlebars-template">
                     <div class="project-card" data-project-id="{{id}}">
-                        <!-- Header section med titel, status og controls -->
                         <div class="project-header">
-                            <div class="header-left">
-                                <h1>{{name}}</h1>
+                            <div class="title-section">
+                                <h2>{{name}}</h2>
                                 <div class="status-badge {{status}}">{{status}}</div>
                             </div>
                             <div class="project-controls">
-                                <button class="action-button" title="Power">
+                                <button class="action-button {{#if isRunning}}active{{/if}}" title="Power">
                                     <i class='bx bx-power-off'></i>
                                 </button>
                                 <button class="action-button" title="Restart">

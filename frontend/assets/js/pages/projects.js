@@ -13,7 +13,34 @@ async function loadProjects() {
         }
         
         const projects = await response.json();
-        
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        // Hent status for alle projekter først
+        await Promise.all(projects.map(async (project) => {
+            try {
+                const statusResponse = await fetch(`http://localhost:3000/api/projects/${project.ProjectId}/status`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (statusResponse.ok) {
+                    const statusData = await statusResponse.json();
+                    project.Status = statusData.status;
+                    project.isRunning = statusData.status === 'online';
+                }
+            } catch (error) {
+                console.error(`Error fetching status for project ${project.ProjectId}:`, error);
+                project.Status = 'unknown';
+                project.isRunning = false;
+            }
+        }));
+
+        // Kategoriser projekter
+        projects.forEach(project => {
+            project.ProjectType = project.UserId === user.UserId ? 'own' : 'other';
+        });
+
         // Tjek hvilken side vi er på
         const isDetailsPage = window.location.pathname.includes('project_details.html');
         
@@ -22,9 +49,13 @@ async function loadProjects() {
         } else {
             await loadProjectsList(projects);
         }
+
+        // Start status opdateringer efter rendering
+        startStatusUpdates();
+
     } catch (error) {
-        console.error('Error:', error);
-        showErrorMessage('Failed to load projects. Please try again.');
+        console.error('Error loading projects:', error);
+        showErrorMessage('Failed to load projects');
     }
 }
 
@@ -89,24 +120,39 @@ async function loadProjectsList(projects) {
 
 async function loadProjectDetails(projects) {
     const projectId = new URLSearchParams(window.location.search).get('id');
+    
     if (!projectId) {
         window.location.href = 'projects.html';
         return;
     }
 
     const project = projects.find(p => p.ProjectId.toString() === projectId);
+    
     if (!project) {
         showErrorMessage('Project not found');
         return;
     }
 
+    // Brug den status vi allerede har fra projects listen
+    project.isRunning = project.Status === 'online';
+
+    // Render med den initielle status
+    await renderProjectDetails(project);
+
+    // Start status opdateringer
+    startStatusUpdates();
+}
+
+// Ny hjælpefunktion til rendering
+async function renderProjectDetails(project) {
     const templateSource = document.getElementById('project-details-template');
     const templateFunction = Handlebars.compile(templateSource.innerHTML);
 
     const templateData = {
         id: project.ProjectId,
         name: project.ProjectName,
-        status: project.Status || 'offline',
+        status: project.Status,
+        isRunning: project.isRunning,
         owner: project.Owner || 'Not specified',
         team: project.TeamName || 'Not specified',
         domain: `${project.Domain}.kubelab.dk`,
@@ -176,11 +222,12 @@ async function handlePowerToggle(projectId, button) {
 
         if (!response.ok) throw new Error(`Failed to ${action} project`);
 
-        const result = await response.json();
-        button.classList.toggle('active', result.status === 'online');
+        // Wait a moment for Portainer to update
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
-        statusBadge.textContent = result.status;
-        statusBadge.className = `status-badge ${result.status}`;
+        // Update status
+        const newStatus = await updateProjectStatus(projectId);
+        console.log(`New status after ${action}:`, newStatus);
         
     } catch (error) {
         console.error('Error:', error);
@@ -313,9 +360,75 @@ function initializeSearchFields() {
     }
 }
 
-// Tilføj denne linje efter at projekterne er blevet indlæst
+// Add this shared function for status updates
+async function updateProjectStatus(projectId) {
+    try {
+        const token = localStorage.getItem('token');
+        console.log(`Updating status for project ${projectId}...`);
+        
+        const statusResponse = await fetch(`http://localhost:3000/api/projects/${projectId}/status`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        console.log('Status response:', statusResponse);
+        
+        if (statusResponse.ok) {
+            const statusData = await statusResponse.json();
+            console.log('Received status data:', statusData);
+            
+            const projectElements = document.querySelectorAll(`[data-project-id="${projectId}"]`);
+            console.log(`Found ${projectElements.length} elements to update`);
+            
+            projectElements.forEach(element => {
+                const statusBadge = element.querySelector('.status-badge');
+                const powerButton = element.querySelector('.action-button[title="Power"]');
+                
+                if (statusBadge) {
+                    console.log(`Updating status badge from ${statusBadge.textContent} to ${statusData.status}`);
+                    statusBadge.textContent = statusData.status;
+                    statusBadge.className = `status-badge ${statusData.status}`;
+                }
+
+                if (powerButton) {
+                    console.log(`Updating power button: ${statusData.status === 'online' ? 'active' : 'inactive'}`);
+                    powerButton.classList.toggle('active', statusData.status === 'online');
+                }
+            });
+
+            return statusData.status;
+        } else {
+            console.warn('Status response not OK:', await statusResponse.text());
+        }
+    } catch (error) {
+        console.error(`Error updating status for project ${projectId}:`, error);
+    }
+    return 'unknown';
+}
+
+// Add periodic status updates
+function startStatusUpdates() {
+    setInterval(() => {
+        document.querySelectorAll('[data-project-id]').forEach(container => {
+            const projectId = container.dataset.projectId;
+            updateProjectStatus(projectId);
+        });
+    }, 10000); // Update every 10 seconds
+}
+
+// Update the initialization
 document.addEventListener('DOMContentLoaded', () => {
-    loadProjects().then(() => {
-        initializeSearchFields();
-    });
+    const isProjectsPage = window.location.pathname.includes('projects.html');
+    const isCreateProject = window.location.pathname.includes('create_project.html');
+    const isDetailsPage = window.location.pathname.includes('project_details.html');
+
+    if (isProjectsPage || isDetailsPage) {
+        loadProjects().then(() => {
+            initializeSearchFields();
+            startStatusUpdates(); // Start periodic updates
+        });
+    } else if (isCreateProject) {
+        initProjectCreation();
+    }
 }); 

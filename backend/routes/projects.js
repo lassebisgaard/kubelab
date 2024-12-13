@@ -268,7 +268,12 @@ router.get('/:id/status', async (req, res) => {
             return res.status(404).json({ error: 'Project not found' });
         }
 
-        const status = await portainerService.getStackStatus(project[0].ProjectName);
+        const projectName = project[0].ProjectName;
+        console.log(`Checking status for project: ${projectName}`);
+        
+        const status = await portainerService.getStackStatus(projectName);
+        console.log(`Status returned for ${projectName}:`, status);
+
         res.json({ status });
     } catch (error) {
         console.error('Error getting project status:', error);
