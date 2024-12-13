@@ -32,7 +32,7 @@ window.BaseStepForm = class BaseStepForm {
     getMaxSteps() {
         const stepMap = {
             'template': 2,
-            'project': 2,
+            'project': 3,
             'team': 2,
             'user': 2
         };
@@ -389,13 +389,16 @@ window.BaseStepForm = class BaseStepForm {
     }
 
     handleNext() {
-        if (this.currentStep < this.maxSteps) {
-            if (this.validateCurrentStep()) {
+        if (this.validateCurrentStep()) {
+            if (this.currentStep === this.maxSteps) {
+                this.handleSubmit();
+            } else {
                 this.currentStep++;
                 this.updateSteps();
+                if (this.type === 'project' && this.currentStep === 3) {
+                    this.updateConfirmationStep();
+                }
             }
-        } else {
-            this.handleSubmission();
         }
     }
 
@@ -1074,6 +1077,69 @@ window.BaseStepForm = class BaseStepForm {
                     this.showErrorMessage('Failed to create service');
                 }
             });
+        }
+    }
+
+    updateConfirmationStep() {
+        // Update confirmation step with current form data
+        document.getElementById('project-name-confirm').textContent = this.formData.name || 'Not specified';
+        document.getElementById('project-domain-confirm').textContent = 
+            this.formData.domain ? `${this.formData.domain}.kubelab.dk` : 'Not specified';
+        document.getElementById('project-description-confirm').textContent = 
+            this.formData.description || 'No description provided';
+
+        // Update template preview
+        const templateDisplay = document.querySelector('.template-display');
+        if (templateDisplay && this.formData.template) {
+            templateDisplay.innerHTML = `
+                <div class="template-info">
+                    <h3>${this.formData.template.name}</h3>
+                    <p class="text-secondary">${this.formData.template.description}</p>
+                </div>
+            `;
+        }
+    }
+
+    async handleSubmit() {
+        try {
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            const successOverlay = document.querySelector('.success-overlay');
+            
+            loadingOverlay?.classList.add('show');
+            
+            const token = localStorage.getItem('token');
+            console.log('Form Data:', this.formData); // Debug log
+            
+            const submitData = {
+                name: this.formData.name,
+                domain: this.formData.domain,
+                description: this.formData.description,
+                templateId: this.formData.template?.id
+            };
+            
+            console.log('Submit Data:', submitData); // Debug log
+            
+            const response = await fetch(`http://localhost:3000/api/${this.type}s`, {
+                method: this.editMode ? 'PUT' : 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(submitData)
+            });
+
+            if (!response.ok) throw new Error(`Failed to ${this.editMode ? 'update' : 'create'} ${this.type}`);
+
+            loadingOverlay?.classList.remove('show');
+            successOverlay?.classList.add('show');
+
+            setTimeout(() => {
+                window.location.href = `${this.type}s.html`;
+            }, 2000);
+
+        } catch (error) {
+            console.error('Error:', error);
+            this.showErrorMessage(`Failed to ${this.editMode ? 'update' : 'create'} ${this.type}`);
         }
     }
 }

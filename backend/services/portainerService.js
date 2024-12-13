@@ -42,16 +42,24 @@ class PortainerService {
     }
 
     async getStackConfig(templateId) {
-        const [rows] = await pool.execute(
-            'SELECT YamlContent FROM Templates WHERE TemplateId = ?', 
-            [templateId]
-        );
+        try {
+            console.log('Getting stack config for templateId:', templateId);
+            const [rows] = await pool.execute(
+                'SELECT YamlContent FROM Templates WHERE TemplateId = ?', 
+                [templateId]
+            );
 
-        if (!rows?.[0]?.YamlContent) {
-            throw new Error('No YAML found for template');
+            console.log('Template result:', rows);
+
+            if (!rows?.[0]?.YamlContent) {
+                throw new Error('No YAML found for template');
+            }
+
+            return rows[0].YamlContent;
+        } catch (error) {
+            console.error('Stack deployment failed:', error);
+            return null;
         }
-
-        return rows[0].YamlContent;
     }
 
     async getStacks() {
@@ -90,9 +98,13 @@ class PortainerService {
     }
 
     async createStack(projectData) {
+        console.log('Creating stack with config:', projectData);
         try {
             const stackContent = await this.getStackConfig(projectData.templateId);
-            
+            if (!stackContent) {
+                throw new Error('Failed to get stack configuration');
+            }
+
             console.log('Project data received:', projectData);
             
             const configuredStack = stackContent
@@ -106,7 +118,7 @@ class PortainerService {
             console.log('Configured stack after replacements:', configuredStack);
 
             const response = await this.client.post(
-                `${this.portainerUrl}/stacks/create/swarm/string?endpointId=5`,
+                `${this.portainerUrl}/api/stacks/create/swarm/string?endpointId=5`,
                 {
                     name: projectData.name,
                     stackFileContent: configuredStack,

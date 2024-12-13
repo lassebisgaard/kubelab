@@ -102,43 +102,41 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const connection = await pool.getConnection();
     try {
-        await connection.beginTransaction();
+        console.log('Received request body:', req.body);
         
         const projectData = {
             name: req.body.name,
             domain: req.body.domain,
             description: req.body.description || '',
             templateId: req.body.templateId,
-            userId: req.user.userId // Fra auth middleware
+            userId: req.user.userId
         };
 
-        console.log('Creating project with data:', projectData);
-
-        // Opret projekt i database
+        console.log('Project Data:', projectData);
+        
+        // 2. Create project in database
         const [result] = await connection.execute(
-            'INSERT INTO Projects (ProjectName, Domain, Description, TemplateId, UserId, DateCreated) VALUES (?, ?, ?, ?, ?, NOW())',
-            [projectData.name, projectData.domain, projectData.description, projectData.templateId, projectData.userId]
+            'INSERT INTO Projects (ProjectName, Description, Domain, UserId, TemplateId) VALUES (?, ?, ?, ?, ?)',
+            [projectData.name, projectData.description, projectData.domain, projectData.userId, projectData.templateId]
         );
 
-        // Deploy til Portainer
-        const portainerService = new PortainerService();
+        // 3. Create stack in Portainer
         const deployResult = await portainerService.createStack(projectData);
+        if (!deployResult.success) {
+            // If Portainer creation fails, delete from database
+            await connection.execute('DELETE FROM Projects WHERE ProjectId = ?', [result.insertId]);
+            throw new Error(deployResult.message || 'Failed to create stack in Portainer');
+        }
 
-        // Commit database transaktion uanset Portainer status
-        await connection.commit();
-
-        // Send response med status
-        res.status(201).json({
+        res.json({
             message: 'Project created successfully',
             projectId: result.insertId,
             deploymentStatus: deployResult.success ? 'deployed' : 'pending',
             deploymentMessage: deployResult.message
         });
-
     } catch (error) {
-        await connection.rollback();
         console.error('Error creating project:', error);
-        res.status(500).json({ error: 'Failed to create project' });
+        res.status(500).json({ error: 'Failed to create project', details: error.message });
     } finally {
         connection.release();
     }
