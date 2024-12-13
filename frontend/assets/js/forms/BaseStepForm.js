@@ -1105,44 +1105,21 @@ window.BaseStepForm = class BaseStepForm {
                 throw new Error('No user ID found - please log in again');
             }
 
+            // Check admin rights for admin-only operations
+            if (['template', 'team'].includes(this.type) && !user.isAdmin) {
+                throw new Error('Access denied. Admin rights required.');
+            }
+
             let response;
             
             if (this.type === 'template') {
                 // Handle template submission
-                const formData = new FormData();
-                formData.append('name', this.formData.name);
-                formData.append('description', this.formData.description);
-                formData.append('services', JSON.stringify(this.formData.services));
-                formData.append('userId', user.UserId);
-
-                if (this.formData.yamlFile) {
-                    formData.append('yaml', this.formData.yamlFile);
+                if (!user.isAdmin) {
+                    throw new Error('Only administrators can create templates');
                 }
-
-                if (this.formData.previewImage) {
-                    formData.append('preview', this.formData.previewImage);
-                }
-
                 response = await this.submitTemplate(token);
             } else if (this.type === 'project') {
-                // Handle project submission
-                if (!this.formData.name || !this.formData.domain || !this.formData.template?.id) {
-                    throw new Error('Please fill in all required fields');
-                }
-
-                response = await fetch('http://localhost:3000/api/projects', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: this.formData.name,
-                        domain: this.formData.domain,
-                        description: this.formData.description || '',
-                        templateId: this.formData.template.id
-                    })
-                });
+                response = await this.submitProject(token);
             }
 
             if (!response.ok) {
@@ -1161,6 +1138,13 @@ window.BaseStepForm = class BaseStepForm {
             console.error('Error:', error);
             this.showErrorMessage(error.message);
             document.querySelector('.loading-overlay')?.classList.remove('show');
+            
+            // Redirect to login if unauthorized
+            if (error.message.includes('Access denied') || error.message.includes('please log in')) {
+                setTimeout(() => {
+                    window.location.href = '/pages/login.html';
+                }, 2000);
+            }
         }
     }
 }

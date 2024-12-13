@@ -20,7 +20,11 @@ router.post('/login', async (req, res) => {
     try {
         // Check if user exists and password matches
         const [users] = await pool.execute(
-            'SELECT UserId, Name, Mail, TeamId FROM Users WHERE Mail = ? AND Password = ?',
+            `SELECT u.*, t.TeamName, r.IsAdmin 
+             FROM Users u 
+             LEFT JOIN Teams t ON u.TeamId = t.TeamId
+             LEFT JOIN Roles r ON u.UserId = r.UserId
+             WHERE u.Mail = ? AND u.Password = ?`,
             [email, password]
         );
 
@@ -28,33 +32,26 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        // Get user role
-        const [roles] = await pool.execute(
-            'SELECT IsAdmin FROM Roles WHERE UserId = ?',
-            [users[0].UserId]
-        );
+        const user = users[0];
+        const isAdmin = user.IsAdmin === 1;
 
-        const isAdmin = roles[0]?.IsAdmin === 1;
-        
         // Create JWT token
         const token = jwt.sign(
             { 
-                userId: users[0].UserId,
-                email: users[0].Mail,
+                userId: user.UserId,
+                email: user.Mail,
                 isAdmin: isAdmin
             },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
 
-        const user = {
-            ...users[0],
-            role: isAdmin ? 'admin' : 'student'
-        };
-
-        res.json({ 
+        res.json({
             message: 'Login successful',
-            user,
+            user: {
+                ...user,
+                isAdmin: isAdmin
+            },
             token
         });
 
