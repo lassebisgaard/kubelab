@@ -442,80 +442,74 @@ window.BaseStepForm = class BaseStepForm {
     }
 
     initFileUploads() {
-        if (this.type === 'template') {
-            // YAML upload
-            const yamlInput = document.getElementById('yaml-file');
-            const yamlUpload = document.querySelector('.yaml-upload');
-            
-            yamlInput?.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    this.formData.yamlFile = file;
-                    yamlUpload.innerHTML = `
-                        <div class="yaml-file-display">
-                            <i class='bx bx-file'></i>
-                            <span class="filename">${file.name}</span>
-                            <button class="remove-file" type="button">
-                                <i class='bx bx-x'></i>
-                            </button>
-                        </div>
-                    `;
+        // YAML fil upload
+        const yamlInput = document.getElementById('yaml-file');
+        const yamlArea = document.querySelector('[data-upload-area]');
+        
+        if (yamlInput && yamlArea) {
+            yamlArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                yamlArea.classList.add('dragover');
+            });
 
-                    // Add remove button handler
-                    const removeBtn = yamlUpload.querySelector('.remove-file');
-                    removeBtn?.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.formData.yamlFile = null;
-                        yamlUpload.innerHTML = `
-                            <input type="file" 
-                                   id="yaml-file" 
-                                   hidden 
-                                   accept=".yaml,.yml"
-                                   required>
-                            <label for="yaml-file" class="upload-area">
-                                <i class='bx bx-file'></i>
-                                <span>Drop your YAML file here or click to browse</span>
-                            </label>
-                        `;
-                        this.initFileUploads();
-                    });
+            yamlArea.addEventListener('dragleave', () => {
+                yamlArea.classList.remove('dragover');
+            });
+
+            yamlArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                yamlArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && (file.name.endsWith('.yaml') || file.name.endsWith('.yml'))) {
+                    this.handleYamlFile(file);
                 }
             });
 
-            // Preview image upload
-            const imageInput = document.getElementById('preview-image');
-            const previewUpload = document.querySelector('.preview-container--upload');
-            
-            imageInput?.addEventListener('change', (e) => {
+            yamlInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.formData.previewImage = e.target.result;
-                        previewUpload.innerHTML = `
-                            <img src="${e.target.result}" alt="Preview">
-                            <button class="remove-file">
-                                <i class='bx bx-x'></i>
-                            </button>
-                        `;
-
-                        const removeBtn = previewUpload.querySelector('.remove-file');
-                        removeBtn?.addEventListener('click', () => {
-                            this.formData.previewImage = null;
-                            previewUpload.innerHTML = `
-                                <input type="file" id="preview-image" hidden accept="image/*">
-                                <label for="preview-image" class="upload-area">
-                                    <i class='bx bx-image'></i>
-                                    <span>Click to upload preview image</span>
-                                </label>
-                            `;
-                            this.initFileUploads();
-                        });
-                    };
-                    reader.readAsDataURL(file);
+                    this.handleYamlFile(file);
                 }
             });
         }
+
+        // Preview billede upload
+        const previewInput = document.getElementById('preview-image');
+        const previewArea = document.querySelector('.preview-container--upload');
+        
+        if (previewInput && previewArea) {
+            previewInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    this.handlePreviewImage(file);
+                }
+            });
+        }
+    }
+
+    handleYamlFile(file) {
+        this.formData.yamlFile = file;
+        const yamlArea = document.querySelector('[data-upload-area]');
+        if (yamlArea) {
+            yamlArea.innerHTML = `
+                <div class="file-preview">
+                    <i class='bx bx-file'></i>
+                    <span class="filename">${file.name}</span>
+                </div>
+            `;
+        }
+    }
+
+    handlePreviewImage(file) {
+        this.formData.previewImage = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const previewArea = document.querySelector('.preview-container--upload');
+            if (previewArea) {
+                previewArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            }
+        };
+        reader.readAsDataURL(file);
     }
 
     showErrorMessage(message) {
@@ -601,91 +595,37 @@ window.BaseStepForm = class BaseStepForm {
 
     async loadServices() {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/services', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            if (response.status === 401) {
-                window.location.href = '/pages/login.html';
+            const services = await window.initializeServices();
+            console.log('Loaded services:', services);
+
+            const servicesSelection = document.querySelector('.services-selection');
+            if (!servicesSelection) {
+                console.error('Services selection container not found');
                 return;
             }
 
-            const services = await response.json();
-            const servicesContainer = document.querySelector('.services-selection');
-            
-            if (servicesContainer) {
-                // Gem services i window objekt for senere brug
-                window.SERVICES = {};
-                services.forEach(service => {
-                    window.SERVICES[service.ServiceId] = {
-                        id: service.ServiceId,
-                        name: service.ServiceName,
-                        icon: service.Icon
-                    };
+            // Fjern loading indicator
+            servicesSelection.querySelector('.loading-indicator')?.remove();
+
+            // Tilføj service tags
+            services.forEach(service => {
+                const serviceTag = document.createElement('div');
+                serviceTag.className = 'service-tag service-tag--selectable';
+                serviceTag.dataset.service = service.ServiceId;
+                serviceTag.innerHTML = `
+                    <i class='bx ${service.Icon}'></i>
+                    <span>${service.ServiceName}</span>
+                `;
+
+                // Tilføj click handler
+                serviceTag.addEventListener('click', () => {
+                    serviceTag.classList.toggle('active');
+                    this.updateSelectedServices();
                 });
-                
-                servicesContainer.innerHTML = services.map(service => `
-                    <div class="service-tag service-tag--selectable" data-service="${service.ServiceId}">
-                        <i class='bx ${service.Icon}'></i>
-                        <span>${service.ServiceName}</span>
-                        ${this.type === 'template' ? `
-                            <button class="service-tag--remove" title="Remove service">
-                                <i class='bx bx-x'></i>
-                            </button>
-                        ` : ''}
-                    </div>
-                `).join('');
 
-                // Add click handlers
-                servicesContainer.querySelectorAll('.service-tag--selectable').forEach(tag => {
-                    const serviceId = tag.dataset.service;
-                    
-                    // Tilføj click handler for remove knappen
-                    const removeBtn = tag.querySelector('.service-tag--remove');
-                    if (removeBtn) {
-                        removeBtn.addEventListener('click', async (e) => {
-                            e.stopPropagation(); // Forhindrer at service bliver toggled
-                            
-                            if (confirm('Are you sure you want to delete this service?')) {
-                                try {
-                                    const token = localStorage.getItem('token');
-                                    const response = await fetch(`http://localhost:3000/api/services/${serviceId}`, {
-                                        method: 'DELETE',
-                                        headers: {
-                                            'Authorization': `Bearer ${token}`
-                                        }
-                                    });
+                servicesSelection.appendChild(serviceTag);
+            });
 
-                                    if (response.status === 409) {
-                                        this.showErrorMessage('Cannot delete service as it is being used by one or more templates');
-                                        return;
-                                    }
-                                    
-                                    if (!response.ok) throw new Error('Failed to delete service');
-                                    
-                                    tag.remove();
-                                    delete window.SERVICES[serviceId];
-                                    this.updateSelectedServices();
-                                } catch (error) {
-                                    console.error('Error deleting service:', error);
-                                    this.showErrorMessage('Failed to delete service');
-                                }
-                            }
-                        });
-                    }
-
-                    // Tilføj click handler for hele service tagget
-                    tag.addEventListener('click', (e) => {
-                        if (!e.target.closest('.service-tag--remove')) {
-                            tag.classList.toggle('active');
-                            this.updateSelectedServices();
-                        }
-                    });
-                });
-            }
         } catch (error) {
             console.error('Error loading services:', error);
             this.showErrorMessage('Failed to load services');
@@ -1108,27 +1048,43 @@ window.BaseStepForm = class BaseStepForm {
             loadingOverlay?.classList.add('show');
             
             const token = localStorage.getItem('token');
-            console.log('Form Data:', this.formData); // Debug log
             
-            const submitData = {
-                name: this.formData.name,
-                domain: this.formData.domain,
-                description: this.formData.description,
-                templateId: this.formData.template?.id
-            };
+            // Hent user data fra localStorage
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user?.UserId) {
+                throw new Error('No user ID found - please log in again');
+            }
+
+            // Opret FormData objekt for at håndtere filer
+            const formData = new FormData();
+            formData.append('name', this.formData.name);
+            formData.append('description', this.formData.description);
+            formData.append('services', JSON.stringify(this.formData.services));
+            formData.append('userId', user.UserId); // Send actual user ID instead of 'null'
+
+            // Tilføj YAML fil hvis den findes
+            if (this.formData.yamlFile) {
+                formData.append('yaml', this.formData.yamlFile);
+            }
+
+            // Tilføj preview billede hvis det findes
+            if (this.formData.previewImage) {
+                formData.append('preview', this.formData.previewImage);
+            }
             
-            console.log('Submit Data:', submitData); // Debug log
-            
-            const response = await fetch(`http://localhost:3000/api/${this.type}s`, {
+            const url = `http://localhost:3000/api/${this.type}s${this.editMode ? `/${this.editId}` : ''}`;
+            const response = await fetch(url, {
                 method: this.editMode ? 'PUT' : 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(submitData)
+                body: formData
             });
 
-            if (!response.ok) throw new Error(`Failed to ${this.editMode ? 'update' : 'create'} ${this.type}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Failed to ${this.editMode ? 'update' : 'create'} ${this.type}`);
+            }
 
             loadingOverlay?.classList.remove('show');
             successOverlay?.classList.add('show');
@@ -1139,7 +1095,8 @@ window.BaseStepForm = class BaseStepForm {
 
         } catch (error) {
             console.error('Error:', error);
-            this.showErrorMessage(`Failed to ${this.editMode ? 'update' : 'create'} ${this.type}`);
+            this.showErrorMessage(error.message);
+            document.querySelector('.loading-overlay')?.classList.remove('show');
         }
     }
 }
