@@ -40,37 +40,35 @@
 
                 <div class="profile-details">
                     <div class="detail">
+                        <label for="userName">Name</label>
                         <div>
-                            <span>Lasse Bisgaard</span>
+                            <span id="userName">Indlæser...</span>
                             <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
+                        <label for="userEmail">Email</label>
                         <div>
-                            <span>Lasse@edu.ucl.dk</span>
+                            <span id="userEmail">Indlæser...</span>
                             <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
+                        <label for="userTeam">Team</label>
                         <div>
-                            <span>+45 23 24 32 22</span>
+                            <span id="userTeam">Indlæser...</span>
                             <i class='bx bx-pencil edit-icon'></i>
                         </div>
                     </div>
 
                     <div class="detail">
+                        <label for="userRole">Role</label>
                         <div>
-                            <span>WUOE24</span>
+                            <span id="userRole">Indlæser...</span>
                             <i class='bx bx-pencil edit-icon'></i>
                         </div>
-                    </div>
-
-                    <div class="detail">
-                        <select class="form-control2">
-                            <option value="role">Role</option>
-                        </select>
                     </div>
 
                     <div class="actions">
@@ -84,12 +82,12 @@
                         <h2>Danger zone</h2>
                         <button class="button delete">Delete profile</button>
                     </div>
-                </div>
-                <div class="logout">
-                    <button>
-                        <span>Log out</span>
-                        <i class='bx bx-log-out'></i>
-                    </button>
+                    <div class="logout">
+                        <button>
+                            <span>Log out</span>
+                            <i class='bx bx-log-out'></i>
+                        </button>
+                    </div>
                 </div>
             </div>
     </main>
@@ -122,4 +120,5 @@ toggleSwitch.addEventListener('change', () => {
   }
 });
 </script>
+<script src="../assets/js/pages/profile.js"></script>
 </html>
