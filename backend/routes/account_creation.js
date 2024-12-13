@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+const bcrypt = require('bcrypt');
+const saltRounds = 12;
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -45,10 +47,13 @@ router.post('/', async (req, res) => {
 
         console.log('Attempting to create user...'); // Debug log
         
-        // Opret bruger
+        // Hash password før det gemmes
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
+        // Opret bruger med hashet password
         const [userResult] = await connection.execute(
             'INSERT INTO Users (Name, Mail, Password, TeamId, Expiration) VALUES (?, ?, ?, ?, ?)',
-            [name, email, password, teamId, expiration]
+            [name, email, hashedPassword, teamId, expiration]
         );
         
         console.log('User created:', userResult); // Debug log

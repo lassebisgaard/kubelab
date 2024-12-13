@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const { verifyToken, JWT_SECRET } = require('../middleware/auth');
 
 // Verify token endpoint
@@ -18,14 +19,14 @@ router.post('/login', async (req, res) => {
     }
 
     try {
-        // Check if user exists and password matches
+        // Hent bruger uden password check
         const [users] = await pool.execute(
             `SELECT u.*, t.TeamName, r.IsAdmin 
              FROM Users u 
              LEFT JOIN Teams t ON u.TeamId = t.TeamId
              LEFT JOIN Roles r ON u.UserId = r.UserId
-             WHERE u.Mail = ? AND u.Password = ?`,
-            [email, password]
+             WHERE u.Mail = ?`,
+            [email]
         );
 
         if (users.length === 0) {
@@ -33,15 +34,16 @@ router.post('/login', async (req, res) => {
         }
 
         const user = users[0];
-        const isAdmin = user.IsAdmin === 1;
+        
+        // Verificer password med bcrypt
+        const validPassword = await bcrypt.compare(password, user.Password);
+        if (!validPassword) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
 
-        // Create JWT token
+        const isAdmin = user.IsAdmin === 1;
         const token = jwt.sign(
-            { 
-                userId: user.UserId,
-                email: user.Mail,
-                isAdmin: isAdmin
-            },
+            { userId: user.UserId, email: user.Mail, isAdmin: isAdmin },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
