@@ -118,12 +118,14 @@ async function loadProjectDetails(projects) {
 }
 
 function initProjectControls() {
+    // Håndter både projekt kort og student projekt rækker
     document.querySelectorAll('.project-controls .action-button').forEach(button => {
         button.addEventListener('click', (e) => {
             e.stopPropagation();
             
-            const projectCard = button.closest('.project-card');
-            const projectId = projectCard.dataset.projectId;
+            // Find projekt ID fra enten kort eller række
+            const container = button.closest('.project-card, .table-row');
+            const projectId = container.dataset.projectId;
             
             if (button.title === 'Power') {
                 handlePowerToggle(projectId, button);
@@ -131,13 +133,24 @@ function initProjectControls() {
                 handleRestart(projectId, button);
             }
         });
+
+        // Sæt initial power button state
+        if (button.title === 'Power') {
+            const container = button.closest('.project-card, .table-row');
+            const statusElement = container.querySelector('.status-badge');
+            if (statusElement) {
+                button.classList.toggle('active', statusElement.textContent === 'online');
+            }
+        }
     });
 }
 
 async function handlePowerToggle(projectId, button) {
     let action;
-    const statusBadge = button.closest('.project-card').querySelector('.status-badge');
+    const container = button.closest('.project-card, .table-row');
+    const statusBadge = container.querySelector('.status-badge');
     const isRunning = statusBadge.textContent === 'online';
+    
     try {
         const controls = button.closest('.project-controls');
         controls.querySelectorAll('.action-button').forEach(btn => {
@@ -157,9 +170,7 @@ async function handlePowerToggle(projectId, button) {
             }
         });
 
-        if (!response.ok) {
-            throw new Error(`Failed to ${action} project`);
-        }
+        if (!response.ok) throw new Error(`Failed to ${action} project`);
 
         const result = await response.json();
         button.classList.toggle('active', result.status === 'online');
@@ -168,7 +179,7 @@ async function handlePowerToggle(projectId, button) {
         statusBadge.className = `status-badge ${result.status}`;
         
     } catch (error) {
-        console.error('Error toggling project state:', error);
+        console.error('Error:', error);
         alert(`Failed to ${action} project. Please try again.`);
         statusBadge.textContent = isRunning ? 'online' : 'offline';
         statusBadge.className = `status-badge ${isRunning ? 'online' : 'offline'}`;
