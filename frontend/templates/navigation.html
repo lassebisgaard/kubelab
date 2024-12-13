@@ -12,14 +12,14 @@
         {{#if user}}
             <li>
                 <a href="create.html" class="create-button">
-                    <img src="../assets/Icons/plus.svg" alt="Plus tegn">
+                    <i class="bx bx-plus"></i>
                     <span>Create</span>
                 </a>
             </li>
 
             <li>
                 <a href="projects.html" {{#if isProjectsPage}}class="active"{{/if}}>
-                    <img src="../assets/Icons/Projects.svg" alt="Projects">
+                    <i class="bx bx-folder"></i>
                     <span>Projects</span>
                 </a>
             </li>
@@ -27,19 +27,19 @@
             {{#if user.isAdmin}}
                 <li>
                     <a href="templates.html" {{#if isTemplatesPage}}class="active"{{/if}}>
-                        <img src="../assets/Icons/Template.svg" alt="Templates">
+                        <i class="bx bx-file"></i>
                         <span>Templates</span>
                     </a>
                 </li>
                 <li>
                     <a href="teams.html" {{#if isTeamsPage}}class="active"{{/if}}>
-                        <img src="../assets/Icons/Teams.svg" alt="Teams">
+                        <i class="bx bx-group"></i>
                         <span>Teams</span>
                     </a>
                 </li>
                 <li>
                     <a href="users.html" {{#if isUsersPage}}class="active"{{/if}}>
-                        <img src="../assets/Icons/Users.svg" alt="Users">
+                        <i class="bx bx-user"></i>
                         <span>Users</span>
                     </a>
                 </li>
@@ -50,7 +50,7 @@
     <ul class="nav-bottom">
         <li>
             <a href="settings.html">
-                <img src="../assets/Icons/settings.svg" alt="Settings">
+                <i class="bx bx-cog"></i>
                 <span>Settings</span>
             </a>
         </li>
