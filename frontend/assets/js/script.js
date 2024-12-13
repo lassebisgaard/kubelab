@@ -76,11 +76,19 @@ function initServiceFilters() {
 // Update the DOMContentLoaded event handler
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Initialize services first
-        await window.initializeServices();
+        const currentPath = window.location.pathname;
+        const publicPages = ['/', '/index.html', '/pages/login.html', '/pages/account_creation.html'];
         
-        // Then initialize other components
+        // Initialize theme for all pages
         initializeTheme();
+        
+        // If it's a public page, we don't need to initialize services or other protected features
+        if (publicPages.some(page => currentPath.endsWith(page))) {
+            return;
+        }
+        
+        // For protected pages, initialize everything
+        await window.initializeServices();
         initSidebarToggle();
         await renderNavigation();
         
@@ -274,19 +282,20 @@ async function renderNavigation() {
             '/pages/account_creation.html'
         ];
         
-        // Hvis vi er på en offentlig side, skal vi ikke tjekke auth
+        // Tjek først om vi er på en offentlig side
         if (publicPages.some(page => currentPath.endsWith(page))) {
             document.body.classList.add('no-sidebar');
-            return;
+            return; // Stop her hvis det er en offentlig side
         }
 
-        // Check auth for beskyttede sider
+        // Hvis ikke offentlig side, tjek for token
         const token = localStorage.getItem('token');
         if (!token) {
             window.location.href = '/pages/login.html';
             return;
         }
 
+        // Resten af authentication og navigation rendering...
         try {
             const response = await fetch('http://localhost:3000/api/auth/verify', {
                 headers: {

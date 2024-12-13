@@ -11,6 +11,19 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Public routes - these should be before the protected routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
+});
+
+app.get('/pages/account_creation.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/account_creation.html'));
+});
+
+app.get('/pages/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/login.html'));
+});
+
 // Import routes
 const projectRoutes = require('./routes/projects');
 const templateRoutes = require('./routes/templates');
