@@ -1099,42 +1099,55 @@ window.BaseStepForm = class BaseStepForm {
             loadingOverlay?.classList.add('show');
             
             const token = localStorage.getItem('token');
-            
-            // Hent user data fra localStorage
             const user = JSON.parse(localStorage.getItem('user'));
+            
             if (!user?.UserId) {
                 throw new Error('No user ID found - please log in again');
             }
 
-            // Opret FormData objekt for at håndtere filer
-            const formData = new FormData();
-            formData.append('name', this.formData.name);
-            formData.append('description', this.formData.description);
-            formData.append('services', JSON.stringify(this.formData.services));
-            formData.append('userId', user.UserId); // Send actual user ID instead of 'null'
-
-            // Tilføj YAML fil hvis den findes
-            if (this.formData.yamlFile) {
-                formData.append('yaml', this.formData.yamlFile);
-            }
-
-            // Tilføj preview billede hvis det findes
-            if (this.formData.previewImage) {
-                formData.append('preview', this.formData.previewImage);
-            }
+            let response;
             
-            const url = `http://localhost:3000/api/${this.type}s${this.editMode ? `/${this.editId}` : ''}`;
-            const response = await fetch(url, {
-                method: this.editMode ? 'PUT' : 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
+            if (this.type === 'template') {
+                // Handle template submission
+                const formData = new FormData();
+                formData.append('name', this.formData.name);
+                formData.append('description', this.formData.description);
+                formData.append('services', JSON.stringify(this.formData.services));
+                formData.append('userId', user.UserId);
+
+                if (this.formData.yamlFile) {
+                    formData.append('yaml', this.formData.yamlFile);
+                }
+
+                if (this.formData.previewImage) {
+                    formData.append('preview', this.formData.previewImage);
+                }
+
+                response = await this.submitTemplate(token);
+            } else if (this.type === 'project') {
+                // Handle project submission
+                if (!this.formData.name || !this.formData.domain || !this.formData.template?.id) {
+                    throw new Error('Please fill in all required fields');
+                }
+
+                response = await fetch('http://localhost:3000/api/projects', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: this.formData.name,
+                        domain: this.formData.domain,
+                        description: this.formData.description || '',
+                        templateId: this.formData.template.id
+                    })
+                });
+            }
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || `Failed to ${this.editMode ? 'update' : 'create'} ${this.type}`);
+                throw new Error(errorData.error || `Failed to create ${this.type}`);
             }
 
             loadingOverlay?.classList.remove('show');
