@@ -29,28 +29,47 @@ async function loadProjects() {
 }
 
 async function loadProjectsList(projects) {
-    const projectGrid = document.querySelector('.project-grid');
-    if (!projectGrid) return;
+    const myProjectsGrid = document.querySelector('.section:first-child .project-template-grid');
+    const studentsSection = document.querySelector('.students-section');
+    const studentsProjectsGrid = document.querySelector('.students-section .project-template-grid');
+    
+    if (!myProjectsGrid) return;
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = user?.isAdmin;
+
+    // Filter projects
+    const myProjects = projects.filter(p => p.ProjectType === 'own');
+    const studentProjects = projects.filter(p => p.ProjectType === 'other');
 
     const templateSource = document.getElementById('project-card-template');
     const templateFunction = Handlebars.compile(templateSource.innerHTML);
 
-    const projectsHtml = projects.map(project => ({
+    // Render My Projects
+    myProjectsGrid.innerHTML = myProjects.map(project => templateFunction({
         id: project.ProjectId,
         name: project.ProjectName,
         status: project.Status || 'offline',
         template: project.TemplateName || 'Not specified',
         domain: `${project.Domain}.kubelab.dk`
-    })).map(templateFunction).join('');
+    })).join('');
 
-    projectGrid.innerHTML = projectsHtml;
+    // Render Students Projects if admin
+    if (isAdmin && studentProjects.length > 0) {
+        studentsSection.style.display = 'block';
+        studentsProjectsGrid.innerHTML = studentProjects.map(project => templateFunction({
+            id: project.ProjectId,
+            name: project.ProjectName,
+            status: project.Status || 'offline',
+            template: project.TemplateName || 'Not specified',
+            domain: `${project.Domain}.kubelab.dk`,
+            owner: project.UserName
+        })).join('');
+    } else {
+        studentsSection.style.display = 'none';
+    }
+
     initProjectControls();
-    
-    // Sæt initial tilstand på power knapper
-    document.querySelectorAll('.project-controls .action-button[title="Power"]').forEach(button => {
-        const statusBadge = button.closest('.project-card').querySelector('.status-badge');
-        button.classList.toggle('active', statusBadge.textContent === 'online');
-    });
 }
 
 async function loadProjectDetails(projects) {

@@ -33,7 +33,7 @@
         <div class="page-container">
             <div class="page-header">
                 <div class="title-section">
-                    <h1 class="page-title">Projects</h1>
+                    <h1>Projects</h1>
                     <a href="create_project.html" class="button primary">
                         <i class='bx bx-plus'></i>
                     </a>
@@ -41,15 +41,26 @@
             </div>
 
             <div class="content-wrapper">
-                <h2 class="section-title">My projects</h2>
-                <div class="search-bar">
-                    <input type="text" 
-                           placeholder="Search my projects..." 
-                           class="form-control" 
-                           id="project-search">
+                <!-- My Projects Section -->
+                <div class="section">
+                    <h2>My projects</h2>
+                    <div class="search-bar">
+                        <input type="text" 
+                               placeholder="Search my projects..." 
+                               class="form-control" 
+                               id="project-search">
+                    </div>
+                    <div class="project-template-grid">
+                        <!-- My projects cards will be inserted here -->
+                    </div>
                 </div>
-                <div class="project-grid">
-                    <!-- Projects will be inserted here -->
+
+                <!-- Students Projects Section -->
+                <div class="section students-section" style="display: none;">
+                    <h2>Students projects</h2>
+                    <div class="project-template-grid">
+                        <!-- Student projects cards will be inserted here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,6 +84,12 @@
                             <span class="text-secondary">Domain name</span>
                             <span>{{domain}}</span>
                         </div>
+                        {{#if owner}}
+                        <div class="info-row">
+                            <span class="text-secondary">Owner</span>
+                            <span>{{owner}}</span>
+                        </div>
+                        {{/if}}
                     </div>
                 </div>
                 <div class="project-controls">

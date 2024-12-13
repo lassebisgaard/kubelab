@@ -7,18 +7,52 @@ const portainerService = new PortainerService();
 // Get all projects with template, team and user info
 router.get('/', async (req, res) => {
     try {
-        const [projects] = await pool.execute(`
+        const userId = req.user.userId;
+        const isAdmin = req.user.isAdmin;
+
+        // Base query for user's own projects
+        let query = `
             SELECT 
                 p.*,
                 t.TemplateName,
                 t.Description as TemplateDescription,
                 u.Name as UserName,
-                tm.TeamName
+                tm.TeamName,
+                CASE 
+                    WHEN p.UserId = ? THEN 'own'
+                    ELSE 'other'
+                END as ProjectType
             FROM Projects p
             LEFT JOIN Templates t ON p.TemplateId = t.TemplateId
             LEFT JOIN Users u ON p.UserId = u.UserId
             LEFT JOIN Teams tm ON u.TeamId = tm.TeamId
-        `);
+            WHERE p.UserId = ?
+        `;
+        
+        let queryParams = [userId, userId];
+
+        // If admin, get all projects
+        if (isAdmin) {
+            query = `
+                SELECT 
+                    p.*,
+                    t.TemplateName,
+                    t.Description as TemplateDescription,
+                    u.Name as UserName,
+                    tm.TeamName,
+                    CASE 
+                        WHEN p.UserId = ? THEN 'own'
+                        ELSE 'other'
+                    END as ProjectType
+                FROM Projects p
+                LEFT JOIN Templates t ON p.TemplateId = t.TemplateId
+                LEFT JOIN Users u ON p.UserId = u.UserId
+                LEFT JOIN Teams tm ON u.TeamId = tm.TeamId
+            `;
+            queryParams = [userId];
+        }
+        
+        const [projects] = await pool.execute(query, queryParams);
         
         // Hent status for hvert projekt
         const projectsWithStatus = await Promise.all(projects.map(async (project) => {
@@ -29,14 +63,10 @@ router.get('/', async (req, res) => {
             };
         }));
         
-        console.log('Found projects:', projectsWithStatus);
         res.json(projectsWithStatus);
     } catch (error) {
         console.error('Database error:', error);
-        res.status(500).json({ 
-            error: 'Failed to fetch projects',
-            details: error.message 
-        });
+        res.status(500).json({ error: 'Failed to fetch projects' });
     }
 });
 

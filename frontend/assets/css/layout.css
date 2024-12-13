@@ -42,8 +42,9 @@ body.no-sidebar main {
 
 .project-template-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 400px));
     gap: 24px;
+    justify-content: start;
     margin-top: 24px;
 }
 
@@ -136,4 +137,13 @@ body.no-sidebar main {
     .content-wrapper {
         padding: 0 4px;
     }
+}
+
+/* Project sections */
+.section {
+    margin-bottom: 48px;
+}
+
+.section h2 {
+    margin-bottom: 24px;
 }
