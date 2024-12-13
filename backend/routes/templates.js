@@ -78,13 +78,13 @@ router.post('/', upload.fields([
         console.log('Form data:', req.body);
         
         // Håndter YAML fil
-        const yamlContent = req.files?.yaml?.[0]?.buffer?.toString('utf8') || null;
+        const yamlContent = req.files?.yaml?.[0]?.buffer?.toString('utf8') || req.body.yamlContent || null;
         const previewPath = req.files?.preview?.[0]?.filename || null;
         
-        // Insert template
+        // Insert template med UserId og YamlContent
         const [result] = await connection.execute(
-            'INSERT INTO Templates (TemplateName, Description, YamlContent, PreviewImage, DateCreated) VALUES (?, ?, ?, ?, NOW())',
-            [req.body.name, req.body.description, yamlContent, previewPath]
+            'INSERT INTO Templates (TemplateName, Description, YamlContent, PreviewImage, DateCreated, UserId) VALUES (?, ?, ?, ?, NOW(), ?)',
+            [req.body.name, req.body.description, yamlContent, previewPath, req.body.userId]
         );
 
         // Parse services fra string til array
@@ -98,12 +98,16 @@ router.post('/', upload.fields([
         }
 
         await connection.commit();
-        res.status(201).json({
-            id: result.insertId,
-            name: req.body.name,
-            description: req.body.description,
-            services: req.body.services ? JSON.parse(req.body.services) : []
-        });
+        
+        // Hent den oprettede template med alle detaljer
+        const [newTemplate] = await connection.execute(`
+            SELECT t.*, u.Name as UserName
+            FROM Templates t
+            LEFT JOIN Users u ON t.UserId = u.UserId
+            WHERE t.TemplateId = ?
+        `, [result.insertId]);
+
+        res.status(201).json(newTemplate[0]);
     } catch (error) {
         await connection.rollback();
         console.error('Error creating template:', error);
