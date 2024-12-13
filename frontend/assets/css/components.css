@@ -2745,6 +2745,7 @@ textarea.form-control2 {
 .avatar {
     position: relative;
     margin: 0 auto;
+    margin-bottom: 20px;
     width: 84px;
     height: 84px;
     overflow: hidden;
