@@ -18,7 +18,6 @@ const serviceRoutes = require('./routes/services');
 const userRoutes = require('./routes/users');
 const teamRoutes = require('./routes/teams');
 const accountCreationRoutes = require('./routes/account_creation');
-const loginRoutes = require('./routes/login');
 const usersPageRoutes = require('./routes/users_page');
 const teamsPageRoutes = require('./routes/teams_page');
 const { verifyToken, verifyAdmin } = require('./middleware/auth');
@@ -40,7 +39,7 @@ app.use('/api/services', verifyToken, (req, res, next) => {
 app.use('/api/users', verifyToken, verifyAdmin, userRoutes);
 app.use('/api/teams', verifyToken, verifyAdmin, teamRoutes);
 app.use('/api/account-creation', accountCreationRoutes);
-app.use('/api/login', loginRoutes);
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users-page', usersPageRoutes);
 app.use('/api/teams-page', teamsPageRoutes);
 

@@ -75,12 +75,22 @@ function initServiceFilters() {
 
 // Update the DOMContentLoaded event handler
 document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize services first
-    await window.initializeServices();
-    
-    // Then initialize other components
-    initSidebarToggle();
-    initServiceFilters();
+    try {
+        // Initialize services first
+        await window.initializeServices();
+        
+        // Then initialize other components
+        initializeTheme();
+        initSidebarToggle();
+        await renderNavigation();
+        
+        // Initialize service filters if we're on a page that uses them
+        if (document.querySelector('.services-filter')) {
+            initServiceFilters();
+        }
+    } catch (error) {
+        console.error('Initialization error:', error);
+    }
 });
 
 window.renderServiceTags = function(serviceIds, options = {}) {
@@ -243,6 +253,15 @@ if (document.readyState === 'loading') {
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark-mode';
     toggleTheme(savedTheme === 'dark-mode');
+    
+    // Ignorer fejl hvis toggle switch ikke findes
+    const toggleSwitch = document.getElementById('dark-mode-toggle');
+    if (toggleSwitch) {
+        toggleSwitch.checked = savedTheme === 'dark-mode';
+        toggleSwitch.addEventListener('change', (e) => {
+            toggleTheme(e.target.checked);
+        });
+    }
 }
 
 async function renderNavigation() {
@@ -314,4 +333,17 @@ function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = '/pages/login.html';
+}
+
+// Add initSidebarToggle function
+function initSidebarToggle() {
+    const resizeBtn = document.querySelector('[data-resize-btn]');
+    if (resizeBtn) {
+        resizeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.documentElement.classList.toggle('sb-expanded');
+            localStorage.setItem('sidebarExpanded', 
+                document.documentElement.classList.contains('sb-expanded'));
+        });
+    }
 }

@@ -1,34 +1,37 @@
 const axios = require('axios');
+const https = require('https');
 const pool = require('../config/database');
 
 class PortainerService {
     constructor() {
-        this.baseUrl = process.env.PORTAINER_URL || 'http://localhost:9000';
+        this.baseUrl = 'https://portainer.kubelab.dk/api';
+        this.username = 'Lasse2024';
+        this.password = 'Gulelefant7';
         this.token = null;
+        
+        // Create axios instance with SSL verification disabled
+        this.axios = axios.create({
+            httpsAgent: new https.Agent({  
+                rejectUnauthorized: false
+            })
+        });
     }
 
     async authenticate() {
         try {
-            const response = await axios.post(`${this.baseUrl}/api/auth`, {
-                username: process.env.PORTAINER_USERNAME,
-                password: process.env.PORTAINER_PASSWORD
+            console.log('Attempting to authenticate with Portainer...');
+            const response = await this.axios.post(`${this.baseUrl}/auth`, {
+                username: this.username,
+                password: this.password
             });
             
+            console.log('Portainer authentication successful');
             this.token = response.data.jwt;
             return this.token;
         } catch (error) {
             console.error('Portainer authentication error:', error);
-            throw new Error('Failed to authenticate with Portainer');
+            throw error;
         }
-    }
-
-    async getHeaders() {
-        if (!this.token) {
-            await this.authenticate();
-        }
-        return {
-            'Authorization': `Bearer ${this.token}`
-        };
     }
 
     async makeAuthenticatedRequest(method, url, data = null) {
@@ -36,19 +39,22 @@ class PortainerService {
             method,
             url: `${this.baseUrl}${url}`,
             headers: { 'Authorization': `Bearer ${this.token}` },
-            data
+            data,
+            httpsAgent: new https.Agent({  
+                rejectUnauthorized: false
+            })
         };
 
         try {
             if (!this.token) {
                 await this.authenticate();
             }
-            return (await axios(config)).data;
+            return (await this.axios(config)).data;
         } catch (error) {
             if (error.response?.status === 401) {
                 console.log('Token expired, re-authenticating...');
                 await this.authenticate();
-                return (await axios(config)).data;
+                return (await this.axios(config)).data;
             }
             console.error(`Failed to make ${method} request to ${url}:`, error);
             throw error;
@@ -69,7 +75,19 @@ class PortainerService {
     }
 
     async getStacks() {
-        return this.makeAuthenticatedRequest('get', '/stacks');
+        try {
+            if (!this.token) {
+                await this.authenticate();
+            }
+            const response = await axios.get(
+                `${this.baseUrl}/stacks`,
+                { headers: { 'Authorization': `Bearer ${this.token}` } }
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get stacks:', error);
+            throw error;
+        }
     }
 
     async getStack(stackName) {
@@ -99,8 +117,12 @@ class PortainerService {
 
     async createStack(projectData) {
         try {
-            if (!this.token) {
-                await this.authenticate();
+            const token = await this.authenticate();
+            if (!token) {
+                return { 
+                    success: false, 
+                    message: 'Project created but deployment pending - Portainer not available'
+                };
             }
             
             const stackContent = await this.getStackConfig(projectData.templateId);
@@ -117,7 +139,7 @@ class PortainerService {
 
             console.log('Configured stack after replacements:', configuredStack);
 
-            const response = await axios.post(
+            const response = await this.axios.post(
                 `${this.baseUrl}/stacks/create/swarm/string?endpointId=5`,
                 {
                     name: projectData.name,
@@ -129,10 +151,13 @@ class PortainerService {
                 }
             );
 
-            return response.data;
+            return { success: true, data: response.data };
         } catch (error) {
             console.error('Stack deployment failed:', error);
-            throw error;
+            return { 
+                success: false, 
+                message: 'Project created but deployment failed - will retry later'
+            };
         }
     }
 

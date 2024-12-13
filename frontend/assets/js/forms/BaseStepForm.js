@@ -530,6 +530,12 @@ window.BaseStepForm = class BaseStepForm {
 
     async handleSubmission() {
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/pages/login.html';
+                return;
+            }
+
             if (this.type === 'template') {
                 const formData = new FormData();
                 formData.append('name', this.formData.name);
@@ -551,6 +557,9 @@ window.BaseStepForm = class BaseStepForm {
 
                 const response = await fetch(url, {
                     method: method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: formData
                 });
 
@@ -567,6 +576,7 @@ window.BaseStepForm = class BaseStepForm {
                 const response = await fetch('http://localhost:3000/api/projects', {
                     method: 'POST',
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(projectData)
