@@ -38,6 +38,7 @@ const { verifyToken, verifyAdmin } = require('./middleware/auth');
 // Public routes (no authentication required)
 app.use('/api/account-creation', accountCreationRoutes);
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/public/teams', require('./routes/public/teams'));
 
 // Protected routes (require authentication)
 app.use('/api/projects', verifyToken, projectRoutes);

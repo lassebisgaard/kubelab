@@ -242,7 +242,7 @@ function validateForm(form) {
         // Hent teams når siden indlæses
         async function loadTeams() {
             try {
-                const response = await fetch('/api/teams');
+                const response = await fetch('/api/public/teams');
                 const teams = await response.json();
                 const optionsList = document.querySelector('.select-options');
                 optionsList.innerHTML = teams.map(team => 
