@@ -4,61 +4,41 @@ const pool = require('../config/database');
 
 class PortainerService {
     constructor() {
-        this.baseUrl = 'https://portainer.kubelab.dk/api';
-        this.username = 'Lasse2024';
-        this.password = 'Gulelefant7';
-        this.token = null;
+        this.portainerUrl = 'https://portainer.kubelab.dk';
+        this.portainerUsername = 'Lasse2024';
+        this.portainerPassword = 'Gulelefant7';
+        this.portainerToken = null;
         
-        // Create axios instance with SSL verification disabled
-        this.axios = axios.create({
+        // Create axios instance that accepts self-signed certificates
+        this.client = axios.create({
             httpsAgent: new https.Agent({  
                 rejectUnauthorized: false
             })
         });
     }
 
-    async authenticate() {
+    async login() {
         try {
-            console.log('Attempting to authenticate with Portainer...');
-            const response = await this.axios.post(`${this.baseUrl}/auth`, {
-                username: this.username,
-                password: this.password
+            const response = await this.client.post(`${this.portainerUrl}/api/auth`, {
+                username: this.portainerUsername,
+                password: this.portainerPassword
             });
             
-            console.log('Portainer authentication successful');
-            this.token = response.data.jwt;
-            return this.token;
+            this.portainerToken = response.data.jwt;
+            return this.portainerToken;
         } catch (error) {
-            console.error('Portainer authentication error:', error);
+            console.error('Portainer login failed:', error);
             throw error;
         }
     }
 
-    async makeAuthenticatedRequest(method, url, data = null) {
-        const config = {
-            method,
-            url: `${this.baseUrl}${url}`,
-            headers: { 'Authorization': `Bearer ${this.token}` },
-            data,
-            httpsAgent: new https.Agent({  
-                rejectUnauthorized: false
-            })
-        };
-
-        try {
-            if (!this.token) {
-                await this.authenticate();
-            }
-            return (await this.axios(config)).data;
-        } catch (error) {
-            if (error.response?.status === 401) {
-                console.log('Token expired, re-authenticating...');
-                await this.authenticate();
-                return (await this.axios(config)).data;
-            }
-            console.error(`Failed to make ${method} request to ${url}:`, error);
-            throw error;
+    async getAuthHeaders() {
+        if (!this.portainerToken) {
+            await this.login();
         }
+        return {
+            'Authorization': `Bearer ${this.portainerToken}`
+        };
     }
 
     async getStackConfig(templateId) {
@@ -76,12 +56,9 @@ class PortainerService {
 
     async getStacks() {
         try {
-            if (!this.token) {
-                await this.authenticate();
-            }
-            const response = await axios.get(
-                `${this.baseUrl}/stacks`,
-                { headers: { 'Authorization': `Bearer ${this.token}` } }
+            const response = await this.client.get(
+                `${this.portainerUrl}/api/stacks`,
+                { headers: await this.getAuthHeaders() }
             );
             return response.data;
         } catch (error) {
@@ -97,16 +74,13 @@ class PortainerService {
 
     async updateStack(stackName, newConfig) {
         try {
-            if (!this.token) {
-                await this.authenticate();
-            }
             const stack = await this.getStack(stackName);
             if (!stack) return null;
 
-            const response = await axios.put(
-                `${this.baseUrl}/stacks/${stack.Id}`,
+            const response = await this.client.put(
+                `${this.portainerUrl}/api/stacks/${stack.Id}`,
                 newConfig,
-                { headers: { 'Authorization': `Bearer ${this.token}` } }
+                { headers: await this.getAuthHeaders() }
             );
             return response.data;
         } catch (error) {
@@ -117,14 +91,6 @@ class PortainerService {
 
     async createStack(projectData) {
         try {
-            const token = await this.authenticate();
-            if (!token) {
-                return { 
-                    success: false, 
-                    message: 'Project created but deployment pending - Portainer not available'
-                };
-            }
-            
             const stackContent = await this.getStackConfig(projectData.templateId);
             
             console.log('Project data received:', projectData);
@@ -139,15 +105,15 @@ class PortainerService {
 
             console.log('Configured stack after replacements:', configuredStack);
 
-            const response = await this.axios.post(
-                `${this.baseUrl}/stacks/create/swarm/string?endpointId=5`,
+            const response = await this.client.post(
+                `${this.portainerUrl}/stacks/create/swarm/string?endpointId=5`,
                 {
                     name: projectData.name,
                     stackFileContent: configuredStack,
                     swarmID: "myst1l6mbp6kysq7rinrzzvda"
                 },
                 {
-                    headers: { 'Authorization': `Bearer ${this.token}` }
+                    headers: await this.getAuthHeaders()
                 }
             );
 
@@ -163,18 +129,15 @@ class PortainerService {
 
     async deleteStack(stackName) {
         try {
-            if (!this.token) {
-                await this.authenticate();
-            }
             const stack = await this.getStack(stackName);
             if (!stack) {
                 console.log(`Stack ${stackName} not found in Portainer`);
                 return;
             }
-            const response = await axios.delete(
-                `${this.baseUrl}/stacks/${stack.Id}?endpointId=5`,
+            const response = await this.client.delete(
+                `${this.portainerUrl}/stacks/${stack.Id}?endpointId=5`,
                 {
-                    headers: { 'Authorization': `Bearer ${this.token}` }
+                    headers: await this.getAuthHeaders()
                 }
             );
             console.log(`Stack ${stackName} deleted from Portainer`);
@@ -205,9 +168,6 @@ class PortainerService {
 
     async startStack(stackName) {
         try {
-            if (!this.token) {
-                await this.authenticate();
-            }
             const stack = await this.getStack(stackName);
             if (!stack) return false;
 
@@ -217,10 +177,10 @@ class PortainerService {
             }
 
             console.log('Making start request for stack', stack.Id);
-            const response = await axios.post(
-                `${this.baseUrl}/stacks/${stack.Id}/start?endpointId=5`,
+            const response = await this.client.post(
+                `${this.portainerUrl}/api/stacks/${stack.Id}/start?endpointId=5`,
                 {},
-                { headers: { 'Authorization': `Bearer ${this.token}` } }
+                { headers: await this.getAuthHeaders() }
             );
             
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -234,9 +194,6 @@ class PortainerService {
 
     async stopStack(stackName) {
         try {
-            if (!this.token) {
-                await this.authenticate();
-            }
             const stack = await this.getStack(stackName);
             if (!stack) return false;
 
@@ -246,10 +203,10 @@ class PortainerService {
             }
 
             console.log('Making stop request for stack', stack.Id);
-            const response = await axios.post(
-                `${this.baseUrl}/stacks/${stack.Id}/stop?endpointId=5`,
+            const response = await this.client.post(
+                `${this.portainerUrl}/api/stacks/${stack.Id}/stop?endpointId=5`,
                 {},
-                { headers: { 'Authorization': `Bearer ${this.token}` } }
+                { headers: await this.getAuthHeaders() }
             );
 
             await new Promise(resolve => setTimeout(resolve, 1000));

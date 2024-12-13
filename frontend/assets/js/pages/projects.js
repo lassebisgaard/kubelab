@@ -115,12 +115,16 @@ async function handlePowerToggle(projectId, button) {
         });
         
         action = isRunning ? 'stop' : 'start';
+        const token = localStorage.getItem('token');
         
         statusBadge.textContent = isRunning ? 'stopping...' : 'starting...';
         statusBadge.className = 'status-badge transitioning';
         
         const response = await fetch(`http://localhost:3000/api/projects/${projectId}/${action}`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
@@ -157,9 +161,14 @@ async function handleRestart(projectId, button) {
         statusBadge.textContent = 'restarting...';
         statusBadge.className = 'status-badge transitioning';
         
+        const token = localStorage.getItem('token');
         button.classList.add('rotating');
+        
         const response = await fetch(`http://localhost:3000/api/projects/${projectId}/restart`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
