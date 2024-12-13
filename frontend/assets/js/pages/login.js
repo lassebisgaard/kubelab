@@ -51,7 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             if (response.ok) {
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('user', JSON.stringify({
+                    ...data.user,
+                    isAdmin: data.user.role === 'admin'
+                }));
                 window.location.href = '/pages/projects.html';
             } else {
                 showErrorMessage(data.error || 'Login failed');

@@ -22,7 +22,7 @@ class UserForm {
 
         // Add submit handler
         const createButton = document.querySelector('.create-user-button');
-        createButton?.addEventListener('click', () => this.handleSubmit());
+        createButton?.addEventListener('click', () => this.handleSubmission());
     }
 
     async loadTeams() {
@@ -37,10 +37,33 @@ class UserForm {
             if (!response.ok) throw new Error('Failed to load teams');
             
             const teams = await response.json();
-            populateTeamDropdown(teams);
+            
+            // Populate team dropdown
+            const teamSelect = document.querySelector('.custom-select[data-type="team"]');
+            if (!teamSelect) return;
+            
+            const optionsContainer = teamSelect.querySelector('.select-options');
+            optionsContainer.innerHTML = teams.map(team => `
+                <div class="option" data-value="${team.TeamId}">
+                    ${team.TeamName}
+                </div>
+            `).join('');
+
+            // Add click handlers for team options
+            optionsContainer.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const selectedText = teamSelect.querySelector('.selected-option');
+                    if (selectedText) {
+                        selectedText.textContent = option.textContent;
+                        this.formData.teamId = option.dataset.value;
+                        teamSelect.classList.remove('open');
+                    }
+                });
+            });
+
         } catch (error) {
             console.error('Error:', error);
-            showErrorMessage('Failed to load teams');
+            this.showErrorMessage('Failed to load teams');
         }
     }
 
@@ -132,13 +155,30 @@ class UserForm {
         return true;
     }
 
-    async handleSubmit() {
+    showErrorMessage(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `
+            <i class='bx bx-error'></i>
+            <p>${message}</p>
+        `;
+
+        const formCard = document.querySelector('.form-card');
+        if (formCard) {
+            // Fjern eksisterende fejlmeddelelser
+            formCard.querySelectorAll('.error-message').forEach(el => el.remove());
+            formCard.insertBefore(errorDiv, formCard.firstChild);
+        }
+    }
+
+    async handleSubmission() {
         try {
+            document.querySelector('.loading-overlay').classList.add('show');
+
             if (!this.validateForm()) {
+                document.querySelector('.loading-overlay').classList.remove('show');
                 return;
             }
-
-            document.querySelector('.loading-overlay').classList.add('show');
 
             const response = await fetch('http://localhost:3000/api/users', {
                 method: 'POST',
@@ -149,32 +189,35 @@ class UserForm {
                 body: JSON.stringify(this.formData)
             });
 
-            if (response.status === 401) {
-                window.location.href = '/pages/login.html';
-                return;
+            if (!response.ok) {
+                if (response.status === 401) {
+                    window.location.href = '/pages/login.html';
+                    return;
+                }
+                if (response.status === 403) {
+                    throw new Error('Access denied. Admin rights required.');
+                }
+                throw new Error('Failed to create user');
             }
 
-            if (response.status === 403) {
-                showErrorMessage('Access denied. Admin rights required.');
-                return;
-            }
-
+            // Skjul loading og vis success
             document.querySelector('.loading-overlay').classList.remove('show');
             document.querySelector('.success-overlay').classList.add('show');
 
+            // Vent 2 sekunder og redirect
             setTimeout(() => {
                 window.location.href = '/pages/users.html';
             }, 2000);
 
         } catch (error) {
-            console.error('Error creating user:', error);
+            console.error('Error:', error);
             document.querySelector('.loading-overlay').classList.remove('show');
-            alert('Failed to create user. Please try again.');
+            this.showErrorMessage(error.message || 'Failed to create user');
         }
     }
 }
 
 // Initialize when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new UserForm();
+    window.userForm = new UserForm();
 }); 

@@ -1,7 +1,6 @@
 class TeamForm extends BaseStepForm {
     constructor() {
         super('team');
-        this.type = 'team';
         this.formData = {
             name: '',
             expiration: '',
@@ -146,10 +145,14 @@ class TeamForm extends BaseStepForm {
 
     async handleSubmission() {
         try {
-            console.log('Submitting team data:', this.formData);
             document.querySelector('.loading-overlay').classList.add('show');
 
             const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/pages/login.html';
+                return;
+            }
+
             const response = await fetch('http://localhost:3000/api/teams', {
                 method: 'POST',
                 headers: {
@@ -159,22 +162,22 @@ class TeamForm extends BaseStepForm {
                 body: JSON.stringify(this.formData)
             });
 
-            if (response.status === 401) {
-                window.location.href = '/pages/login.html';
-                return;
+            if (!response.ok) {
+                if (response.status === 401) {
+                    window.location.href = '/pages/login.html';
+                    return;
+                }
+                if (response.status === 403) {
+                    throw new Error('Access denied. Admin rights required.');
+                }
+                throw new Error('Failed to create team');
             }
 
-            if (response.status === 403) {
-                showErrorMessage('Access denied. Admin rights required.');
-                return;
-            }
-
-            const result = await response.json();
-            window.location.href = '/pages/teams.html';
-
+            // Skjul loading og vis success
             document.querySelector('.loading-overlay').classList.remove('show');
             document.querySelector('.success-overlay').classList.add('show');
 
+            // Vent 2 sekunder og redirect
             setTimeout(() => {
                 window.location.href = '/pages/teams.html';
             }, 2000);
@@ -182,17 +185,12 @@ class TeamForm extends BaseStepForm {
         } catch (error) {
             console.error('Error creating team:', error);
             document.querySelector('.loading-overlay').classList.remove('show');
-            alert('Failed to create team. Please try again.');
+            this.showErrorMessage(error.message || 'Failed to create team');
         }
     }
 }
 
+// Initialize when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof BaseStepForm === 'undefined') {
-        console.error('BaseStepForm not loaded');
-        return;
-    }
-    const form = new TeamForm();
-    // Tilføj form til window så vi kan kalde removeMember fra HTML
-    window.teamForm = form;
+    window.teamForm = new TeamForm();
 }); 

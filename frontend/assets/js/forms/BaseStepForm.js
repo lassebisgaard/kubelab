@@ -8,7 +8,7 @@ window.BaseStepForm = class BaseStepForm {
         this.backButton = document.querySelector('.back-button');
         this.nextButton = document.querySelector('.next-button');
         this.currentStep = 1;
-        this.maxSteps = this.steps.length;
+        this.maxSteps = type === 'template' ? 3 : 2;
         
         // Check for edit mode
         const urlParams = new URLSearchParams(window.location.search);
@@ -530,6 +530,8 @@ window.BaseStepForm = class BaseStepForm {
 
     async handleSubmission() {
         try {
+            document.querySelector('.loading-overlay').classList.add('show');
+
             const token = localStorage.getItem('token');
             if (!token) {
                 window.location.href = '/pages/login.html';
@@ -565,7 +567,6 @@ window.BaseStepForm = class BaseStepForm {
 
                 if (!response.ok) throw new Error('Failed to save template');
             } else {
-                // Project data
                 const projectData = {
                     name: this.formData.name,
                     description: this.formData.description,
@@ -585,32 +586,22 @@ window.BaseStepForm = class BaseStepForm {
                 if (!response.ok) throw new Error('Failed to create project');
             }
 
-            // Redirect med det samme efter success
-            window.location.href = this.type === 'template' 
-                ? '/pages/templates.html' 
-                : '/pages/projects.html';
-            
+            // Skjul loading og vis success
+            document.querySelector('.loading-overlay').classList.remove('show');
+            document.querySelector('.success-overlay').classList.add('show');
+
+            // Vent 2 sekunder og redirect
+            setTimeout(() => {
+                window.location.href = this.type === 'template' 
+                    ? '/pages/templates.html' 
+                    : '/pages/projects.html';
+            }, 2000);
+
         } catch (error) {
             console.error('Error:', error);
+            document.querySelector('.loading-overlay').classList.remove('show');
             this.showErrorMessage(`Failed to save ${this.type}`);
         }
-    }
-
-    showLoadingOverlay() {
-        document.querySelector('.loading-overlay')?.classList.add('show');
-    }
-
-    hideLoadingOverlay() {
-        document.querySelector('.loading-overlay')?.classList.remove('show');
-    }
-
-    showSuccessOverlay() {
-        return new Promise(resolve => {
-            const overlay = document.querySelector('.success-overlay');
-            overlay.classList.add('active');
-            // Vent på at animation er færdig
-            setTimeout(resolve, 500);
-        });
     }
 
     initFileUploads() {
