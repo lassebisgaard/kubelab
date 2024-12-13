@@ -266,37 +266,36 @@ function initializeTheme() {
 
 async function renderNavigation() {
     try {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const currentPage = window.location.pathname.split('/').pop();
+        const currentPath = window.location.pathname;
+        const publicPages = ['/', '/index.html', '/pages/login.html', '/pages/account_creation.html'];
         
-        // Ret stien til at være relativ til frontend mappen
+        // Don't render navigation for public pages
+        if (publicPages.some(page => currentPath.endsWith(page))) {
+            return;
+        }
+
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user) {
+            return;
+        }
+
+        // Rest of your existing renderNavigation code...
         const response = await fetch('../templates/navigation.html');
         const templateText = await response.text();
         
-        // Debug logs
-        console.log('Navigation template loaded');
-        console.log('User data:', user);
-        console.log('Current page:', currentPage);
-        
-        // Compile og render template
         const template = Handlebars.compile(templateText);
         const navigationHtml = template({
             user: user,
-            isProjectsPage: currentPage === 'projects.html',
-            isTemplatesPage: currentPage === 'templates.html',
-            isTeamsPage: currentPage === 'teams.html',
-            isUsersPage: currentPage === 'users.html'
+            isProjectsPage: currentPath === 'projects.html',
+            isTemplatesPage: currentPath === 'templates.html',
+            isTeamsPage: currentPath === 'teams.html',
+            isUsersPage: currentPath === 'users.html'
         });
         
-        // Indsæt i DOM
         document.querySelector('aside').innerHTML = navigationHtml;
-        
-        // Genaktiver eventuelle event listeners
         initializeNavigationEvents();
     } catch (error) {
         console.error('Error rendering navigation:', error);
-        console.log('Current page:', window.location.pathname);
-        console.log('User data:', localStorage.getItem('user'));
     }
 }
 

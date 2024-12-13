@@ -22,7 +22,11 @@ const usersPageRoutes = require('./routes/users_page');
 const teamsPageRoutes = require('./routes/teams_page');
 const { verifyToken, verifyAdmin } = require('./middleware/auth');
 
-// Use routes
+// Public routes (no authentication required)
+app.use('/api/account-creation', accountCreationRoutes);
+app.use('/api/auth', require('./routes/auth'));
+
+// Protected routes (require authentication)
 app.use('/api/projects', verifyToken, projectRoutes);
 app.use('/api/templates', verifyToken, (req, res, next) => {
     if (req.method === 'GET') {
@@ -38,10 +42,8 @@ app.use('/api/services', verifyToken, (req, res, next) => {
 }, serviceRoutes);
 app.use('/api/users', verifyToken, verifyAdmin, userRoutes);
 app.use('/api/teams', verifyToken, verifyAdmin, teamRoutes);
-app.use('/api/account-creation', accountCreationRoutes);
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users-page', usersPageRoutes);
-app.use('/api/teams-page', teamsPageRoutes);
+app.use('/api/users-page', verifyToken, usersPageRoutes);
+app.use('/api/teams-page', verifyToken, teamsPageRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
