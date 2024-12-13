@@ -55,9 +55,19 @@ app.use('/api/services', verifyToken, (req, res, next) => {
     verifyAdmin(req, res, next);
 }, serviceRoutes);
 app.use('/api/users', verifyToken, verifyAdmin, userRoutes);
-app.use('/api/teams', verifyToken, verifyAdmin, teamRoutes);
+app.use('/api/teams', verifyToken, (req, res, next) => {
+    if (req.method === 'GET') {
+        return next();
+    }
+    verifyAdmin(req, res, next);
+}, teamRoutes);
 app.use('/api/users-page', verifyToken, usersPageRoutes);
-app.use('/api/teams-page', verifyToken, teamsPageRoutes);
+app.use('/api/teams-page', verifyToken, (req, res, next) => {
+    if (req.method === 'GET') {
+        return next();
+    }
+    verifyAdmin(req, res, next);
+}, teamsPageRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
