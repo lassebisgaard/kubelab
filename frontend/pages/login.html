@@ -98,13 +98,15 @@
                         body: JSON.stringify({ email, password })
                     });
 
-                    const data = await response.json();
-
                     if (response.ok) {
-                        // Store user data in localStorage or sessionStorage
-                        localStorage.setItem('user', JSON.stringify(data.user));
+                        const data = await response.json();
+                        // Gem både token og user data
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify({
+                            ...data.user,
+                            isAdmin: data.user.role === 'admin'
+                        }));
                         
-                        // Redirect to dashboard or home page
                         window.location.href = '/pages/projects.html';
                     } else {
                         alert(data.error || 'Login failed');

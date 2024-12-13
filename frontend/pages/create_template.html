@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/navigation.css">
     <link rel="stylesheet" href="../assets/css/components.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 </head>
 <body class="dark-mode">
     <button class="burger-menu">
@@ -23,64 +24,7 @@
     <div class="mobile-nav-overlay"></div>
     <!-- Navigation -->
     <aside>
-        <nav>
-            <ul>
-                <li>
-                    <img src="../assets/images/logo.svg" alt="Logo">
-                    <span>Kubelab</span>
-                </li>
-                <li>
-                    <a href="#" data-resize-btn>
-                        <i class='bx bx-chevron-left'></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="create.html" class="create-button">
-                        <img src="../assets/Icons/plus.svg" alt="Plus tegn">
-                        <span>Create</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="projects.html">
-                        <img src="../assets/Icons/Projects.svg" alt="Projects">
-                        <span>Projects</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="templates.html">
-                        <img src="../assets/Icons/Template.svg" alt="Templates">
-                        <span>Templates</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <img src="../assets/Icons/Teams.svg" alt="Teams">
-                        <span>Teams</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <img src="../assets/Icons/Users.svg" alt="Users">
-                        <span>Users</span>
-                    </a>
-                </li>
-            </ul>
-
-            <ul class="nav-bottom">
-                <li>
-                    <a href="settings.html">
-                        <img src="../assets/Icons/settings.svg" alt="Settings">
-                        <span>Settings</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="profile-link">
-                        <img src="../assets/images/profil.png" alt="Profile Picture" class="profile-image">
-                        <span>Lasse Bisgaard</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <!-- Navigation will be rendered here -->
     </aside>
 
     <main>

@@ -1,6 +1,17 @@
 async function loadProjects() {
     try {
-        const response = await fetch('http://localhost:3000/api/projects');
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/projects', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.status === 401) {
+            window.location.href = '/pages/login.html';
+            return;
+        }
+        
         const projects = await response.json();
         
         // Tjek hvilken side vi er på

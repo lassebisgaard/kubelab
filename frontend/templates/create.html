@@ -1,0 +1,39 @@
+<div class="grid grid-2x2">
+    <a href="create_project.html" class="card">
+        <h2>Create new project</h2>
+        <p class="text-secondary">Choose between different templates and configure your project.</p>
+        <div class="card-content flex-center">
+            <span class="plus-icon">+</span>
+            <div class="card-action-text">Create new project</div>
+        </div>
+    </a>
+
+    {{#if user.isAdmin}}
+        <a href="create_template.html" class="card">
+            <h2>Create new template</h2>
+            <p class="text-secondary">Create a template that others can use for their projects.</p>
+            <div class="card-content flex-center">
+                <span class="plus-icon">+</span>
+                <div class="card-action-text">Create new template</div>
+            </div>
+        </a>
+
+        <a href="create_team.html" class="card">
+            <h2>Create new team</h2>
+            <p class="text-secondary">Create and manage teams to organize users and control access.</p>
+            <div class="card-content flex-center">
+                <span class="plus-icon">+</span>
+                <div class="card-action-text">Create new team</div>
+            </div>
+        </a>
+
+        <a href="create_user.html" class="card">
+            <h2>Create new user</h2>
+            <p class="text-secondary">Add new users to your organization and configure their roles.</p>
+            <div class="card-content flex-center">
+                <span class="plus-icon">+</span>
+                <div class="card-action-text">Create new user</div>
+            </div>
+        </a>
+    {{/if}}
+</div> 

@@ -1,21 +1,19 @@
 async function loadProjectDetails() {
     try {
-        // Get project ID from URL
+        const token = localStorage.getItem('token');
         const projectId = new URLSearchParams(window.location.search).get('id');
-        if (!projectId) {
-            window.location.href = 'projects.html';
+        
+        const response = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.status === 401) {
+            window.location.href = '/pages/login.html';
             return;
         }
 
-        // Load services first
-        await window.loadServices();
-        
-        // Get project data
-        const response = await fetch(`http://localhost:3000/api/projects/${projectId}`);
-        if (!response.ok) {
-            throw new Error('Failed to load project');
-        }
-        
         const project = await response.json();
         console.log('Project data:', project);
 
@@ -109,22 +107,16 @@ function initProjectControls(projectId) {
 
 async function handlePowerToggle(projectId, button) {
     try {
-        const controls = button.closest('.project-controls');
-        controls.querySelectorAll('.action-button').forEach(btn => {
-            btn.disabled = true;
-        });
-        
+        const token = localStorage.getItem('token');
         const statusBadge = document.querySelector('.status-badge');
         const isRunning = statusBadge.textContent === 'online';
         const action = isRunning ? 'stop' : 'start';
         
-        // Vis transitioning status med animation
-        statusBadge.textContent = isRunning ? 'stopping...' : 'starting...';
-        statusBadge.className = 'status-badge transitioning';
-        button.classList.add('transitioning');
-        
         const response = await fetch(`http://localhost:3000/api/projects/${projectId}/${action}`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
@@ -138,75 +130,61 @@ async function handlePowerToggle(projectId, button) {
         statusBadge.className = `status-badge ${result.status}`;
         
     } catch (error) {
-        console.error('Error toggling project state:', error);
-        alert(`Failed to toggle project state. Please try again.`);
-        // Reset status ved fejl
-        const statusBadge = document.querySelector('.status-badge');
-        const currentStatus = button.classList.contains('active') ? 'online' : 'offline';
-        statusBadge.textContent = currentStatus;
-        statusBadge.className = `status-badge ${currentStatus}`;
-    } finally {
-        button.classList.remove('transitioning');
-        const controls = button.closest('.project-controls');
-        controls.querySelectorAll('.action-button').forEach(btn => {
-            btn.disabled = false;
-        });
+        console.error('Error:', error);
+        showErrorMessage(`Failed to ${action} project`);
     }
 }
 
 async function handleRestart(projectId, button) {
     try {
-        const controls = button.closest('.project-controls');
-        controls.querySelectorAll('.action-button').forEach(btn => {
-            btn.disabled = true;
-        });
-        
+        const token = localStorage.getItem('token');
         const statusBadge = document.querySelector('.status-badge');
         statusBadge.textContent = 'restarting...';
         statusBadge.className = 'status-badge transitioning';
         
         button.classList.add('rotating');
         const response = await fetch(`http://localhost:3000/api/projects/${projectId}/restart`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to restart project');
+        if (response.status === 401) {
+            window.location.href = '/pages/login.html';
+            return;
         }
 
         const result = await response.json();
         statusBadge.textContent = result.status;
         statusBadge.className = `status-badge ${result.status}`;
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
-        console.error('Error restarting project:', error);
-        alert('Failed to restart project. Please try again.');
-        // Reset status ved fejl
-        const statusBadge = document.querySelector('.status-badge');
-        statusBadge.textContent = 'offline';
-        statusBadge.className = 'status-badge offline';
-    } finally {
-        button.classList.remove('rotating');
-        const controls = button.closest('.project-controls');
-        controls.querySelectorAll('.action-button').forEach(btn => {
-            btn.disabled = false;
-        });
+        console.error('Error:', error);
+        showErrorMessage('Failed to restart project');
     }
 }
 
 async function deleteProject(projectId) {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
+
+        if (response.status === 401) {
+            window.location.href = '/pages/login.html';
+            return;
+        }
 
         if (!response.ok) throw new Error('Failed to delete project');
         
-        window.location.href = 'projects.html';
+        window.location.href = '/pages/projects.html';
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to delete project. Please try again.');
+        showErrorMessage('Failed to delete project');
     }
 }
 

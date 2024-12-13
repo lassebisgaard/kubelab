@@ -3,22 +3,32 @@ const pool = require('../config/database');
 
 class PortainerService {
     constructor() {
-        this.baseUrl = 'https://portainer.kubelab.dk/api';
+        this.baseUrl = process.env.PORTAINER_URL || 'http://localhost:9000';
         this.token = null;
     }
 
     async authenticate() {
         try {
-            const response = await axios.post(`${this.baseUrl}/auth`, {
-                username: "Lasse2024",
-                password: "Gulelefant7"
+            const response = await axios.post(`${this.baseUrl}/api/auth`, {
+                username: process.env.PORTAINER_USERNAME,
+                password: process.env.PORTAINER_PASSWORD
             });
+            
             this.token = response.data.jwt;
             return this.token;
         } catch (error) {
-            console.error('Authentication failed:', error);
-            throw error;
+            console.error('Portainer authentication error:', error);
+            throw new Error('Failed to authenticate with Portainer');
         }
+    }
+
+    async getHeaders() {
+        if (!this.token) {
+            await this.authenticate();
+        }
+        return {
+            'Authorization': `Bearer ${this.token}`
+        };
     }
 
     async makeAuthenticatedRequest(method, url, data = null) {

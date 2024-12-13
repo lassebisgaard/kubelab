@@ -1,8 +1,17 @@
 async function loadTemplates() {
     try {
-        await window.loadServices();
-
-        const response = await fetch('http://localhost:3000/api/templates');
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/templates', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.status === 401) {
+            window.location.href = '/pages/login.html';
+            return;
+        }
+        
         const templates = await response.json();
         
         const templateGrid = document.querySelector('.project-template-grid');
@@ -37,15 +46,8 @@ async function loadTemplates() {
 
         initTemplateActions();
     } catch (error) {
-        console.error('Error loading templates:', error);
-        const templateGrid = document.querySelector('.project-template-grid');
-        templateGrid.innerHTML = `
-            <div class="error-message">
-                <i class='bx bx-error'></i>
-                <p>Failed to load templates</p>
-                <button class="button secondary" onclick="loadTemplates()">Try Again</button>
-            </div>
-        `;
+        console.error('Error:', error);
+        showErrorMessage('Failed to load templates');
     }
 }
 

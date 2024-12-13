@@ -50,22 +50,20 @@ class TeamForm extends BaseStepForm {
 
     async loadUsers() {
         try {
-            const response = await fetch('http://localhost:3000/api/users');
-            const users = await response.json();
-            
-            const searchResults = document.querySelector('.search-results');
-            searchResults.innerHTML = users.map(user => `
-                <div class="user-option" data-id="${user.UserId}">
-                    <div class="user-info">
-                        <span class="user-name">${user.Name}</span>
-                        <span class="user-email">${user.Mail}</span>
-                    </div>
-                    <input type="checkbox" ${this.formData.members.some(m => m.userId === user.UserId) ? 'checked' : ''}>
-                </div>
-            `).join('');
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/users', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
+            if (!response.ok) throw new Error('Failed to load users');
+            
+            const users = await response.json();
+            populateUsersList(users);
         } catch (error) {
-            console.error('Error loading users:', error);
+            console.error('Error:', error);
+            showErrorMessage('Failed to load users');
         }
     }
 
@@ -151,17 +149,28 @@ class TeamForm extends BaseStepForm {
             console.log('Submitting team data:', this.formData);
             document.querySelector('.loading-overlay').classList.add('show');
 
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:3000/api/teams', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(this.formData)
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to create team');
+            if (response.status === 401) {
+                window.location.href = '/pages/login.html';
+                return;
             }
+
+            if (response.status === 403) {
+                showErrorMessage('Access denied. Admin rights required.');
+                return;
+            }
+
+            const result = await response.json();
+            window.location.href = '/pages/teams.html';
 
             document.querySelector('.loading-overlay').classList.remove('show');
             document.querySelector('.success-overlay').classList.add('show');

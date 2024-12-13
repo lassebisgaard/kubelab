@@ -27,44 +27,20 @@ class UserForm {
 
     async loadTeams() {
         try {
-            console.log('Starting teams fetch...');
-            const response = await fetch('http://localhost:3000/api/teams');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const teams = await response.json();
-            console.log('Loaded teams:', teams);
-            
-            const teamSelect = document.querySelector('.custom-select[data-type="team"]');
-            if (!teamSelect) {
-                console.error('Team select element not found');
-                return;
-            }
-
-            const options = teamSelect.querySelector('.select-options');
-            if (!options) {
-                console.error('Options container not found in team select');
-                return;
-            }
-            
-            options.innerHTML = teams.map(team => `
-                <div class="option" data-value="${team.TeamId}">${team.TeamName}</div>
-            `).join('');
-
-            // Add click handlers for options
-            options.querySelectorAll('.option').forEach(option => {
-                option.addEventListener('click', () => {
-                    const selectedText = teamSelect.querySelector('.selected-option');
-                    if (selectedText) {
-                        selectedText.textContent = option.textContent;
-                        this.formData.teamId = option.dataset.value;
-                        teamSelect.classList.remove('open');
-                    }
-                });
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/teams', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
+            if (!response.ok) throw new Error('Failed to load teams');
+            
+            const teams = await response.json();
+            populateTeamDropdown(teams);
         } catch (error) {
-            console.error('Error loading teams:', error);
+            console.error('Error:', error);
+            showErrorMessage('Failed to load teams');
         }
     }
 
@@ -167,13 +143,20 @@ class UserForm {
             const response = await fetch('http://localhost:3000/api/users', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(this.formData)
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to create user');
+            if (response.status === 401) {
+                window.location.href = '/pages/login.html';
+                return;
+            }
+
+            if (response.status === 403) {
+                showErrorMessage('Access denied. Admin rights required.');
+                return;
             }
 
             document.querySelector('.loading-overlay').classList.remove('show');

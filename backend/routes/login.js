@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
     }
@@ -27,15 +29,28 @@ router.post('/', async (req, res) => {
             [users[0].UserId]
         );
 
+        const isAdmin = roles[0]?.IsAdmin === 1;
+        
+        // Create JWT token
+        const token = jwt.sign(
+            { 
+                userId: users[0].UserId,
+                email: users[0].Mail,
+                isAdmin: isAdmin
+            },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
         const user = {
             ...users[0],
-            role: roles[0]?.IsAdmin ? 'admin' : 'student'
+            role: isAdmin ? 'admin' : 'student'
         };
 
-        // You might want to implement proper session management here
         res.json({ 
             message: 'Login successful',
-            user: user
+            user,
+            token
         });
 
     } catch (error) {

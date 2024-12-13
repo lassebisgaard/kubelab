@@ -21,13 +21,24 @@ const accountCreationRoutes = require('./routes/account_creation');
 const loginRoutes = require('./routes/login');
 const usersPageRoutes = require('./routes/users_page');
 const teamsPageRoutes = require('./routes/teams_page');
+const { verifyToken, verifyAdmin } = require('./middleware/auth');
 
 // Use routes
-app.use('/api/projects', projectRoutes);
-app.use('/api/templates', templateRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/teams', teamRoutes);
+app.use('/api/projects', verifyToken, projectRoutes);
+app.use('/api/templates', verifyToken, (req, res, next) => {
+    if (req.method === 'GET') {
+        return next();
+    }
+    verifyAdmin(req, res, next);
+}, templateRoutes);
+app.use('/api/services', verifyToken, (req, res, next) => {
+    if (req.method === 'GET') {
+        return next();
+    }
+    verifyAdmin(req, res, next);
+}, serviceRoutes);
+app.use('/api/users', verifyToken, verifyAdmin, userRoutes);
+app.use('/api/teams', verifyToken, verifyAdmin, teamRoutes);
 app.use('/api/account-creation', accountCreationRoutes);
 app.use('/api/login', loginRoutes);
 app.use('/api/users-page', usersPageRoutes);

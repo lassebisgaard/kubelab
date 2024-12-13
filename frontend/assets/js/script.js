@@ -263,12 +263,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Kør theme check med det samme i tilfælde af at DOMContentLoaded allerede er fyret
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeTheme);
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeTheme();
+        renderNavigation();
+    });
 } else {
     initializeTheme();
+    renderNavigation();
 }
 
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark-mode';
     toggleTheme(savedTheme === 'dark-mode');
+}
+
+async function renderNavigation() {
+    try {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // Ret stien til at være relativ til frontend mappen
+        const response = await fetch('../templates/navigation.html');
+        const templateText = await response.text();
+        
+        // Debug logs
+        console.log('Navigation template loaded');
+        console.log('User data:', user);
+        console.log('Current page:', currentPage);
+        
+        // Compile og render template
+        const template = Handlebars.compile(templateText);
+        const navigationHtml = template({
+            user: user,
+            isProjectsPage: currentPage === 'projects.html',
+            isTemplatesPage: currentPage === 'templates.html',
+            isTeamsPage: currentPage === 'teams.html',
+            isUsersPage: currentPage === 'users.html'
+        });
+        
+        // Indsæt i DOM
+        document.querySelector('aside').innerHTML = navigationHtml;
+        
+        // Genaktiver eventuelle event listeners
+        initializeNavigationEvents();
+    } catch (error) {
+        console.error('Error rendering navigation:', error);
+        console.log('Current page:', window.location.pathname);
+        console.log('User data:', localStorage.getItem('user'));
+    }
+}
+
+// Tilføj denne funktion for at håndtere navigation events
+function initializeNavigationEvents() {
+    // Burger menu toggle
+    const burgerMenu = document.querySelector('.burger-menu');
+    const aside = document.querySelector('aside');
+    const overlay = document.querySelector('.mobile-nav-overlay');
+    
+    if (burgerMenu) {
+        burgerMenu.addEventListener('click', () => {
+            aside.classList.toggle('mobile-nav-open');
+            overlay.classList.toggle('active');
+        });
+    }
+    
+    // Overlay click handler
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            aside.classList.remove('mobile-nav-open');
+            overlay.classList.remove('active');
+        });
+    }
+    
+    // Logout handler
+    const logoutButton = document.querySelector('.logout button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/pages/login.html';
 }
