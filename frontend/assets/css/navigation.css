@@ -164,38 +164,27 @@ nav a img:not(.profile-image),
 
 /* Mobile */
 @media (max-width: 768px) {
-    /* Eksisterende mobile styles... */
-
-    /* Juster main content layout */
-    main {
-        margin-left: 0;
+    /* Opdater sidebar position og width */
+    aside {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 280px !important;
+        z-index: 1000;
     }
 
-    /* Juster page container */
-    .page-container {
-        padding: 24px;
-        margin-top: 72px;
-        margin-left: 0;
+    /* Når navigation er åben */
+    aside.mobile-nav-open {
+        transform: translateX(0);
     }
 
-    /* Juster page header */
-    .page-header {
-        margin-top: 72px;
-        padding: 0;
-        margin-left: 0;
-    }
-
-    /* Juster section title */
-    .section-title {
-        padding-left: 0;
-        margin-left: 0;
+    /* Fjern alle :root:not(.sb-expanded) margin effekter på mobile */
+    :root:not(.sb-expanded) main {
+        margin-left: 0 !important;
     }
 
     /* Burger menu styling */
     .burger-menu {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
+        display: block !important;
         position: fixed;
         top: 16px;
         left: 16px;
@@ -207,11 +196,12 @@ nav a img:not(.profile-image),
         border: 1px solid var(--border-color);
         cursor: pointer;
         padding: 8px;
+        transition: transform 0.3s ease;
     }
 
     /* Burger menu ikon */
     .burger-menu i {
-        color: #FFFFFF;
+        color: var(--text-color);
         font-size: 24px;
     }
 
@@ -220,45 +210,55 @@ nav a img:not(.profile-image),
         transform: translateX(240px);
     }
 
-    /* Skjul resize knap */
-    [data-resize-btn],
-    nav > ul:first-of-type > li:nth-child(2) {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
+    /* Navigation styling for mobile */
+    nav {
+        padding: 16px;
     }
 
-    /* Resten af mobile styles forbliver uændret */
-    aside {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
+    /* Skjul resize knap på mobile */
+    [data-resize-btn] {
+        display: none !important;
+    }
+
+    /* Overlay når navigation er åben */
+    .nav-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .mobile-nav-open ~ .nav-overlay {
+        display: block;
+    }
+
+    /* Ensure navigation is always expanded on mobile */
+    :root:not(.sb-expanded) aside {
         width: 280px !important;
     }
 
-    aside.mobile-nav-open {
-        transform: translateX(0);
+    :root:not(.sb-expanded) nav a,
+    :root:not(.sb-expanded) .nav-bottom a {
+        width: 100%;
+        padding: 8px 8px 8px 24px;
+        justify-content: flex-start;
     }
 
-    /* Juster main content layout */
-    main {
-        padding-left: 0;
-        padding-top: 72px; /* Gør plads til burger menu */
+    :root:not(.sb-expanded) nav a span,
+    :root:not(.sb-expanded) .nav-bottom a span,
+    :root:not(.sb-expanded) nav ul li:first-child span {
+        display: block;
     }
 
-    /* Juster page container */
-    .page-container {
-        padding: 24px;
-        padding-top: 0; /* Fjern top padding da vi har padding-top på main */
+    :root:not(.sb-expanded) .create-button {
+        width: 206px;
+        padding: 0;
+        justify-content: center;
     }
 
-    /* Juster page header */
-    .page-header {
-        margin-top: 0;
-    }
-
-    /* Juster content wrapper */
-    .content-wrapper {
-        padding-left: 48px; /* Gør plads til burger menu */
+    :root:not(.sb-expanded) .create-button span {
+        display: block;
     }
 }
 
@@ -342,4 +342,16 @@ nav a.active::before {
 /* Make sure create button doesn't get the active indicator */
 nav a.create-button.active::before {
     display: none;
+}
+
+/* Ensure smooth transitions */
+aside, 
+.burger-menu,
+main {
+    transition: all 0.3s ease;
+}
+
+/* Tilføj disse styles udenfor media query */
+.burger-menu {
+    display: none; /* Skjult som standard, vises kun på mobile */
 }

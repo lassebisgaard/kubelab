@@ -77,27 +77,17 @@ body.no-sidebar main {
 
 @media (max-width: 768px) {
     main {
-        margin-left: 0;
-        padding: 1rem 1rem 80px;
+        margin-left: 0 !important;
+        padding: 72px 16px 16px 16px;
+        width: 100%;
     }
 
     .content-wrapper {
-        max-width: 100%;
-        padding: 0 8px;
+        padding: 0 16px;
     }
 
-    .grid-2x2,
-    .details-grid {
+    .grid-2x2 {
         grid-template-columns: 1fr;
-    }
-
-    .config-grid {
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .icon-grid {
-        grid-template-columns: repeat(4, 1fr);
     }
 
     .project-template-grid {
@@ -131,7 +121,7 @@ body.no-sidebar main {
     }
 
     .page-container {
-        padding: 1.5rem 1rem;
+        padding: 4.5rem 1rem;
     }
 
     .content-wrapper {
