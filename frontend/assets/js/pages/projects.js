@@ -59,7 +59,11 @@ async function loadProjectsList(projects) {
         studentsSection.style.display = 'block';
         const tableBody = studentsSection.querySelector('.table-body');
         tableBody.innerHTML = studentProjects.map(project => `
-            <div class="table-row" data-project-id="${project.ProjectId}">
+            <div class="table-row" 
+                 data-project-id="${project.ProjectId}"
+                 onclick="window.location.href='project_details.html?id=${project.ProjectId}'"
+                 role="button"
+                 tabindex="0">
                 <div class="col-name">${project.ProjectName}</div>
                 <div class="col-domain">${project.Domain}.kubelab.dk</div>
                 <div class="col-owner">${project.UserName || 'Not specified'}</div>
@@ -67,10 +71,10 @@ async function loadProjectsList(projects) {
                     <div class="status-badge ${project.Status || 'offline'}">${project.Status || 'offline'}</div>
                 </div>
                 <div class="col-controls project-controls">
-                    <button class="action-button" title="Power">
+                    <button class="action-button" title="Power" onclick="event.stopPropagation()">
                         <i class='bx bx-power-off'></i>
                     </button>
-                    <button class="action-button" title="Restart">
+                    <button class="action-button" title="Restart" onclick="event.stopPropagation()">
                         <i class='bx bx-refresh'></i>
                     </button>
                 </div>

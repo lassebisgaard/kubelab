@@ -371,7 +371,7 @@ button.action-button i {
 }
 
 .table-row {
-    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
@@ -380,7 +380,7 @@ button.action-button i {
 }
 
 .table-row:hover {
-    background-color: var(--hover-background);
+    background-color: var(--card-background);
 }
 
 .table-row .project-controls {
@@ -3189,5 +3189,17 @@ label.option-label {
 /* Search input margin */
 .modal-body .form-group {
     margin-bottom: 16px;
+}
+
+/* Ensure buttons still work independently */
+.table-row .project-controls button {
+    position: relative;
+    z-index: 1;
+}
+
+/* Accessibility */
+.table-row:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: -2px;
 }
 
