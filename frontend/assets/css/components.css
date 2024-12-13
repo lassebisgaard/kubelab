@@ -349,6 +349,55 @@ button.action-button i {
     margin-bottom: 8px;
 }
 
+/* Projects Table */
+.projects-table {
+    background: var(--card-background);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 24px;
+}
+
+.table-header, .table-row {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+    align-items: center;
+    padding: 16px 24px;
+}
+
+.table-header {
+    background: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 500;
+}
+
+.table-row {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.table-row:hover {
+    background-color: var(--hover-background);
+}
+
+.table-row .project-controls {
+    justify-content: flex-end;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .table-header, .table-row {
+        grid-template-columns: 2fr 2fr 1fr;
+    }
+    
+    .col-owner, .col-controls {
+        display: none;
+    }
+}
+
 /* === Labels & Form Controls === */
 label,
 .label {
@@ -3174,3 +3223,4 @@ label.option-label {
     opacity: 1;
     color: var(--secondary-color);
 }
+

@@ -57,14 +57,25 @@ async function loadProjectsList(projects) {
     // Render Students Projects if admin
     if (isAdmin && studentProjects.length > 0) {
         studentsSection.style.display = 'block';
-        studentsProjectsGrid.innerHTML = studentProjects.map(project => templateFunction({
-            id: project.ProjectId,
-            name: project.ProjectName,
-            status: project.Status || 'offline',
-            template: project.TemplateName || 'Not specified',
-            domain: `${project.Domain}.kubelab.dk`,
-            owner: project.UserName
-        })).join('');
+        const tableBody = studentsSection.querySelector('.table-body');
+        tableBody.innerHTML = studentProjects.map(project => `
+            <div class="table-row" data-project-id="${project.ProjectId}">
+                <div class="col-name">${project.ProjectName}</div>
+                <div class="col-domain">${project.Domain}.kubelab.dk</div>
+                <div class="col-owner">${project.UserName || 'Not specified'}</div>
+                <div class="col-status">
+                    <div class="status-badge ${project.Status || 'offline'}">${project.Status || 'offline'}</div>
+                </div>
+                <div class="col-controls project-controls">
+                    <button class="action-button" title="Power">
+                        <i class='bx bx-power-off'></i>
+                    </button>
+                    <button class="action-button" title="Restart">
+                        <i class='bx bx-refresh'></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
     } else {
         studentsSection.style.display = 'none';
     }
@@ -244,4 +255,52 @@ function showErrorMessage(message) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadProjects); 
+function initializeSearchFields() {
+    // My projects search
+    const myProjectsSearch = document.getElementById('project-search');
+    if (myProjectsSearch) {
+        myProjectsSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const projectCards = document.querySelector('.project-template-grid')
+                .querySelectorAll('.project-card');
+            
+            projectCards.forEach(card => {
+                const projectName = card.querySelector('h3').textContent.toLowerCase();
+                const template = card.querySelector('.info-row:first-child span:last-child').textContent.toLowerCase();
+                const domain = card.querySelector('.info-row:nth-child(2) span:last-child').textContent.toLowerCase();
+                
+                card.style.display = (projectName.includes(searchTerm) || 
+                    template.includes(searchTerm) || 
+                    domain.includes(searchTerm)) ? '' : 'none';
+            });
+        });
+    }
+
+    // Students projects search
+    const studentProjectsSearch = document.getElementById('student-project-search');
+    if (studentProjectsSearch) {
+        studentProjectsSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('.table-row');
+            
+            tableRows.forEach(row => {
+                const projectName = row.querySelector('.col-name').textContent.toLowerCase();
+                const domain = row.querySelector('.col-domain').textContent.toLowerCase();
+                const owner = row.querySelector('.col-owner')?.textContent.toLowerCase() || '';
+                const status = row.querySelector('.status-badge').textContent.toLowerCase();
+                
+                row.style.display = (projectName.includes(searchTerm) || 
+                    domain.includes(searchTerm) || 
+                    owner.includes(searchTerm) || 
+                    status.includes(searchTerm)) ? '' : 'none';
+            });
+        });
+    }
+}
+
+// Tilføj denne linje efter at projekterne er blevet indlæst
+document.addEventListener('DOMContentLoaded', () => {
+    loadProjects().then(() => {
+        initializeSearchFields();
+    });
+}); 
