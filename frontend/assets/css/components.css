@@ -52,14 +52,45 @@
     padding: 0;
 }
 
-/* Brug så .account-button som base klasse */
 .account-create {
-    composes: account-button;
+    width: 404px;
+    height: 40px;
+    margin-bottom: 24px;
+    background-color: var(--background-color-dark);
+    border-color: var(--accent-color-dark);
+    font-size: 20px;
+    border-radius: 8px;
+    color: var(--text-color-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.6s ease;
+    text-decoration: none;
+    padding: 0;
 }
 
+
 .account-create-front {
-    composes: account-button;
+    width: 404px;
+    height: 40px;
+    margin-bottom: 24px;
+    background-color: var(--background-color-dark);
+    border-color: var(--accent-color-dark);
+    font-size: 20px;
+    border-radius: 8px;
+    color: var(--text-color-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.6s ease;
+    text-decoration: none;
+    padding: 0;
 }
+
 
 .login-btn {
     width: 404px;
@@ -85,6 +116,7 @@
     color: var(--link-color-dark);
     text-decoration: none;
 }
+
 
 /* === Theme Toggle === */
 .theme-toggle {
