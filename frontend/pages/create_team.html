@@ -163,8 +163,8 @@
                     <label>Search users</label>
                     <input type="text" class="form-control" placeholder="Search by name or email">
                 </div>
-                <div class="search-results">
-                    <!-- Search results will be populated here -->
+                <div class="user-list">
+                    <!-- Users will be populated here -->
                 </div>
             </div>
             <div class="modal-footer">
@@ -193,8 +193,12 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/forms/BaseStepForm.js"></script>
+    <script src="../assets/js/pages/createTeam.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            renderNavigation();
             // Initialize flatpickr
             flatpickr("#team-expiration-input", {
                 dateFormat: "d.m.Y",

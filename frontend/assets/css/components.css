@@ -3074,3 +3074,103 @@ label.option-label {
 .content-row.header .email {
     text-align: right;
 }
+
+/* User List Styling */
+.user-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.user-option {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.user-option:last-child {
+    border-bottom: none;
+}
+
+.user-option:hover {
+    background-color: var(--card-background);
+}
+
+.user-option .checkbox-wrapper {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.user-option .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-option .user-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.user-option .user-email {
+    font-size: 12px;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+/* Checkbox styling */
+.checkbox-wrapper input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+/* Modal body padding */
+.modal-body {
+    padding: 24px;
+}
+
+/* Search input margin */
+.modal-body .form-group {
+    margin-bottom: 16px;
+}
+
+/* Selected members styling in step 2 */
+.services-selection .service-tag {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px;
+}
+
+.services-selection .service-tag i {
+    color: var(--accent-color);
+}
+
+.services-selection .service-tag .service-tag--remove {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    opacity: 0.7;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.services-selection .service-tag .service-tag--remove:hover {
+    opacity: 1;
+    color: var(--secondary-color);
+}

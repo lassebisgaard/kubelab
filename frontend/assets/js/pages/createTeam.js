@@ -8,6 +8,27 @@ class TeamForm extends BaseStepForm {
             members: []
         };
         this.initMemberModal();
+        this.initFormListeners();
+    }
+
+    initFormListeners() {
+        const nameInput = document.getElementById('team-name-input');
+        const expirationInput = document.getElementById('team-expiration-input');
+
+        const checkInputs = () => {
+            if (this.nextButton) {
+                const nameValue = nameInput?.value || '';
+                const expirationValue = expirationInput?.value || '';
+                this.nextButton.disabled = !nameValue || !expirationValue;
+            }
+        };
+
+        // Lyt efter ændringer i begge input felter
+        nameInput?.addEventListener('input', checkInputs);
+        expirationInput?.addEventListener('change', checkInputs); // Brug 'change' for datepicker
+        
+        // Kør initial check
+        checkInputs();
     }
 
     initMemberModal() {
@@ -59,11 +80,29 @@ class TeamForm extends BaseStepForm {
             if (!response.ok) throw new Error('Failed to load users');
             
             const users = await response.json();
-            populateUsersList(users);
+            this.populateUsersList(users);
         } catch (error) {
             console.error('Error:', error);
-            showErrorMessage('Failed to load users');
+            this.showErrorMessage('Failed to load users');
         }
+    }
+
+    populateUsersList(users) {
+        const userList = document.querySelector('.user-list');
+        if (!userList) return;
+
+        userList.innerHTML = users.map(user => `
+            <div class="user-option" data-id="${user.UserId}">
+                <label class="checkbox-wrapper">
+                    <input type="checkbox" ${this.formData.members.some(m => m.userId === user.UserId.toString()) ? 'checked' : ''}>
+                    <span class="checkmark"></span>
+                </label>
+                <div class="user-info">
+                    <span class="user-name">${user.Name}</span>
+                    <span class="user-email">${user.Email}</span>
+                </div>
+            </div>
+        `).join('');
     }
 
     updateSelectedMembers() {
@@ -72,9 +111,35 @@ class TeamForm extends BaseStepForm {
             const userEl = checkbox.closest('.user-option');
             return {
                 userId: userEl.dataset.id,
-                name: userEl.querySelector('.user-name').textContent
+                name: userEl.querySelector('.user-name').textContent,
+                email: userEl.querySelector('.user-email').textContent
             };
         });
+
+        // Opdater visningen i step 2
+        const container = document.querySelector('.services-selection');
+        if (container) {
+            container.innerHTML = this.formData.members.map(member => `
+                <div class="service-tag service-tag--removable" data-id="${member.userId}">
+                    <i class='bx bx-user'></i>
+                    <span>${member.name}</span>
+                    <button class="service-tag--remove">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Tilføj event listeners til remove knapper
+            container.querySelectorAll('.service-tag--remove').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tag = e.target.closest('.service-tag--removable');
+                    const userId = tag.dataset.id;
+                    this.formData.members = this.formData.members.filter(m => m.userId !== userId);
+                    tag.remove();
+                    this.updateMemberDisplay();
+                });
+            });
+        }
 
         this.updateMemberDisplay();
     }
@@ -113,13 +178,8 @@ class TeamForm extends BaseStepForm {
             const expirationInput = document.getElementById('team-expiration-input');
             const descriptionInput = document.getElementById('team-description-input');
 
-            if (!nameInput.value) {
-                alert('Please enter a team name');
-                return false;
-            }
-
-            if (!expirationInput.value) {
-                alert('Please select an expiration date');
+            if (!nameInput.value || !expirationInput.value) {
+                this.showErrorMessage('Please fill in all required fields');
                 return false;
             }
 
@@ -130,13 +190,17 @@ class TeamForm extends BaseStepForm {
             this.formData.expiration = formattedDate;
             this.formData.description = descriptionInput.value;
 
+            // Enable next button when required fields are filled
+            if (this.nextButton) {
+                this.nextButton.disabled = false;
+            }
+
             document.getElementById('team-name-confirm').textContent = this.formData.name;
             document.getElementById('team-expiration-confirm').textContent = expirationInput.value;
             document.getElementById('team-description-confirm').textContent = 
                 this.formData.description || 'Not specified';
         }
         else if (this.currentStep === 2) {
-            // Opdater medlemsvisning i confirmation step
             this.updateMemberDisplay();
         }
 
