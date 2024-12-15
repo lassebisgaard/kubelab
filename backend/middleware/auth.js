@@ -1,6 +1,15 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+// Add debug logging
+console.log('Current working directory:', process.cwd());
+console.log('Environment variables loaded:', process.env.JWT_SECRET ? 'Yes' : 'No');
+
+// Make the check more flexible with a default for development
+const JWT_SECRET = process.env.JWT_SECRET || 'development_jwt_secret';
+
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET is required');
+}
 
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
@@ -25,4 +34,4 @@ const verifyAdmin = (req, res, next) => {
     next();
 };
 
-module.exports = { verifyToken, verifyAdmin, JWT_SECRET }; 
+module.exports = { verifyToken, verifyAdmin }; 

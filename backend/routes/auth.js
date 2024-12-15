@@ -3,8 +3,14 @@ const router = express.Router();
 const pool = require('../config/database');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { verifyToken, JWT_SECRET } = require('../middleware/auth');
+const { verifyToken } = require('../middleware/auth');
 const crypto = require('crypto');
+
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Verify token endpoint
 router.get('/verify', verifyToken, (req, res) => {

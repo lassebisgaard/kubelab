@@ -114,13 +114,13 @@ router.post('/', async (req, res) => {
 
         console.log('Project Data:', projectData);
         
-        // 2. Create project in database
+        // Create project in database
         const [result] = await connection.execute(
             'INSERT INTO Projects (ProjectName, Description, Domain, UserId, TemplateId) VALUES (?, ?, ?, ?, ?)',
             [projectData.name, projectData.description, projectData.domain, projectData.userId, projectData.templateId]
         );
 
-        // 3. Create stack in Portainer
+        // Create stack in Portainer
         const deployResult = await portainerService.createStack(projectData);
         if (!deployResult.success) {
             // If Portainer creation fails, delete from database
@@ -131,7 +131,7 @@ router.post('/', async (req, res) => {
         res.json({
             message: 'Project created successfully',
             projectId: result.insertId,
-            deploymentStatus: deployResult.success ? 'deployed' : 'pending',
+            status: deployResult.status || 'online',
             deploymentMessage: deployResult.message
         });
     } catch (error) {
