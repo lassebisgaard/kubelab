@@ -489,26 +489,49 @@ window.BaseStepForm = class BaseStepForm {
 
     handleYamlFile(file) {
         this.formData.yamlFile = file;
-        const yamlArea = document.querySelector('[data-upload-area]');
-        if (yamlArea) {
-            yamlArea.innerHTML = `
-                <div class="file-preview">
-                    <i class='bx bx-file'></i>
-                    <span class="filename">${file.name}</span>
-                </div>
-            `;
+        const yamlFileDisplay = document.querySelector('.yaml-file-display');
+        const uploadArea = document.querySelector('.yaml-upload .upload-area');
+        
+        if (yamlFileDisplay && uploadArea) {
+            yamlFileDisplay.querySelector('.filename').textContent = file.name;
+            yamlFileDisplay.style.display = 'flex';
+            uploadArea.style.display = 'none';
+            
+            // Add remove handler
+            yamlFileDisplay.querySelector('.remove-file').onclick = () => {
+                this.formData.yamlFile = null;
+                yamlFileDisplay.style.display = 'none';
+                uploadArea.style.display = 'flex';
+                document.getElementById('yaml-file').value = '';
+            };
         }
     }
 
     handlePreviewImage(file) {
         this.formData.previewImage = file;
         const reader = new FileReader();
+        const previewDisplay = document.querySelector('.preview-image-display');
+        const uploadArea = document.querySelector('.preview-container--upload .upload-area');
+        
         reader.onload = (e) => {
-            const previewArea = document.querySelector('.preview-container--upload');
-            if (previewArea) {
-                previewArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            if (previewDisplay && uploadArea) {
+                const previewUrl = e.target.result;
+                this.formData.previewImageUrl = previewUrl;  // Gem URL'en separat
+                previewDisplay.querySelector('img').src = previewUrl;
+                previewDisplay.style.display = 'block';
+                uploadArea.style.display = 'none';
+                
+                // Add remove handler
+                previewDisplay.querySelector('.remove-file').onclick = () => {
+                    this.formData.previewImage = null;
+                    this.formData.previewImageUrl = null;  // Nulstil også URL'en
+                    previewDisplay.style.display = 'none';
+                    uploadArea.style.display = 'flex';
+                    document.getElementById('preview-image').value = '';
+                };
             }
         };
+        
         reader.readAsDataURL(file);
     }
 
@@ -827,10 +850,10 @@ window.BaseStepForm = class BaseStepForm {
             `;
         }
 
-        // Opdater preview billede
+        // Opdater preview billede - brug den gemte URL
         const previewContainer = document.querySelector('#template-step2 .preview-container--detail');
-        if (previewContainer && this.formData.previewImage) {
-            previewContainer.innerHTML = `<img src="${this.formData.previewImage}" alt="Preview">`;
+        if (previewContainer && this.formData.previewImageUrl) {
+            previewContainer.innerHTML = `<img src="${this.formData.previewImageUrl}" alt="Preview">`;
         }
 
         // Opdater services
@@ -999,9 +1022,11 @@ window.BaseStepForm = class BaseStepForm {
                         const serviceTag = document.createElement('div');
                         serviceTag.className = 'service-tag service-tag--selectable';
                         serviceTag.dataset.service = newService.ServiceId;
+                        serviceTag.setAttribute('role', 'button');
+                        serviceTag.setAttribute('tabindex', '0');
                         serviceTag.innerHTML = `
-                            <i class='bx ${newService.Icon}'></i>
-                            <span>${newService.ServiceName}</span>
+                            <i class='bx ${newService.icon}'></i>
+                            <span>${newService.name}</span>
                             <button class="service-tag--remove" title="Remove service">
                                 <i class='bx bx-x'></i>
                             </button>
@@ -1022,7 +1047,7 @@ window.BaseStepForm = class BaseStepForm {
                             if (window.showDeleteConfirmation) {
                                 window.showDeleteConfirmation(
                                     'Delete Service',
-                                    `Are you sure you want to delete the service "${newService.ServiceName}"?`,
+                                    `Are you sure you want to delete the service "${newService.name}"?`,
                                     async () => {
                                         try {
                                             const token = localStorage.getItem('token');
@@ -1057,8 +1082,8 @@ window.BaseStepForm = class BaseStepForm {
                     // Add to window.SERVICES
                     window.SERVICES[newService.ServiceId] = {
                         id: newService.ServiceId,
-                        name: newService.ServiceName,
-                        icon: newService.Icon
+                        name: newService.name,
+                        icon: newService.icon
                     };
 
                     closeModal();

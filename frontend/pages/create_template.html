@@ -76,6 +76,13 @@
                                                hidden 
                                                accept=".yaml,.yml"
                                                required>
+                                        <div class="yaml-file-display" style="display: none;">
+                                            <i class='bx bx-file'></i>
+                                            <span class="filename"></span>
+                                            <button type="button" class="remove-file" title="Remove file">
+                                                <i class='bx bx-x'></i>
+                                            </button>
+                                        </div>
                                         <label for="yaml-file" class="upload-area">
                                             <i class='bx bx-file'></i>
                                             <span>Drop your YAML file here or click to browse</span>
@@ -91,6 +98,12 @@
                                                id="preview-image" 
                                                hidden 
                                                accept="image/*">
+                                        <div class="preview-image-display" style="display: none;">
+                                            <img src="" alt="Preview" class="preview-image">
+                                            <button type="button" class="remove-file" title="Remove image">
+                                                <i class='bx bx-x'></i>
+                                            </button>
+                                        </div>
                                         <label for="preview-image" class="upload-area">
                                             <i class='bx bx-image'></i>
                                             <span>Click to upload preview image</span>
