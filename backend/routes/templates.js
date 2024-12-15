@@ -3,15 +3,18 @@ const router = express.Router();
 const pool = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-// Konfigurer multer til at gemme filer
+// Ensure uploads directory exists
+const uploadsPath = path.join(__dirname, '..', 'uploads', 'images');
+if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath, { recursive: true });
+}
+
+// Konfigurer multer til kun at håndtere preview billeder
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        if (file.fieldname === 'preview') {
-            cb(null, 'uploads/images/');
-        } else {
-            cb(null, 'uploads/yaml/');
-        }
+        cb(null, uploadsPath);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now();
@@ -19,7 +22,18 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+    if (file.fieldname === 'preview') {
+        cb(null, true);
+    } else {
+        cb(new Error('Unexpected field'));
+    }
+};
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter
+});
 
 // Get all templates
 router.get('/', async (req, res) => {
@@ -64,21 +78,22 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create new template
-router.post('/', upload.fields([
-    { name: 'yaml', maxCount: 1 },
-    { name: 'preview', maxCount: 1 }
-]), async (req, res) => {
+router.post('/', upload.single('preview'), async (req, res) => {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
         
         // Debug logs
-        console.log('File received:', req.files);
+        console.log('File received:', req.file);
         console.log('Form data:', req.body);
         
-        // Handle YAML content
-        const yamlContent = req.body.yamlContent || null;
-        const previewPath = req.files?.preview?.[0]?.filename || null;
+        // Get YAML content directly from the request body
+        const yamlContent = req.body.yamlContent;
+        if (!yamlContent) {
+            throw new Error('YAML content is required');
+        }
+
+        const previewPath = req.file?.filename || null;
         const userId = req.body.userId || null;
         
         // Insert template with UserId and YamlContent
@@ -133,10 +148,7 @@ router.post('/', upload.fields([
 });
 
 // Update template
-router.put('/:id', upload.fields([
-    { name: 'yaml', maxCount: 1 },
-    { name: 'preview', maxCount: 1 }
-]), async (req, res) => {
+router.put('/:id', upload.single('preview'), async (req, res) => {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
@@ -147,9 +159,7 @@ router.put('/:id', upload.fields([
         // Mere detaljeret debug logging
         console.log('Update request:', {
             body: req.body,
-            files: req.files,
-            preview: req.files?.preview?.[0]?.filename,
-            yaml: req.files?.yaml?.[0]?.filename
+            file: req.file
         });
         
         if (req.body.name) {
@@ -160,15 +170,13 @@ router.put('/:id', upload.fields([
             updates.push('Description = ?');
             values.push(req.body.description);
         }
-        if (req.files?.yaml?.[0]) {
+        if (req.body.yamlContent) {
             updates.push('YamlContent = ?');
-            values.push(req.files.yaml[0].buffer?.toString('utf8'));
+            values.push(req.body.yamlContent);
         }
-        if (req.files?.preview?.[0]) {
-            const filename = req.files.preview[0].filename;
-            console.log('Preview filename:', filename); // Debug log
+        if (req.file) {
             updates.push('PreviewImage = ?');
-            values.push(filename);
+            values.push(req.file.filename);
         }
         
         values.push(req.params.id);

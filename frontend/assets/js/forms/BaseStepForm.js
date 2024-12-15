@@ -546,8 +546,7 @@ window.BaseStepForm = class BaseStepForm {
         formData.append('userId', user.UserId);
         
         if (this.formData.yamlFile) {
-            formData.append('yaml', this.formData.yamlFile);
-            // Also append the YAML content as text
+            // Read YAML file content and send it directly
             const yamlContent = await this.formData.yamlFile.text();
             formData.append('yamlContent', yamlContent);
         }
