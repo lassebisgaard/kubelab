@@ -187,4 +187,29 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Tilføj denne nye route til at slette bruger
+router.delete('/:id', async (req, res) => {
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+        
+        const userId = req.params.id;
+
+        // Slet brugerens rolle først (pga. foreign key)
+        await connection.execute('DELETE FROM Roles WHERE UserId = ?', [userId]);
+        
+        // Derefter slet brugeren
+        await connection.execute('DELETE FROM Users WHERE UserId = ?', [userId]);
+        
+        await connection.commit();
+        res.json({ message: 'Bruger slettet' });
+    } catch (error) {
+        await connection.rollback();
+        console.error('Fejl ved sletning af bruger:', error);
+        res.status(500).json({ error: 'Der opstod en fejl ved sletning af brugeren' });
+    } finally {
+        connection.release();
+    }
+});
+
 module.exports = router; 

@@ -3675,3 +3675,14 @@ label.option-label {
     border-bottom-color: var(--accent-color);
 }
 
+/* Tilføj disse styles til de eksisterende custom-select2 styles */
+.profile-details .detail .custom-select2.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.profile-details .detail .custom-select2.disabled .select-header {
+    cursor: not-allowed;
+}
+

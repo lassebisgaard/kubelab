@@ -99,6 +99,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         initCustomSelect('userTeam', options.teams, userData.team);
         initCustomSelect('userRole', options.roles, userData.role);
 
+        // Check om brugeren er admin
+        const isAdmin = user.isAdmin; // Dette kommer fra localStorage
+
+        // Disable team og role selects for ikke-admin brugere
+        if (!isAdmin) {
+            const teamSelect = document.querySelector('[for="userTeam"] .custom-select2');
+            const roleSelect = document.querySelector('[for="userRole"] .custom-select2');
+            
+            if (teamSelect) {
+                teamSelect.classList.add('disabled');
+            }
+            if (roleSelect) {
+                roleSelect.classList.add('disabled');
+            }
+        }
+
         // Tilføj click handlers til edit ikoner
         const editIcons = document.querySelectorAll('.edit-icon');
         editIcons.forEach(icon => {
@@ -168,12 +184,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             confirmBtn.addEventListener('click', async () => {
                 try {
                     const getValue = (selector) => {
-                        if (selector === 'userTeam' || selector === 'userRole') {
-                            // For custom select2, hent værdien fra selected-option span
-                            const selectedOption = document.querySelector(`[for="${selector}"] .selected-option`);
-                            if (selectedOption) {
-                                return selectedOption.textContent;
-                            }
+                        // Hvis det er team eller role og brugeren ikke er admin, returner den oprindelige værdi
+                        if ((selector === 'userTeam' || selector === 'userRole') && !isAdmin) {
+                            return userData[selector.replace('user', '').toLowerCase()];
                         }
                         
                         // For almindelige input felter
@@ -270,6 +283,36 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/pages/login.html';
+        });
+    }
+
+    // Tilføj dette i DOMContentLoaded event listener
+    const deleteButton = document.querySelector('.button.delete');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', async () => {
+            // Vis bekræftelses dialog
+            if (confirm('Er du sikker på at du vil slette din profil? Dette kan ikke fortrydes.')) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/users/${user.UserId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Kunne ikke slette bruger');
+                    }
+
+                    // Log ud og redirect til login siden
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/pages/login.html';
+                } catch (error) {
+                    console.error('Fejl ved sletning af profil:', error);
+                    alert('Der opstod en fejl ved sletning af profilen');
+                }
+            }
         });
     }
 });
