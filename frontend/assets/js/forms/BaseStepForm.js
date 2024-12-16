@@ -1021,7 +1021,7 @@ window.BaseStepForm = class BaseStepForm {
                     if (servicesSelection) {
                         const serviceTag = document.createElement('div');
                         serviceTag.className = 'service-tag service-tag--selectable';
-                        serviceTag.dataset.service = newService.ServiceId;
+                        serviceTag.dataset.service = newService.id;
                         serviceTag.setAttribute('role', 'button');
                         serviceTag.setAttribute('tabindex', '0');
                         serviceTag.innerHTML = `
@@ -1044,14 +1044,16 @@ window.BaseStepForm = class BaseStepForm {
                         const removeBtn = serviceTag.querySelector('.service-tag--remove');
                         removeBtn?.addEventListener('click', async (e) => {
                             e.stopPropagation();
+                            const serviceId = serviceTag.dataset.service;
+                            
                             if (window.showDeleteConfirmation) {
                                 window.showDeleteConfirmation(
                                     'Delete Service',
-                                    `Are you sure you want to delete the service "${newService.name}"?`,
+                                    'Are you sure you want to delete this service?',
                                     async () => {
                                         try {
                                             const token = localStorage.getItem('token');
-                                            const response = await fetch(`http://localhost:3000/api/services/${newService.ServiceId}`, {
+                                            const response = await fetch(`http://localhost:3000/api/services/${serviceId}`, {
                                                 method: 'DELETE',
                                                 headers: {
                                                     'Authorization': `Bearer ${token}`
@@ -1066,6 +1068,7 @@ window.BaseStepForm = class BaseStepForm {
                                             if (!response.ok) throw new Error('Failed to delete service');
                                             
                                             serviceTag.remove();
+                                            delete window.SERVICES[serviceId];
                                             this.updateSelectedServices();
                                         } catch (error) {
                                             console.error('Error deleting service:', error);
@@ -1080,8 +1083,8 @@ window.BaseStepForm = class BaseStepForm {
                     }
 
                     // Add to window.SERVICES
-                    window.SERVICES[newService.ServiceId] = {
-                        id: newService.ServiceId,
+                    window.SERVICES[newService.id] = {
+                        id: newService.id,
                         name: newService.name,
                         icon: newService.icon
                     };

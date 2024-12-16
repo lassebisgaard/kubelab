@@ -30,7 +30,7 @@ router.post('/', verifyToken, verifyAdmin, async (req, res) => {
 });
 
 // Delete service
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, verifyAdmin, async (req, res) => {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
