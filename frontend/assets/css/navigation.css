@@ -156,7 +156,7 @@ nav a img,
     object-fit: cover;
 }
 
-/* Ensure other nav images don't get rounded corners */
+
 nav a img:not(.profile-image),
 .nav-bottom a img:not(.profile-image) {
     border-radius: 0;
@@ -177,7 +177,7 @@ nav a img:not(.profile-image),
         transform: translateX(0);
     }
 
-    /* Fjern alle :root:not(.sb-expanded) margin effekter på mobile */
+
     :root:not(.sb-expanded) main {
         margin-left: 0 !important;
     }
@@ -262,7 +262,6 @@ nav a img:not(.profile-image),
     }
 }
 
-/* Alle spans i navigation */
 nav a span,
 .nav-bottom a span,
 .create-button span {
@@ -271,7 +270,6 @@ nav a span,
     text-overflow: ellipsis;
 }
 
-/* Remove any conflicting styles */
 nav a.create-button {
     padding: 0;
     margin-bottom: 24px;
@@ -331,7 +329,6 @@ nav a.active::before {
     background-color: var(--accent-color);
 }
 
-/* Adjust for collapsed state */
 :root:not(.sb-expanded) nav a,
 :root:not(.sb-expanded) .nav-bottom a {
     justify-content: center;
@@ -339,12 +336,10 @@ nav a.active::before {
     padding: 8px;
 }
 
-/* Make sure create button doesn't get the active indicator */
 nav a.create-button.active::before {
     display: none;
 }
 
-/* Ensure smooth transitions */
 aside, 
 .burger-menu,
 main {
