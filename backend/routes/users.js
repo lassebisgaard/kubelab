@@ -152,35 +152,70 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const userId = req.params.id;
+        const requestingUser = req.user; // Fra JWT token
         const { name, email, team, role } = req.body;
 
-        // Først opdater Users tabellen
+        // Tjek om brugeren prøver at opdatere sin egen profil
+        if (userId !== requestingUser.userId.toString()) {
+            return res.status(403).json({ error: 'Ikke tilladelse til at opdatere andre brugere' });
+        }
+
+        // Hent brugerens nuværende data
+        const [currentUser] = await pool.execute(`
+            SELECT Users.*, Teams.TeamName, Roles.IsAdmin 
+            FROM Users 
+            LEFT JOIN Teams ON Users.TeamId = Teams.TeamId
+            LEFT JOIN Roles ON Users.UserId = Roles.UserId
+            WHERE Users.UserId = ?
+        `, [userId]);
+
+        if (!currentUser.length) {
+            return res.status(404).json({ error: 'Bruger ikke fundet' });
+        }
+
+        const updates = {
+            name,
+            email,
+            team: !requestingUser.isAdmin ? currentUser[0].TeamName : team, // Behold eksisterende team hvis ikke admin
+            role: !requestingUser.isAdmin ? (currentUser[0].IsAdmin ? 'Administrator' : 'Studerende') : role // Behold eksisterende rolle hvis ikke admin
+        };
+
+        // Opdater basis information
         await pool.execute(
             'UPDATE Users SET Name = ?, Mail = ? WHERE UserId = ?',
-            [name, email, userId]
+            [updates.name, updates.email, userId]
         );
 
-        // Hvis team er ændret, opdater TeamId
-        if (team) {
-            const [teams] = await pool.execute('SELECT TeamId FROM Teams WHERE TeamName = ?', [team]);
-            if (teams.length > 0) {
+        // Kun opdater team og role hvis brugeren er admin
+        if (requestingUser.isAdmin) {
+            if (updates.team) {
+                const [teams] = await pool.execute('SELECT TeamId FROM Teams WHERE TeamName = ?', [updates.team]);
+                if (teams.length > 0) {
+                    await pool.execute(
+                        'UPDATE Users SET TeamId = ? WHERE UserId = ?',
+                        [teams[0].TeamId, userId]
+                    );
+                }
+            }
+
+            if (updates.role) {
+                const isAdmin = updates.role.toLowerCase() === 'administrator' ? 1 : 0;
                 await pool.execute(
-                    'UPDATE Users SET TeamId = ? WHERE UserId = ?',
-                    [teams[0].TeamId, userId]
+                    'UPDATE Roles SET IsAdmin = ? WHERE UserId = ?',
+                    [isAdmin, userId]
                 );
             }
         }
 
-        // Hvis role er ændret, opdater Roles tabellen
-        if (role) {
-            const isAdmin = role.toLowerCase() === 'administrator' ? 1 : 0;
-            await pool.execute(
-                'UPDATE Roles SET IsAdmin = ? WHERE UserId = ?',
-                [isAdmin, userId]
-            );
-        }
-
-        res.json({ message: 'Bruger opdateret' });
+        res.json({ 
+            message: 'Bruger opdateret',
+            updates: {
+                name: updates.name,
+                email: updates.email,
+                team: updates.team,
+                role: updates.role
+            }
+        });
     } catch (error) {
         console.error('Fejl ved opdatering af bruger:', error);
         res.status(500).json({ error: 'Der opstod en fejl ved opdatering af brugeren' });

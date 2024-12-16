@@ -2828,12 +2828,7 @@ textarea.form-control2 {
     opacity: 0.7;
 }
 
-.detail div {
-    width: 404px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
+.detail div:not(:has(.custom-select2)) {
     border-bottom: 2px solid var(--border-color);
 }
 
@@ -2967,12 +2962,7 @@ textarea.form-control2 {
 }
 
 /* Opdater den eksisterende .detail div style */
-.detail div {
-    width: 404px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
+.detail div:not(:has(.custom-select2)) {
     border-bottom: 2px solid var(--border-color);
 }
 
@@ -3065,6 +3055,7 @@ textarea.form-control2 {
     width: 404px;
     border: none;
     background: transparent;
+    padding: 0;
 }
 
 .profile-details .detail .custom-select2 .select-header {
@@ -3072,12 +3063,11 @@ textarea.form-control2 {
     height: auto;
     background: transparent;
     border: none;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color); /* Denne skal beholdes */
     border-radius: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: border-color 0.2s ease; /* Tilføj smooth transition */
 }
 
 .profile-details .detail .custom-select2.open .select-header {
@@ -3651,17 +3641,6 @@ label.option-label {
 .services-selection .service-tag .service-tag--remove:hover {
     opacity: 1;
     color: var(--secondary-color);
-}
-
-
-.profile-details .detail div {
-    width: 404px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 2px solid var(--border-color);
-    transition: border-color 0.2s ease; /* Tilføj smooth transition */
 }
 
 

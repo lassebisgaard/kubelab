@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Definer isAdmin én gang
+        const isAdmin = user.isAdmin;
+
         // Hent options (roller og teams) fra API
         const optionsResponse = await fetch('http://localhost:3000/api/users/options', {
             headers: {
@@ -49,70 +52,75 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         };
 
-        // Opdater text fields
+        // Opdater navn og email
         updateElement('userName', userData.name);
         updateElement('userEmail', userData.email);
 
-        // Initialiser custom selects
-        const initCustomSelect = (selector, options, currentValue) => {
-            const header = document.querySelector(`[for="${selector}"] .select-header`);
-            const selectedOption = document.querySelector(`[for="${selector}"] .selected-option`);
-            const optionsList = document.querySelector(`[for="${selector}"] .select-options`);
+        // Opdater team og role felter baseret på admin status
+        const teamDiv = document.querySelector('[for="userTeam"] div');
+        const roleDiv = document.querySelector('[for="userRole"] div');
 
-            // Sæt den nuværende værdi
-            if (selectedOption) {
-                selectedOption.textContent = currentValue;
-            }
+        if (isAdmin) {
+            // For admin brugere - opret custom select struktur
+            teamDiv.outerHTML = `
+                <div class="custom-select2">
+                    <div class="select-header" tabindex="0">
+                        <span class="selected-option">${userData.team}</span>
+                        <i class="bx bx-chevron-down"></i>
+                    </div>
+                    <ul class="select-options">
+                        ${options.teams.map(team => `<li class="option" data-value="${team}">${team}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
 
-            // Tilføj options til listen
-            if (optionsList) {
-                optionsList.innerHTML = options.map(option => 
-                    `<li class="option" data-value="${option}">${option}</li>`
-                ).join('');
-            }
+            roleDiv.outerHTML = `
+                <div class="custom-select2">
+                    <div class="select-header" tabindex="0">
+                        <span class="selected-option">${userData.role}</span>
+                        <i class="bx bx-chevron-down"></i>
+                    </div>
+                    <ul class="select-options">
+                        ${options.roles.map(role => `<li class="option" data-value="${role}">${role}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
 
-            // Toggle dropdown
-            if (header) {
-                header.addEventListener('click', (e) => {
-                    const select = header.closest('.custom-select2');
-                    select.classList.toggle('open');
+            // Tilføj event listeners til custom selects
+            document.querySelectorAll('.custom-select2 .select-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.closest('.custom-select2').classList.toggle('open');
                     updateButtonStates(true);
                 });
-            }
+            });
 
-            // Håndter option valg
-            if (optionsList) {
-                optionsList.addEventListener('click', (e) => {
-                    const option = e.target.closest('.option');
-                    if (!option) return;
-
-                    if (selectedOption) {
-                        selectedOption.textContent = option.textContent;
-                    }
-                    header.closest('.custom-select2').classList.remove('open');
+            document.querySelectorAll('.custom-select2 .option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const select = option.closest('.custom-select2');
+                    const header = select.querySelector('.selected-option');
+                    header.textContent = option.textContent;
+                    select.classList.remove('open');
                     updateButtonStates(true);
                 });
-            }
-        };
-
-        // Initialiser selects
-        initCustomSelect('userTeam', options.teams, userData.team);
-        initCustomSelect('userRole', options.roles, userData.role);
-
-        // Check om brugeren er admin
-        const isAdmin = user.isAdmin; // Dette kommer fra localStorage
-
-        // Disable team og role selects for ikke-admin brugere
-        if (!isAdmin) {
-            const teamSelect = document.querySelector('[for="userTeam"] .custom-select2');
-            const roleSelect = document.querySelector('[for="userRole"] .custom-select2');
+            });
+        } else {
+            // For almindelige brugere - vis bare spans
+            teamDiv.innerHTML = `<span id="userTeam">${userData.team}</span>`;
+            roleDiv.innerHTML = `<span id="userRole">${userData.role}</span>`;
             
-            if (teamSelect) {
-                teamSelect.classList.add('disabled');
-            }
-            if (roleSelect) {
-                roleSelect.classList.add('disabled');
-            }
+            // Tilføj not-allowed cursor
+            teamDiv.style.cursor = 'not-allowed';
+            roleDiv.style.cursor = 'not-allowed';
+        }
+
+        // Håndter ikke-admin brugere
+        if (!isAdmin) {
+            // Tilføj not-allowed cursor kun til team og role felter
+            const teamDiv = document.querySelector('[for="userTeam"] div');
+            const roleDiv = document.querySelector('[for="userRole"] div');
+            
+            if (teamDiv) teamDiv.style.cursor = 'not-allowed';
+            if (roleDiv) roleDiv.style.cursor = 'not-allowed';
         }
 
         // Tilføj click handlers til edit ikoner
@@ -120,6 +128,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         editIcons.forEach(icon => {
             icon.addEventListener('click', function() {
                 const detailDiv = this.closest('.detail');
+                const fieldType = detailDiv.getAttribute('for');
+                
+                // Skip KUN hvis det er team eller role felt og brugeren ikke er admin
+                if (!isAdmin && (fieldType === 'userTeam' || fieldType === 'userRole')) {
+                    return;
+                }
+
                 const span = detailDiv.querySelector('span');
                 if (!span) return;
                 
