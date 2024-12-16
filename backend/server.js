@@ -55,7 +55,7 @@ app.use('/api/services', verifyToken, (req, res, next) => {
     }
     verifyAdmin(req, res, next);
 }, serviceRoutes);
-app.use('/api/users', verifyToken, verifyAdmin, userRoutes);
+app.use('/api/users', verifyToken, userRoutes);
 app.use('/api/teams', verifyToken, (req, res, next) => {
     if (req.method === 'GET') {
         return next();

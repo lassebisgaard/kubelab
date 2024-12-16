@@ -2646,7 +2646,7 @@ textarea.form-control2 {
 }
 
 .button.delete {
-    background-color: var(--secondary-color);
+    background-color: var(--error-color);
     color: var(--text-color);
     border: 1px solid var(--secondary-color);
     padding: 10px 28px;
@@ -2878,7 +2878,7 @@ textarea.form-control2 {
     border-color: var(--accent-color);
     font-size: 16px;
     border-radius: 8px;
-    color: var(--text-color-dark);
+    color: var(--text-color);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -3441,7 +3441,6 @@ label.option-label {
     color: #00ff00;
 }
 
-/* Styling for forgot password link */
 .forgot-password-link {
     display: block;
     text-align: center;
@@ -3478,7 +3477,6 @@ label.option-label {
     border-bottom: 2px solid var(--border-color);
 }
 
-/* Tilføj max-width til profile container */
 .profile-container {
     width: 100%;
     max-width: 75%;
