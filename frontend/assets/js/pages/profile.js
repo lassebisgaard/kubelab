@@ -18,6 +18,9 @@ const avatarStyles = [
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        // Sæt knapperne til inaktiv tilstand ved indlæsning
+        updateButtonStates(false);
+
         // Hent bruger ID fra localStorage
         currentUser = JSON.parse(localStorage.getItem('user'));
         authToken = localStorage.getItem('token');
@@ -445,6 +448,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 avatarModal.style.display = 'none';
+                
+                // Nulstil edit tilstand efter avatar opdatering
+                updateButtonStates(false);
             } catch (error) {
                 console.error('Fejl ved opdatering af avatar:', error);
                 alert('Der skete en fejl ved opdatering af avatar');
