@@ -84,7 +84,22 @@ class TeamForm extends BaseStepForm {
             if (!response.ok) throw new Error('Failed to load users');
             
             const users = await response.json();
-            this.populateUsersList(users);
+            const userList = document.querySelector('.user-list');
+            
+            if (userList) {
+                userList.innerHTML = users.map(user => `
+                    <div class="user-option" data-id="${user.UserId}">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" ${this.formData.members.some(m => m.userId === user.UserId.toString()) ? 'checked' : ''}>
+                            <span class="checkmark"></span>
+                        </label>
+                        <div class="user-info">
+                            <span class="user-name">${user.Name}</span>
+                            <span class="user-email">${user.Mail}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
         } catch (error) {
             console.error('Error:', error);
             this.showErrorMessage('Failed to load users');
