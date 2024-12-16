@@ -109,15 +109,16 @@ router.post('/', async (req, res) => {
             domain: req.body.domain,
             description: req.body.description || '',
             templateId: req.body.templateId,
-            userId: req.user.userId
+            userId: req.user.userId,
+            dateCreated: new Date().toISOString().slice(0, 19).replace('T', ' ')
         };
 
         console.log('Project Data:', projectData);
         
         // Create project in database
         const [result] = await connection.execute(
-            'INSERT INTO Projects (ProjectName, Description, Domain, UserId, TemplateId) VALUES (?, ?, ?, ?, ?)',
-            [projectData.name, projectData.description, projectData.domain, projectData.userId, projectData.templateId]
+            'INSERT INTO Projects (ProjectName, Description, Domain, UserId, TemplateId, DateCreated) VALUES (?, ?, ?, ?, ?, ?)',
+            [projectData.name, projectData.description, projectData.domain, projectData.userId, projectData.templateId, projectData.dateCreated]
         );
 
         // Create stack in Portainer
