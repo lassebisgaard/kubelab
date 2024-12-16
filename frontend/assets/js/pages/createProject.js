@@ -106,8 +106,37 @@ async function loadServices() {
     }
 }
 
+// Add this function to handle search
+function initSearchFunctionality() {
+    const searchInput = document.getElementById('template-search');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const templateCards = document.querySelectorAll('.project-template-card');
+        
+        templateCards.forEach(card => {
+            const name = card.querySelector('h3').textContent.toLowerCase();
+            const description = card.querySelector('p').textContent.toLowerCase();
+            const matches = name.includes(searchTerm) || description.includes(searchTerm);
+            
+            // Hvis der er aktive service-filtre, tjek også dem
+            const activeFilters = Array.from(
+                document.querySelectorAll('.service-tag--selectable.active')
+            ).map(tag => tag.dataset.service);
+
+            const cardServices = card.dataset.services?.split(',') || [];
+            const matchesFilters = activeFilters.length === 0 || 
+                                 activeFilters.every(filter => cardServices.includes(filter));
+
+            card.style.display = (matches && matchesFilters) ? '' : 'none';
+        });
+    });
+}
+
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', async () => {
     await loadServices();
     await loadTemplates();
+    initSearchFunctionality();
 }); 
