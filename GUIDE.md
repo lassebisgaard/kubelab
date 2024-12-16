@@ -30,7 +30,7 @@
    ```
 
 ### Start Projektet
-2. Start backend: `npm run dev` i `/backend`
+2. Start backend: `npm run dev` eller `node server js` i `/backend`
 3. Åbn frontend i browser: `/frontend/pages/index.html`
 
 ### Test Brugere
