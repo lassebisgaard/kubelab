@@ -1201,91 +1201,6 @@ textarea.form-control2 {
     min-width: 0;
 }
 
-/* === Delete Service Dialog === */
-.delete-service-dialog .modal-content {
-    max-width: 400px;
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-}
-
-.delete-service-dialog .modal-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.delete-service-dialog .modal-header h3 {
-    font-size: 18px;
-    font-weight: 500;
-}
-
-.delete-service-dialog .modal-body {
-    padding: 24px;
-}
-
-.delete-service-dialog .modal-body>p {
-    font-size: 14px;
-    margin-bottom: 16px;
-    color: var(--text-color);
-}
-
-.delete-service-dialog .service-preview {
-    display: flex;
-    margin-bottom: 24px;
-}
-
-.delete-service-dialog .service-preview .service-tag {
-    pointer-events: none;
-    background-color: var(--background-color);
-    border-color: var(--border-color);
-}
-
-.delete-service-dialog .warning-message {
-    display: flex;
-    gap: 12px;
-    padding: 12px 16px;
-    background-color: rgba(255, 71, 87, 0.1);
-    border-radius: 6px;
-    border: 1px solid rgba(255, 71, 87, 0.2);
-}
-
-.delete-service-dialog .warning-message i {
-    color: #ff4757;
-    font-size: 20px;
-    margin-top: 2px;
-}
-
-.delete-service-dialog .warning-title {
-    color: #ff4757;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 4px;
-}
-
-.delete-service-dialog .warning-text {
-    color: var(--text-color);
-    font-size: 13px;
-    line-height: 1.4;
-}
-
-.delete-service-dialog .modal-footer {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-}
-
-.delete-service-dialog .button.delete {
-    background-color: #ff4757;
-    border: none;
-    color: white;
-    padding: 8px 20px;
-}
-
-.delete-service-dialog .button.delete:hover {
-    background-color: #ff6b81;
-}
 
 /* === Modal === */
 .modal {
@@ -1297,18 +1212,22 @@ textarea.form-control2 {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
     background: var(--background-color);
     border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
+    max-width: 35%;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
+    padding: 1.5rem;
 }
 
 .modal-header {
@@ -1317,6 +1236,14 @@ textarea.form-control2 {
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid var(--border-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 2rem;
+    border-top: 1px solid var(--border-color);
 }
 
 .modal-header h3 {
@@ -1856,43 +1783,6 @@ textarea.form-control2 {
     font-size: 1.1rem;
 }
 
-/* === Service Tags Container === */
-.service-tags-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 16px 0;
-}
-
-.service-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 12px;
-    font-size: 1rem;
-    color: var(--text-color);
-    opacity: 0.7;
-    transition: all 0.2s ease;
-}
-
-.service-tag i {
-    font-size: 1rem;
-    color: var(--accent-color);
-}
-
-.service-tag:hover {
-    border-color: var(--accent-color);
-}
-
-.service-tag.active {
-    background-color: var(--hover-background);
-    border-color: var(--accent-color);
-}
-
-.service-tag.active i {
-    color: var(--accent-color);
-    opacity: 1;
-}
 
 /* === Template Actions === */
 .template-actions {
@@ -2034,22 +1924,16 @@ textarea.form-control2 {
     opacity: 1 !important;
 }
 
-/* Static service tags */
-.service-tag--static {
-    cursor: default;
-    opacity: 0.8;
-}
-
-.service-tag--static:hover {
-    border-color: var(--border-color);
-}
-
 /* Project Cards - Updated Design */
 .project-card {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    position: relative;
 }
 
 .project-header {
@@ -2149,21 +2033,6 @@ textarea.form-control2 {
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 24px;
     margin-top: 24px;
-}
-
-/* Search Bar */
-.search-bar {
-    margin-top: 24px;
-}
-
-.search-bar input {
-    width: 100%;
-    padding: 12px 16px;
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-color);
-    font-size: 14px;
 }
 
 
@@ -2663,13 +2532,6 @@ textarea.form-control2 {
     cursor: pointer;
 }
 
-.project-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-    position: relative;
-}
 
 /* Generelle project controls styles */
 .project-controls {
@@ -2695,9 +2557,6 @@ textarea.form-control2 {
     right: 1.5rem;
 }
 
-.project-card {
-    position: relative;
-}
 
 .front-page-wrapper {
     display: flex;
@@ -3550,16 +3409,6 @@ label.option-label {
         grid-template-columns: 1fr;
     }
 
-    /* Service Tags */
-    .service-tags-container {
-        gap: 4px;
-    }
-
-    .service-tag {
-        font-size: 12px;
-        padding: 4px 8px;
-    }
-
     /* Template Actions */
     .template-actions {
         flex-wrap: wrap;
@@ -3654,10 +3503,6 @@ label.option-label {
     text-decoration: underline;
 }
 
-.services-selection .service-tag .service-tag--remove:hover {
-    opacity: 1;
-    color: var(--secondary-color);
-}
 
 
 /* For custom select */

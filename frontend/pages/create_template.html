@@ -263,9 +263,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/forms/BaseStepForm.js"></script>
+    <script src="../assets/js/pages/createTemplate.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            new BaseStepForm('template');
+            window.templateForm = new TemplateForm();
         });
     </script>
 </body>
