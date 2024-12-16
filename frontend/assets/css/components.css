@@ -993,12 +993,14 @@ textarea.form-control2 {
     z-index: 1000;
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none; /* Tilføj denne linje */
 }
 
 .loading-overlay.show,
 .success-overlay.show {
     display: flex;
     opacity: 1;
+    pointer-events: auto; /* Tilføj denne linje */
 }
 
 .loading-content,
@@ -3267,10 +3269,6 @@ label.option-label {
     accent-color: var(--accent-color);
 }
 
-/* Modal body padding */
-.modal-body {
-    padding: 24px;
-}
 
 /* Search input margin */
 .modal-body .form-group {
