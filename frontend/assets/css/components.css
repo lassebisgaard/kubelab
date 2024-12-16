@@ -2726,7 +2726,7 @@ textarea.form-control2 {
     background-color: var(--background-color);
     border: 1px solid var(--accent-color);
     font-size: 16px;
-    border-radius: 8px;
+    border-radius: 4px;
     color: var(--text-color);
     cursor: pointer;
     display: none;
@@ -2745,7 +2745,7 @@ textarea.form-control2 {
     background-color: var(--accent-color);
     border: none;
     font-size: 16px;
-    border-radius: 8px;
+    border-radius: 4px;
     color: black;
     cursor: pointer;
     display: flex;
