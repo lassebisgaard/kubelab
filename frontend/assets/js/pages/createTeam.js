@@ -14,6 +14,7 @@ class TeamForm extends BaseStepForm {
     initFormListeners() {
         const nameInput = document.getElementById('team-name-input');
         const expirationInput = document.getElementById('team-expiration-input');
+        const descriptionInput = document.getElementById('team-description-input');
 
         const checkInputs = () => {
             if (this.nextButton) {
@@ -23,9 +24,12 @@ class TeamForm extends BaseStepForm {
             }
         };
 
-        // Lyt efter ændringer i begge input felter
+        // Lyt efter ændringer i input felter
         nameInput?.addEventListener('input', checkInputs);
-        expirationInput?.addEventListener('change', checkInputs); // Brug 'change' for datepicker
+        expirationInput?.addEventListener('change', checkInputs);
+        descriptionInput?.addEventListener('input', () => {
+            this.formData.description = descriptionInput.value;
+        });
         
         // Kør initial check
         checkInputs();
@@ -134,9 +138,7 @@ class TeamForm extends BaseStepForm {
                 btn.addEventListener('click', (e) => {
                     const tag = e.target.closest('.service-tag--removable');
                     const userId = tag.dataset.id;
-                    this.formData.members = this.formData.members.filter(m => m.userId !== userId);
-                    tag.remove();
-                    this.updateMemberDisplay();
+                    this.removeMember(userId);
                 });
             });
         }
@@ -146,15 +148,26 @@ class TeamForm extends BaseStepForm {
 
     updateMemberDisplay() {
         const container = document.querySelector('.services-selection');
+        if (!container) return;
+        
         container.innerHTML = this.formData.members.map(member => `
             <div class="service-tag service-tag--removable" data-id="${member.userId}">
                 <i class='bx bx-user'></i>
                 <span>${member.name}</span>
-                <button class="service-tag--remove" onclick="document.querySelector('.team-form').removeMember('${member.userId}')">
+                <button class="service-tag--remove">
                     <i class='bx bx-x'></i>
                 </button>
             </div>
         `).join('');
+
+        // Tilføj event listeners til remove knapper
+        container.querySelectorAll('.service-tag--remove').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tag = e.target.closest('.service-tag--removable');
+                const userId = tag.dataset.id;
+                this.removeMember(userId);
+            });
+        });
 
         // Opdater confirmation step
         const membersConfirm = document.getElementById('team-members-confirm');
@@ -168,6 +181,12 @@ class TeamForm extends BaseStepForm {
     removeMember(userId) {
         this.formData.members = this.formData.members.filter(m => m.userId !== userId);
         this.updateMemberDisplay();
+        
+        // Fjern checkmark i modal hvis den er åben
+        const checkbox = document.querySelector(`.user-option[data-id="${userId}"] input[type="checkbox"]`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
     }
 
     validateCurrentStep() {
@@ -190,21 +209,36 @@ class TeamForm extends BaseStepForm {
             this.formData.expiration = formattedDate;
             this.formData.description = descriptionInput.value;
 
-            // Enable next button when required fields are filled
-            if (this.nextButton) {
-                this.nextButton.disabled = false;
-            }
-
+            // Opdater confirmation step
             document.getElementById('team-name-confirm').textContent = this.formData.name;
             document.getElementById('team-expiration-confirm').textContent = expirationInput.value;
             document.getElementById('team-description-confirm').textContent = 
                 this.formData.description || 'Not specified';
+
+            return true;
         }
         else if (this.currentStep === 2) {
+            // Opdater members display i confirmation step
             this.updateMemberDisplay();
+            return true;
+        }
+        else if (this.currentStep === 3) {
+            // På confirmation step skal vi bare returnere true for at tillade submission
+            return true;
         }
 
-        return true;
+        return false;
+    }
+
+    handleNext() {
+        if (this.validateCurrentStep()) {
+            if (this.currentStep === this.maxSteps) {
+                this.handleSubmission();
+            } else {
+                this.currentStep++;
+                this.updateSteps();
+            }
+        }
     }
 
     async handleSubmission() {

@@ -33,7 +33,7 @@ window.BaseStepForm = class BaseStepForm {
         const stepMap = {
             'template': 2,
             'project': 3,
-            'team': 2,
+            'team': 3,
             'user': 2
         };
         return stepMap[this.type] || 2;
@@ -1136,14 +1136,18 @@ window.BaseStepForm = class BaseStepForm {
 
             let response;
             
-            if (this.type === 'template') {
-                // Handle template submission
-                if (!user.isAdmin) {
-                    throw new Error('Only administrators can create templates');
-                }
-                response = await this.submitTemplate(token);
-            } else if (this.type === 'project') {
-                response = await this.submitProject(token);
+            switch(this.type) {
+                case 'template':
+                    response = await this.submitTemplate(token);
+                    break;
+                case 'project':
+                    response = await this.submitProject(token);
+                    break;
+                case 'team':
+                    response = await this.submitTeam(token);
+                    break;
+                default:
+                    throw new Error(`Unknown type: ${this.type}`);
             }
 
             if (!response.ok) {

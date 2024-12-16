@@ -38,8 +38,8 @@ router.post('/', async (req, res) => {
         
         // Opret team
         const [result] = await connection.execute(
-            'INSERT INTO Teams (TeamName, Expiration) VALUES (?, ?)',
-            [name, expiration]
+            'INSERT INTO Teams (TeamName, Description, Expiration) VALUES (?, ?, ?)',
+            [name, description || null, expiration]
         );
         
         const teamId = result.insertId;
