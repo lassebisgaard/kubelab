@@ -2,7 +2,7 @@
 main {
     padding: 3rem;
     transition: margin-left 0.5s ease-in-out;
-    padding-bottom: 100px;
+    padding-bottom: 1rem;
 }
 
 /* Tilføj margin-left kun på sider med sidebar */

@@ -17,6 +17,7 @@ router.get('/', async (req, res) => {
                 t.TemplateName,
                 t.Description as TemplateDescription,
                 u.Name as UserName,
+                u.Name as Owner,
                 tm.TeamName,
                 CASE 
                     WHEN p.UserId = ? THEN 'own'
@@ -39,6 +40,7 @@ router.get('/', async (req, res) => {
                     t.TemplateName,
                     t.Description as TemplateDescription,
                     u.Name as UserName,
+                    u.Name as Owner,
                     tm.TeamName,
                     CASE 
                         WHEN p.UserId = ? THEN 'own'

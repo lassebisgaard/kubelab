@@ -106,7 +106,7 @@ class ProjectManager {
                      tabindex="0">
                     <div class="col-name">${project.ProjectName}</div>
                     <div class="col-domain">${project.Domain}.kubelab.dk</div>
-                    <div class="col-owner">${project.UserName || 'Not specified'}</div>
+                    <div class="col-owner">${project.Owner || 'Not specified'}</div>
                     <div class="col-status">
                         <div class="status-badge ${project.Status}">${project.Status}</div>
                     </div>
