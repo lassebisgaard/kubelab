@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const bcrypt = require('bcrypt');
-const saltRounds = 12;
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -41,14 +39,13 @@ router.post('/', async (req, res) => {
             });
         }
         
-        // Generate og hash password
+        // Generate password uden hashing
         const defaultPassword = Math.random().toString(36).slice(-8);
-        const hashedPassword = await bcrypt.hash(defaultPassword, saltRounds);
         
-        // Create user med hashet password
+        // Create user med almindeligt password
         const [userResult] = await connection.execute(
             'INSERT INTO Users (Name, Mail, TeamId, Password, Expiration) VALUES (?, ?, ?, ?, ?)',
-            [name, email, teamId, hashedPassword, expiration]
+            [name, email, teamId, defaultPassword, expiration]
         );
         
         // Opret rolle for brugeren

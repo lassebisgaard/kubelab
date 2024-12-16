@@ -1,15 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-// Add debug logging
-console.log('Current working directory:', process.cwd());
-console.log('Environment variables loaded:', process.env.JWT_SECRET ? 'Yes' : 'No');
-
-// Make the check more flexible with a default for development
-const JWT_SECRET = process.env.JWT_SECRET || 'development_jwt_secret';
-
-if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET is required');
-}
+// Brug samme secret key som i auth.js
+const JWT_SECRET = 'development_secret_key_123';
 
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];

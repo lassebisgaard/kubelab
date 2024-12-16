@@ -2,38 +2,29 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const { verifyToken } = require('../middleware/auth');
-const crypto = require('crypto');
 
-if (!process.env.JWT_SECRET) {
-    throw new Error('JWT_SECRET environment variable is required');
-}
-
-const JWT_SECRET = process.env.JWT_SECRET;
+// Brug en default secret key for udvikling
+const JWT_SECRET = 'development_secret_key_123';
 
 // Verify token endpoint
 router.get('/verify', verifyToken, (req, res) => {
     res.json({ valid: true, user: req.user });
 });
 
-// Login endpoint
+// Login endpoint - forenklet uden password hashing
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
-    }
-
     try {
-        // Hent bruger uden password check
+        // Direkte password sammenligning
         const [users] = await pool.execute(
             `SELECT u.*, t.TeamName, r.IsAdmin 
              FROM Users u 
              LEFT JOIN Teams t ON u.TeamId = t.TeamId
              LEFT JOIN Roles r ON u.UserId = r.UserId
-             WHERE u.Mail = ?`,
-            [email]
+             WHERE u.Mail = ? AND u.Password = ?`,
+            [email, password]
         );
 
         if (users.length === 0) {
@@ -41,14 +32,8 @@ router.post('/login', async (req, res) => {
         }
 
         const user = users[0];
-        
-        // Verificer password med bcrypt
-        const validPassword = await bcrypt.compare(password, user.Password);
-        if (!validPassword) {
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
-
         const isAdmin = user.IsAdmin === 1;
+        
         const token = jwt.sign(
             { userId: user.UserId, email: user.Mail, isAdmin: isAdmin },
             JWT_SECRET,
