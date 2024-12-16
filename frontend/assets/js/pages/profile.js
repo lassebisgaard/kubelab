@@ -1,46 +1,51 @@
-async function loadUserProfile() {
+document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const token = localStorage.getItem('token');
+        // Hent bruger ID fra localStorage
         const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
         
-        const response = await fetch(`http://localhost:3000/api/users/${user.userId}`, {
+        if (!user || !token) {
+            window.location.href = '/pages/login.html';
+            return;
+        }
+
+        // Hent brugerdata fra API
+        const response = await fetch(`http://localhost:3000/api/users/${user.UserId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
 
-        if (response.status === 401) {
-            window.location.href = '/pages/login.html';
-            return;
+        if (!response.ok) {
+            throw new Error('Kunne ikke hente brugerdata');
         }
 
-        const profileData = await response.json();
-        renderProfile(profileData);
-    } catch (error) {
-        console.error('Error:', error);
-        showErrorMessage('Failed to load profile');
-    }
-}
+        const userData = await response.json();
 
-async function updateProfile(profileData) {
-    try {
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user'));
-        
-        const response = await fetch(`http://localhost:3000/api/users/${user.userId}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(profileData)
+        // Opdater DOM elementer med brugerdata
+        document.getElementById('userName').textContent = userData.name;
+        document.getElementById('userEmail').textContent = userData.email;
+        document.getElementById('userTeam').textContent = userData.team;
+        document.getElementById('userRole').textContent = userData.role;
+
+        // Opdater også profilbilledets navn
+        const profileName = document.querySelector('.profile-container h2');
+        if (profileName) {
+            profileName.textContent = userData.name;
+        }
+
+    } catch (error) {
+        console.error('Fejl ved indlæsning af profil:', error);
+        // Vis eventuelt en fejlmeddelelse til brugeren
+    }
+
+    // Håndter logout knap
+    const logoutButton = document.querySelector('.logout button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/pages/login.html';
         });
-
-        if (!response.ok) throw new Error('Failed to update profile');
-        
-        showSuccessMessage('Profile updated successfully');
-    } catch (error) {
-        console.error('Error:', error);
-        showErrorMessage('Failed to update profile');
     }
-} 
+}); 

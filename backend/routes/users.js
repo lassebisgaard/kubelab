@@ -92,4 +92,37 @@ router.post('/', async (req, res) => {
     }
 });
 
+// Tilføj denne nye route til at hente brugerdetaljer
+router.get('/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        
+        // Hent bruger information inklusiv team og rolle
+        const [users] = await pool.execute(`
+            SELECT Users.*, Teams.TeamName, Roles.IsAdmin 
+            FROM Users 
+            LEFT JOIN Teams ON Users.TeamId = Teams.TeamId
+            LEFT JOIN Roles ON Users.UserId = Roles.UserId
+            WHERE Users.UserId = ?
+        `, [userId]);
+
+        if (users.length === 0) {
+            return res.status(404).json({ error: 'Bruger ikke fundet' });
+        }
+
+        const user = users[0];
+        const userData = {
+            name: user.Name,
+            email: user.Mail,
+            team: user.TeamName || 'Intet team',
+            role: user.IsAdmin ? 'Administrator' : 'Studerende',
+        };
+
+        res.json(userData);
+    } catch (error) {
+        console.error('Fejl ved hentning af brugerdata:', error);
+        res.status(500).json({ error: 'Der opstod en fejl ved hentning af brugerdata' });
+    }
+});
+
 module.exports = router; 

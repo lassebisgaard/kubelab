@@ -136,28 +136,6 @@
                                         `).join('')
                                         : '<p class="no-projects">No projects</p>'
                                     }
-                                <div class="content-row header">
-                                    <span class="name">Email</span>
-                                    <span class="email">${user.Mail || 'N/A'}</span>
-                                </div>
-                                <div class="content-row">
-                                    <span class="name">Udløbsdato</span>
-                                    <span class="email">${new Date(user.Expiration).toLocaleDateString('da-DK') || 'N/A'}</span>
-                                </div>
-                                
-                                <!-- Projekter sektion -->
-                                <div class="projects-section">
-                                    <h3>Projekter</h3>
-                                    <div class="projects-list">
-                                        ${user.Projects && user.Projects.length > 0 ? 
-                                            user.Projects.map(project => `
-                                                <div class="project-row">
-                                                    <span class="project-name">${project.ProjectName}</span>
-                                                </div>
-                                            `).join('')
-                                            : '<p class="no-projects">Ingen projekter</p>'
-                                        }
-                                    </div>
                                 </div>
                             </div>
                         </div>
