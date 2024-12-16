@@ -2770,13 +2770,6 @@ textarea.form-control2 {
     color: var(--text-color-dark);
 }
 
-.profile-container {
-    width: 100%;
-    max-width: 90%;
-    padding-left: 75px;
-    text-align: center;
-}
-
 .avatar {
     position: relative;
     margin: 0 auto;
@@ -3478,9 +3471,8 @@ label.option-label {
 }
 
 .profile-container {
-    width: 100%;
-    max-width: 75%;
+    width: 70%;
+    max-width: 70%;
     margin: 0 auto;
-    padding-left: 75px;
     text-align: center;
 }
