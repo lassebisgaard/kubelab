@@ -2800,7 +2800,7 @@ textarea.form-control2 {
     display: grid;
     grid-template-columns: 404px 404px;
     /* Fast bredde på kolonnerne */
-    gap: 5rem;
+    gap: 4rem;
     margin-top: 2rem;
     margin-bottom: 20px;
     justify-content: space-between;
