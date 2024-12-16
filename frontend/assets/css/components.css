@@ -2801,7 +2801,7 @@ textarea.form-control2 {
     grid-template-columns: 404px 404px;
     /* Fast bredde på kolonnerne */
     gap: 75px;
-    margin-top: 50px;
+    margin-top: 30px;
     margin-bottom: 20px;
     justify-content: space-between;
     /* Fordeler kolonnerne jævnt */
