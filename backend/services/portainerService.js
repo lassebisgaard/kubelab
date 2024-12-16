@@ -135,24 +135,29 @@ class PortainerService {
 
     async createStack(projectData) {
         try {
+            // Get stack template
             const stackContent = await this.getStackConfig(projectData.templateId);
             if (!stackContent) {
-                throw new Error('Failed to get stack configuration');
+                throw new Error('Template not found');
             }
 
+            // Configure stack content with correct domain names
             const configuredStack = stackContent
                 .replace(/CHANGEME01/g, projectData.name)
-                .replace(/CHANGEME02/g, `${projectData.name}-db`)
-                .replace(/SUBDOMAIN01/g, projectData.domain)
-                .replace(/SUBDOMAIN02/g, `db-${projectData.domain}`)
-                .replace(/CHANGEME/g, projectData.name)
-                .replace(/SUBDOMAIN/g, projectData.domain);
+                .replace(/CHANGEME02/g, `${projectData.name}-phpmyadmin`)
+                .replace(/SUBDOMAIN01/g, `wp.${projectData.domain}`)
+                .replace(/SUBDOMAIN02/g, `db.${projectData.domain}`);
 
-            console.log('Creating stack with config:', {
+            console.log('Creating stack:', {
                 name: projectData.name,
-                stackFileContent: configuredStack
+                domains: {
+                    wordpress: `wp.${projectData.domain}.kubelab.dk`,
+                    phpmyadmin: `db.${projectData.domain}.kubelab.dk`
+                }
             });
 
+            // Deploy stack
+            const headers = await this.getAuthHeaders();
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/create/swarm/string?endpointId=5`,
                 {
@@ -160,30 +165,26 @@ class PortainerService {
                     stackFileContent: configuredStack,
                     swarmID: "myst1l6mbp6kysq7rinrzzvda"
                 },
-                {
-                    headers: await this.getAuthHeaders()
-                }
+                { headers }
             );
 
-            // Vent på at stacken starter op
+            // Wait for services to start
             await new Promise(resolve => setTimeout(resolve, 5000));
-            
-            // Hent den aktuelle status
-            const status = await this.getStackStatus(projectData.name);
-            console.log(`New stack ${projectData.name} status:`, status);
             
             return { 
                 success: true, 
                 data: response.data,
-                status: status
+                domains: {
+                    wordpress: `wp.${projectData.domain}.kubelab.dk`,
+                    phpmyadmin: `db.${projectData.domain}.kubelab.dk`
+                }
             };
         } catch (error) {
             console.error('Stack deployment failed:', error);
-            return { 
-                success: false, 
-                message: error.message || 'Failed to create stack in Portainer',
-                status: 'unknown'
-            };
+            if (error.response) {
+                console.error('Portainer error response:', error.response.data);
+            }
+            return { success: false, message: error.message };
         }
     }
 

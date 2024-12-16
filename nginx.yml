@@ -12,9 +12,9 @@
         "labels": [
           "traefik.enable=true",
           "traefik.http.routers.CHANGEME01.rule=Host(`SUBDOMAIN01.kubelab.dk`)",
-          "traefik.http.routers.CHANGEME.entrypoints=web,websecure",
-          "traefik.http.routers.CHANGEME.tls.certresolver=letsencrypt",
-          "traefik.http.services.CHANGEME.loadbalancer.server.port=80"
+          "traefik.http.routers.CHANGEME01.entrypoints=web,websecure",
+          "traefik.http.routers.CHANGEME01.tls.certresolver=letsencrypt",
+          "traefik.http.services.CHANGEME01.loadbalancer.server.port=80"
         ]
       }
     }
