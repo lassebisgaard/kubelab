@@ -282,20 +282,17 @@ async function renderNavigation() {
             '/pages/account_creation.html'
         ];
         
-        // Tjek først om vi er på en offentlig side
         if (publicPages.some(page => currentPath.endsWith(page))) {
             document.body.classList.add('no-sidebar');
-            return; // Stop her hvis det er en offentlig side
+            return;
         }
 
-        // Hvis ikke offentlig side, tjek for token
         const token = localStorage.getItem('token');
         if (!token) {
             window.location.href = '/pages/login.html';
             return;
         }
 
-        // Resten af authentication og navigation rendering...
         try {
             const response = await fetch('http://localhost:3000/api/auth/verify', {
                 headers: {
@@ -314,14 +311,41 @@ async function renderNavigation() {
             return;
         }
 
-        // Hvis auth er ok, render navigation
+        // Hent bruger og generer avatar URL
         const user = JSON.parse(localStorage.getItem('user') || '{}');
+        let avatarUrl = '../assets/images/profil.png';
+
+        if (user.avatarSeed) {
+            const avatarStyles = [
+                { seed: 'happy1', color: 'b6e3f4' },
+                { seed: 'happy2', color: 'c0aede' },
+                { seed: 'happy3', color: 'ffd5dc' },
+                { seed: 'happy4', color: 'ffdfbf' },
+                { seed: 'cool1', color: 'ff9ff3' },
+                { seed: 'cool2', color: 'feca57' },
+                { seed: 'cool3', color: '48dbfb' },
+                { seed: 'cool4', color: '1dd1a1' },
+                { seed: 'cute1', color: 'ff6b6b' },
+                { seed: 'cute2', color: '4ecdc4' },
+                { seed: 'cute3', color: '45b7d1' },
+                { seed: 'cute4', color: '96ceb4' }
+            ];
+            
+            const style = avatarStyles.find(s => s.seed === user.avatarSeed);
+            if (style) {
+                avatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${user.avatarSeed}&backgroundColor=${style.color}`;
+            }
+        }
+
         const response = await fetch('../templates/navigation.html');
         const templateText = await response.text();
         
         const template = Handlebars.compile(templateText);
         const navigationHtml = template({
-            user: user,
+            user: {
+                ...user,
+                avatarUrl: avatarUrl  // Tilføj avatar URL til template data
+            },
             isProjectsPage: currentPath.includes('projects.html'),
             isTemplatesPage: currentPath.includes('templates.html'),
             isTeamsPage: currentPath.includes('teams.html'),

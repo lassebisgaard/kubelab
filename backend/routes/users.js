@@ -39,13 +39,30 @@ router.post('/', async (req, res) => {
             });
         }
         
+        // Generer tilfældig avatar seed
+        const avatarStyles = [
+            { seed: 'happy1', color: 'b6e3f4' },
+            { seed: 'happy2', color: 'c0aede' },
+            { seed: 'happy3', color: 'ffd5dc' },
+            { seed: 'happy4', color: 'ffdfbf' },
+            { seed: 'cool1', color: 'ff9ff3' },
+            { seed: 'cool2', color: 'feca57' },
+            { seed: 'cool3', color: '48dbfb' },
+            { seed: 'cool4', color: '1dd1a1' },
+            { seed: 'cute1', color: 'ff6b6b' },
+            { seed: 'cute2', color: '4ecdc4' },
+            { seed: 'cute3', color: '45b7d1' },
+            { seed: 'cute4', color: '96ceb4' }
+        ];
+        const randomAvatar = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
+        
         // Generate password uden hashing
         const defaultPassword = Math.random().toString(36).slice(-8);
         
-        // Create user med almindeligt password
+        // Create user med almindeligt password og avatar
         const [userResult] = await connection.execute(
-            'INSERT INTO Users (Name, Mail, TeamId, Password, Expiration) VALUES (?, ?, ?, ?, ?)',
-            [name, email, teamId, defaultPassword, expiration]
+            'INSERT INTO Users (Name, Mail, TeamId, Password, Expiration, AvatarSeed) VALUES (?, ?, ?, ?, ?, ?)',
+            [name, email, teamId, defaultPassword, expiration, randomAvatar.seed]
         );
         
         // Opret rolle for brugeren
@@ -89,7 +106,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Flyt options route FØR :id route
+// Flyt options route F��R :id route
 router.get('/options', async (req, res) => {
     try {
         // Hent alle unikke roller fra Roles tabellen
@@ -139,6 +156,7 @@ router.get('/:id', async (req, res) => {
             email: user.Mail,
             team: user.TeamName || 'Intet team',
             role: user.IsAdmin ? 'Administrator' : 'Studerende',
+            avatarSeed: user.AvatarSeed
         };
 
         res.json(userData);
@@ -152,10 +170,11 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const userId = req.params.id;
-        const requestingUser = req.user; // Fra JWT token
-        const { name, email, team, role } = req.body;
+        const requestingUser = req.user;
+        const { name, email, team, role, avatarSeed } = req.body;
 
-        // Tjek om brugeren prøver at opdatere sin egen profil
+        console.log('Received update request:', { userId, avatarSeed, body: req.body });
+
         if (userId !== requestingUser.userId.toString()) {
             return res.status(403).json({ error: 'Ikke tilladelse til at opdatere andre brugere' });
         }
@@ -173,6 +192,26 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Bruger ikke fundet' });
         }
 
+        // Hvis vi har et nyt avatar seed, opdater det
+        if (avatarSeed) {
+            console.log('Updating avatar seed:', avatarSeed);
+            try {
+                await pool.execute(
+                    'UPDATE Users SET AvatarSeed = ? WHERE UserId = ?',
+                    [avatarSeed, userId]
+                );
+                console.log('Avatar seed updated successfully');
+                return res.json({ 
+                    message: 'Avatar opdateret',
+                    avatarSeed: avatarSeed
+                });
+            } catch (dbError) {
+                console.error('Database error:', dbError);
+                throw dbError;
+            }
+        }
+
+        // Resten af den eksisterende kode for andre opdateringer...
         const updates = {
             name,
             email,
@@ -217,8 +256,11 @@ router.put('/:id', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Fejl ved opdatering af bruger:', error);
-        res.status(500).json({ error: 'Der opstod en fejl ved opdatering af brugeren' });
+        console.error('Error in PUT endpoint:', error);
+        res.status(500).json({ 
+            error: 'Der opstod en fejl ved opdatering af brugeren',
+            details: error.message 
+        });
     }
 });
 

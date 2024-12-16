@@ -1,21 +1,39 @@
+let currentUser;
+let authToken;
+
+const avatarStyles = [
+    { seed: 'happy1', mood: 'happy', color: 'b6e3f4' },
+    { seed: 'happy2', mood: 'happy', color: 'c0aede' },
+    { seed: 'happy3', mood: 'happy', color: 'ffd5dc' },
+    { seed: 'happy4', mood: 'happy', color: 'ffdfbf' },
+    { seed: 'cool1', mood: 'cool', color: 'ff9ff3' },
+    { seed: 'cool2', mood: 'cool', color: 'feca57' },
+    { seed: 'cool3', mood: 'cool', color: '48dbfb' },
+    { seed: 'cool4', mood: 'cool', color: '1dd1a1' },
+    { seed: 'cute1', mood: 'cute', color: 'ff6b6b' },
+    { seed: 'cute2', mood: 'cute', color: '4ecdc4' },
+    { seed: 'cute3', mood: 'cute', color: '45b7d1' },
+    { seed: 'cute4', mood: 'cute', color: '96ceb4' }
+];
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // Hent bruger ID fra localStorage
-        const user = JSON.parse(localStorage.getItem('user'));
-        const token = localStorage.getItem('token');
+        currentUser = JSON.parse(localStorage.getItem('user'));
+        authToken = localStorage.getItem('token');
         
-        if (!user || !token) {
+        if (!currentUser || !authToken) {
             window.location.href = '/pages/login.html';
             return;
         }
 
         // Definer isAdmin én gang
-        const isAdmin = user.isAdmin;
+        const isAdmin = currentUser.isAdmin;
 
         // Hent options (roller og teams) fra API
         const optionsResponse = await fetch('http://localhost:3000/api/users/options', {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${authToken}`
             }
         });
 
@@ -26,9 +44,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const options = await optionsResponse.json();
         
         // Hent brugerdata fra API
-        const response = await fetch(`http://localhost:3000/api/users/${user.UserId}`, {
+        const response = await fetch(`http://localhost:3000/api/users/${currentUser.UserId}`, {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${authToken}`
             }
         });
 
@@ -238,11 +256,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         role: getValue('userRole')
                     };
 
-                    const response = await fetch(`http://localhost:3000/api/users/${user.UserId}`, {
+                    const response = await fetch(`http://localhost:3000/api/users/${currentUser.UserId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authToken}`
                         },
                         body: JSON.stringify(updatedData)
                     });
@@ -287,6 +305,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateButtonStates(false);
         }
 
+        // Sæt den korrekte avatar med det samme
+        if (userData.avatarSeed) {
+            const style = avatarStyles.find(s => s.seed === userData.avatarSeed);
+            if (style) {
+                const avatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${userData.avatarSeed}&backgroundColor=${style.color}`;
+                
+                // Opdater både profil og sidebar avatar
+                const profileAvatar = document.getElementById('profileAvatar');
+                const sidebarAvatar = document.querySelector('.profile-link img');
+                
+                if (profileAvatar) profileAvatar.src = avatarUrl;
+                if (sidebarAvatar) sidebarAvatar.src = avatarUrl;
+            }
+        }
+
     } catch (error) {
         console.error('Fejl ved indlæsning af profil:', error);
     }
@@ -308,10 +341,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Vis bekræftelses dialog
             if (confirm('Er du sikker på at du vil slette din profil? Dette kan ikke fortrydes.')) {
                 try {
-                    const response = await fetch(`http://localhost:3000/api/users/${user.UserId}`, {
+                    const response = await fetch(`http://localhost:3000/api/users/${currentUser.UserId}`, {
                         method: 'DELETE',
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authToken}`
                         }
                     });
 
@@ -327,6 +360,94 @@ document.addEventListener('DOMContentLoaded', async () => {
                     console.error('Fejl ved sletning af profil:', error);
                     alert('Der opstod en fejl ved sletning af profilen');
                 }
+            }
+        });
+    }
+
+    // Tilføj i DOMContentLoaded event listener
+
+    const changeAvatarBtn = document.getElementById('changeAvatar');
+    const avatarModal = document.getElementById('avatarModal');
+    const avatarGrid = document.querySelector('.avatar-grid');
+
+    if (changeAvatarBtn && avatarModal && avatarGrid) {
+        // Generer avatar muligheder
+        avatarGrid.innerHTML = avatarStyles.map(style => `
+            <div class="avatar-option" data-seed="${style.seed}">
+                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${style.seed}&backgroundColor=${style.color}" 
+                     alt="Bot avatar">
+            </div>
+        `).join('');
+
+        // Vis modal når man klikker på edit ikon
+        changeAvatarBtn.addEventListener('click', () => {
+            avatarModal.style.display = 'flex';
+        });
+
+        // Luk modal når man klikker udenfor
+        avatarModal.addEventListener('click', (e) => {
+            if (e.target === avatarModal) {
+                avatarModal.style.display = 'none';
+            }
+        });
+
+        // Tilføj denne event listener for close button
+        const closeModalBtn = document.querySelector('.close-modal');
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                avatarModal.style.display = 'none';
+            });
+        }
+
+        // Opdater avatar valg handler
+        avatarGrid.addEventListener('click', async (e) => {
+            const option = e.target.closest('.avatar-option');
+            if (!option) return;
+
+            // Fjern tidligere selection
+            document.querySelectorAll('.avatar-option.selected').forEach(el => 
+                el.classList.remove('selected')
+            );
+            
+            // Tilføj selection til den valgte
+            option.classList.add('selected');
+
+            const seed = option.dataset.seed;
+            const style = avatarStyles.find(s => s.seed === seed);
+            const newAvatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${seed}&backgroundColor=${style.color}`;
+
+            // Opdater avatar i UI (både profil og sidebar)
+            document.getElementById('profileAvatar').src = newAvatarUrl;
+            const sidebarAvatar = document.querySelector('.profile-link img');
+            if (sidebarAvatar) {
+                sidebarAvatar.src = newAvatarUrl;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/users/${currentUser.UserId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        avatarSeed: seed
+                    })
+                });
+
+                if (!response.ok) throw new Error('Kunne ikke opdatere avatar');
+                
+                // Opdater også avatar i localStorage
+                const updatedUser = JSON.parse(localStorage.getItem('user'));
+                if (updatedUser) {
+                    updatedUser.avatarSeed = seed;
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                }
+
+                avatarModal.style.display = 'none';
+            } catch (error) {
+                console.error('Fejl ved opdatering af avatar:', error);
+                alert('Der skete en fejl ved opdatering af avatar');
             }
         });
     }

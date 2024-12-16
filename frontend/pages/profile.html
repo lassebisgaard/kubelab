@@ -33,7 +33,10 @@
             
             <div class="profile-container">
                 <div class="avatar">
-                    <img src="../assets/images/profil.png" alt="Profile Picture">
+                    <img src="../assets/images/profil.png" alt="Profile Picture" id="profileAvatar">
+                    <div class="avatar-edit">
+                        <i class='bx bx-image edit-icon' id="changeAvatar"></i>
+                    </div>
                 </div>
                 <h2></h2>
 
@@ -70,7 +73,10 @@
 
                     <div class="actions">
                         <button class="btn cancel">Cancel</button>
-                        <button class="btn confirm">Confirm changes</button>
+                        <button class="btn confirm">
+                            <span>Confirm changes</span>
+                            <i class='bx bx-check'></i>
+                        </button>
                     </div>
                 </div>
                 
@@ -90,6 +96,17 @@
             </div>
     </main>
     
+    <div class="modal" id="avatarModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Choose Avatar Style</h3>
+                <button class="close-modal"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="avatar-grid">
+                <!-- Avatars vil blive indsat her via JavaScript -->
+            </div>
+        </div>
+    </div>
 </body>
 
 <script src="../assets/js/pages/profile.js"></script>

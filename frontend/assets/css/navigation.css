@@ -355,3 +355,10 @@ main {
 .burger-menu {
     display: none; /* Skjult som standard, vises kun på mobile */
 }
+
+.profile-link img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;  /* Gør billedet rundt */
+    object-fit: cover;   /* Sikrer at billedet fylder hele cirklen */
+}

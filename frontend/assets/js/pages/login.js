@@ -50,9 +50,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
             
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                window.location.href = '/pages/projects.html';
+                const handleLoginSuccess = async (response) => {
+                    const { token, user } = response;
+
+                    // Hent den fulde brugerdata inklusiv avatar
+                    const userResponse = await fetch(`http://localhost:3000/api/users/${user.UserId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!userResponse.ok) {
+                        throw new Error('Kunne ikke hente brugerdata');
+                    }
+
+                    const userData = await userResponse.json();
+
+                    // Gem både token og den komplette brugerdata (inklusiv avatarSeed)
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify({
+                        ...user,
+                        avatarSeed: userData.avatarSeed  // Tilføj avatarSeed til localStorage
+                    }));
+
+                    window.location.href = '/pages/projects.html';
+                };
+
+                handleLoginSuccess(data);
             } else {
                 showErrorMessage(data.error || 'Login failed');
             }
