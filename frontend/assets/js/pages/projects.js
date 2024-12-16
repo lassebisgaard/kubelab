@@ -164,6 +164,7 @@ class ProjectManager {
 
         document.getElementById('project-details-container').innerHTML = templateFunction(templateData);
         this.initProjectControls();
+        this.initDeleteButton();
     }
 
     async updateProjectStatus(projectId) {
@@ -307,6 +308,40 @@ class ProjectManager {
                 this.updateProjectStatus(projectId);
             });
         }, 10000);
+    }
+
+    initDeleteButton() {
+        const deleteButton = document.querySelector('.danger-zone .delete');
+        if (!deleteButton) return;
+
+        deleteButton.addEventListener('click', () => {
+            if (window.showDeleteConfirmation) {
+                window.showDeleteConfirmation(
+                    'Delete Project',
+                    'Are you sure you want to delete this project? This action cannot be undone.',
+                    async () => {
+                        try {
+                            const projectId = new URLSearchParams(window.location.search).get('id');
+                            const token = localStorage.getItem('token');
+                            const response = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            });
+
+                            if (!response.ok) throw new Error('Failed to delete project');
+
+                            // Redirect back to projects page after successful deletion
+                            window.location.href = '/pages/projects.html';
+                        } catch (error) {
+                            console.error('Error:', error);
+                            showErrorMessage('Failed to delete project');
+                        }
+                    }
+                );
+            }
+        });
     }
 }
 

@@ -156,9 +156,11 @@ router.delete('/:id', async (req, res) => {
 
         if (project && project[0]) {
             try {
+                // Slet stack i Portainer
                 await portainerService.deleteStack(project[0].ProjectName);
             } catch (portainerError) {
                 console.error('Portainer deletion failed:', portainerError);
+                // Vi fortsætter med at slette fra databasen selvom Portainer fejler
             }
         }
 

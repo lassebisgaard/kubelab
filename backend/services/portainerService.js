@@ -249,6 +249,35 @@ class PortainerService {
             return false;
         }
     }
+
+    async deleteStack(stackName) {
+        try {
+            // Først henter vi stack ID baseret på navnet
+            const stacks = await this.getStacks();
+            const stack = stacks.find(s => s.Name === stackName);
+            
+            if (!stack) {
+                throw new Error(`Stack ${stackName} not found`);
+            }
+
+            // Derefter sletter vi stacken
+            const response = await fetch(`${this.portainerUrl}/api/stacks/${stack.Id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${this.portainerToken}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete stack: ${response.statusText}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error deleting stack:', error);
+            throw error;
+        }
+    }
 }
 
 module.exports = PortainerService; 
