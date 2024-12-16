@@ -89,7 +89,33 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Tilføj denne nye route til at hente brugerdetaljer
+// Flyt options route FØR :id route
+router.get('/options', async (req, res) => {
+    try {
+        // Hent alle unikke roller fra Roles tabellen
+        const [roles] = await pool.execute(`
+            SELECT DISTINCT 
+                CASE 
+                    WHEN IsAdmin = 1 THEN 'Administrator'
+                    ELSE 'Studerende'
+                END as RoleName
+            FROM Roles
+        `);
+
+        // Hent alle teams fra Teams tabellen
+        const [teams] = await pool.execute('SELECT TeamId, TeamName FROM Teams');
+
+        res.json({
+            roles: roles.map(r => r.RoleName),
+            teams: teams.map(t => t.TeamName)
+        });
+    } catch (error) {
+        console.error('Fejl ved hentning af options:', error);
+        res.status(500).json({ error: 'Kunne ikke hente valgmuligheder' });
+    }
+});
+
+// Derefter kommer ID route
 router.get('/:id', async (req, res) => {
     try {
         const userId = req.params.id;
@@ -119,6 +145,45 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error('Fejl ved hentning af brugerdata:', error);
         res.status(500).json({ error: 'Der opstod en fejl ved hentning af brugerdata' });
+    }
+});
+
+// Tilføj denne nye route til at opdatere bruger
+router.put('/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { name, email, team, role } = req.body;
+
+        // Først opdater Users tabellen
+        await pool.execute(
+            'UPDATE Users SET Name = ?, Mail = ? WHERE UserId = ?',
+            [name, email, userId]
+        );
+
+        // Hvis team er ændret, opdater TeamId
+        if (team) {
+            const [teams] = await pool.execute('SELECT TeamId FROM Teams WHERE TeamName = ?', [team]);
+            if (teams.length > 0) {
+                await pool.execute(
+                    'UPDATE Users SET TeamId = ? WHERE UserId = ?',
+                    [teams[0].TeamId, userId]
+                );
+            }
+        }
+
+        // Hvis role er ændret, opdater Roles tabellen
+        if (role) {
+            const isAdmin = role.toLowerCase() === 'administrator' ? 1 : 0;
+            await pool.execute(
+                'UPDATE Roles SET IsAdmin = ? WHERE UserId = ?',
+                [isAdmin, userId]
+            );
+        }
+
+        res.json({ message: 'Bruger opdateret' });
+    } catch (error) {
+        console.error('Fejl ved opdatering af bruger:', error);
+        res.status(500).json({ error: 'Der opstod en fejl ved opdatering af brugeren' });
     }
 });
 

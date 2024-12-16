@@ -56,17 +56,27 @@
 
                     <div class="detail" for="userTeam">
                         <label for="userTeam">Team</label>
-                        <div>
-                            <span id="userTeam">Indlæser...</span>
-                            <i class='bx bx-pencil edit-icon'></i>
+                        <div class="custom-select2">
+                            <div class="select-header" tabindex="0">
+                                <span class="selected-option">Indlæser...</span>
+                                <i class="bx bx-chevron-down"></i>
+                            </div>
+                            <ul class="select-options">
+                                <!-- Options will be populated by JavaScript -->
+                            </ul>
                         </div>
                     </div>
 
                     <div class="detail" for="userRole">
                         <label for="userRole">Role</label>
-                        <div>
-                            <span id="userRole">Indlæser...</span>
-                            <i class='bx bx-pencil edit-icon'></i>
+                        <div class="custom-select2">
+                            <div class="select-header" tabindex="0">
+                                <span class="selected-option">Indlæser...</span>
+                                <i class="bx bx-chevron-down"></i>
+                            </div>
+                            <ul class="select-options">
+                                <!-- Options will be populated by JavaScript -->
+                            </ul>
                         </div>
                     </div>
 
@@ -94,31 +104,5 @@
     
 </body>
 
-<script>
-    const toggleSwitch = document.getElementById('dark-mode-toggle');
-const rootElement = document.documentElement;
-
-
-const currentTheme = localStorage.getItem('theme');
-if (currentTheme) {
-  rootElement.classList.add(currentTheme);
-  toggleSwitch.checked = currentTheme === 'dark-mode'; 
-}
-
-
-toggleSwitch.addEventListener('change', () => {
-  if (toggleSwitch.checked) {
-  
-    rootElement.classList.remove('light-mode');
-    rootElement.classList.add('dark-mode');
-    localStorage.setItem('theme', 'dark-mode'); 
-  } else {
-
-    rootElement.classList.remove('dark-mode');
-    rootElement.classList.add('light-mode');
-    localStorage.setItem('theme', 'light-mode'); 
-  }
-});
-</script>
 <script src="../assets/js/pages/profile.js"></script>
 </html>
