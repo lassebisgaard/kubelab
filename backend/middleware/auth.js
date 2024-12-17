@@ -1,7 +1,11 @@
 const jwt = require('jsonwebtoken');
 
 // Brug samme secret key som i auth.js
-const JWT_SECRET = 'development_secret_key_123';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+}
 
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];

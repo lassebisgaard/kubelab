@@ -1,4 +1,14 @@
 require('dotenv').config();
+
+// Tjek for nødvendige miljøvariabler
+const requiredEnvVars = ['JWT_SECRET', 'DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_DATABASE'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+    console.error('Missing required environment variables:', missingEnvVars.join(', '));
+    process.exit(1);
+}
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
