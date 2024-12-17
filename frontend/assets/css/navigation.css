@@ -263,8 +263,9 @@ nav a.create-button {
 
 [data-resize-btn] {
     position: absolute !important;
-    right: -16px;
-    top: 32px;
+    right: -40px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     width: 32px !important;
     height: 32px !important;
     background: var(--card-background) !important;
@@ -278,6 +279,12 @@ nav a.create-button {
     z-index: 101;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+}
+
+/* Juster position når sidebar er kollapset */
+:root:not(.sb-expanded) [data-resize-btn] {
+    right: -35px !important;
 }
 
 [data-resize-btn] i {

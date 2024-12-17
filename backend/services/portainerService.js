@@ -108,18 +108,28 @@ class PortainerService {
             const stack = await this.getStack(stackName);
             if (!stack) {
                 console.log(`Stack ${stackName} not found in Portainer`);
-                return 'offline';
+                return 'unknown';
             }
 
-            if (stack.Status === 1 || stack.Status === 'active') {
-                return 'online';
+            console.log(`Stack ${stackName} status:`, stack.Status);
+
+            const statusMap = {
+                1: 'online',     // Active
+                2: 'offline',    // Inactive
+                'active': 'online',
+                'inactive': 'offline'
+            };
+
+            const status = statusMap[stack.Status];
+            if (!status) {
+                console.log(`Unknown status for stack ${stackName}:`, stack.Status);
+                return 'unknown';
             }
-            
-            return 'offline';
-            
+
+            return status;
         } catch (error) {
             console.error(`Error getting status for stack ${stackName}:`, error);
-            return 'offline';
+            return 'unknown';
         }
     }
 
@@ -158,17 +168,12 @@ class PortainerService {
                 { headers }
             );
 
-            // Vent og tjek status 3 gange
-            let status = 'offline';
-            for(let i = 0; i < 3; i++) {
-                await new Promise(resolve => setTimeout(resolve, 7000));
-                status = await this.getStackStatus(projectData.name);
-                if(status === 'online') break;
-            }
+            // Wait for services to start
+            await new Promise(resolve => setTimeout(resolve, 15000));
             
             return { 
                 success: true, 
-                status: status,
+                status: 'online',  // Altid returner online for nye projekter
                 data: response.data,
                 domains: {
                     wordpress: `${projectData.domain}.kubelab.dk`,
@@ -193,22 +198,19 @@ class PortainerService {
                 return false;
             }
 
-            if (stack.Status === 1) {
-                console.log(`Stack ${stackName} is already running`);
-                return true;
-            }
-
+            // Brug axios i stedet for fetch for konsistens
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/${stack.Id}/start?endpointId=5`,
                 {},
                 { headers: await this.getAuthHeaders() }
             );
+
+            // Vent og tjek status
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            const status = await this.getStackStatus(stackName);
             
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            const success = response.status === 200;
-            console.log(`Stack ${stackName} start result:`, success);
-            return success;
+            return status === 'online';
+
         } catch (error) {
             console.error(`Error starting stack ${stackName}:`, error);
             return false;
@@ -224,22 +226,18 @@ class PortainerService {
                 return false;
             }
 
-            if (stack.Status === 2) {
-                console.log(`Stack ${stackName} is already stopped`);
-                return true;
-            }
-
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/${stack.Id}/stop?endpointId=5`,
                 {},
                 { headers: await this.getAuthHeaders() }
             );
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Vent og tjek status
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            const status = await this.getStackStatus(stackName);
+            
+            return status === 'offline';
 
-            const success = response.status === 200;
-            console.log(`Stack ${stackName} stop result:`, success);
-            return success;
         } catch (error) {
             console.error(`Error stopping stack ${stackName}:`, error);
             return false;
@@ -256,17 +254,14 @@ class PortainerService {
                 throw new Error(`Stack ${stackName} not found`);
             }
 
-            // Derefter sletter vi stacken
-            const response = await fetch(`${this.portainerUrl}/api/stacks/${stack.Id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${this.portainerToken}`
-                }
-            });
+            // Brug this.client i stedet for fetch
+            const response = await this.client.delete(
+                `${this.portainerUrl}/api/stacks/${stack.Id}?endpointId=5`,
+                { headers: await this.getAuthHeaders() }
+            );
 
-            if (!response.ok) {
-                throw new Error(`Failed to delete stack: ${response.statusText}`);
-            }
+            // Vent kort tid for at sikre sletningen er gennemført
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             return true;
         } catch (error) {

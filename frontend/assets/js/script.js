@@ -354,6 +354,7 @@ async function renderNavigation() {
         
         document.querySelector('aside').innerHTML = navigationHtml;
         initializeNavigationEvents();
+        initSidebarToggle();
     } catch (error) {
         console.error('Error rendering navigation:', error);
     }

@@ -316,8 +316,11 @@ router.delete('/:id', async (req, res) => {
                 // Slet stack i Portainer
                 await portainerService.deleteStack(project[0].ProjectName);
             } catch (portainerError) {
-                console.error('Portainer deletion failed:', portainerError);
-                // Vi fortsætter med at slette fra databasen selvom Portainer fejler
+                // Hvis fejlen er "not found", er det okay - fortsæt bare
+                if (!portainerError.message?.includes('not found')) {
+                    console.error('Portainer deletion failed:', portainerError);
+                }
+                // Vi fortsætter med at slette fra databasen uanset hvad
             }
         }
 
