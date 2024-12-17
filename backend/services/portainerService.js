@@ -145,13 +145,13 @@ class PortainerService {
             const configuredStack = stackContent
                 .replace(/CHANGEME01/g, projectData.name)
                 .replace(/CHANGEME02/g, `${projectData.name}-phpmyadmin`)
-                .replace(/SUBDOMAIN01/g, `wp.${projectData.domain}`)
+                .replace(/SUBDOMAIN01/g, `${projectData.domain}`)
                 .replace(/SUBDOMAIN02/g, `db.${projectData.domain}`);
 
             console.log('Creating stack:', {
                 name: projectData.name,
                 domains: {
-                    wordpress: `wp.${projectData.domain}.kubelab.dk`,
+                    wordpress: `${projectData.domain}.kubelab.dk`,
                     phpmyadmin: `db.${projectData.domain}.kubelab.dk`
                 }
             });
@@ -175,7 +175,7 @@ class PortainerService {
                 success: true, 
                 data: response.data,
                 domains: {
-                    wordpress: `wp.${projectData.domain}.kubelab.dk`,
+                    wordpress: `${projectData.domain}.kubelab.dk`,
                     phpmyadmin: `db.${projectData.domain}.kubelab.dk`
                 }
             };
