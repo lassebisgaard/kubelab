@@ -169,10 +169,14 @@ class PortainerService {
             );
 
             // Wait for services to start
-            await new Promise(resolve => setTimeout(resolve, 10000));
+            await new Promise(resolve => setTimeout(resolve, 20000));
+            
+            // Get initial status
+            const status = await this.getStackStatus(projectData.name);
             
             return { 
                 success: true, 
+                status: status,
                 data: response.data,
                 domains: {
                     wordpress: `${projectData.domain}.kubelab.dk`,
