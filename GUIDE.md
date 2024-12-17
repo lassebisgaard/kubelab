@@ -1,49 +1,59 @@
-# Kubelab Guide
+# Kubelab - Underviser Guide
 
-## Hurtig Start
-### Forudsætninger
-- Node.js installeret
-- Git installeret
-- Docker Desktop installeret og kørende
+## Kom i gang
+### Systemkrav
+- Node.js på din computer
+- Git til at hente projektet
+- Docker Desktop (husk at starte det)
+- MySQL (database)
+
+### Installation
+1. Klon projektet og installer dependencies
+    Åbn terminal og skriv:
+    git clone https://github.com/lassebisgaard/kubelab.git
+    cd backend
+    npm install
+
+### Initial Setup
+1. Find filen `.env.example` i backend mappen
+2. Lav en kopi af den og kald den `.env`
+3. Erstat værdierne i .env med disse:
+    - DB_PASSWORD = root (eller dit MySQL password hvis det er anderledes)
+    - JWT_SECRET = kubelab_development_secret_key_2024
+    - Resten af værdierne kan blive som de er
 
 ### Database Setup
-1. Opret en ny database kaldet `Kubelab` i MySQL
-   - Via phpMyAdmin:
-     - Åbn phpMyAdmin
-     - Klik "Ny" i venstre sidebar
-     - Indtast `Kubelab` som databasenavn
-     - Vælg `utf8mb4_general_ci` som collation
-     - Klik "Opret"
-2. Importér database struktur og data
-   - Find `Kubelab.sql` i projektets rod
-   - I phpMyAdmin, vælg den nye `Kubelab` database
-   - Gå til "Importér" fanen
-   - Vælg `Kubelab.sql` filen
-   - Klik "Udfør"
+- Opret en ny database kaldet `Kubelab` i MySQL
+- 2. Åbn phpMyAdmin
+- 3. Klik "Ny" i venstre side
+- 4. Skriv `Kubelab` og klik "Opret"
+- 5. Vælg den nye `Kubelab` database i menuen til venstre
+- 6. Klik på "Importér" i toppen
+- 7. Find filen `Kubelab.sql` i projektets rod
+- 8. Klik "Start" eller "Go" for at importere databasen
 
-### Projekt Setup
-1. Klon projektet og installer dependencies
-   ```bash
-   git clone <projekt-url>
-   cd backend
-   npm install
-   ```
+2. Start backend:
+    Skriv i terminal:
+    node server.js (husk at starte i backend mappen)
 
-### Start Projektet
-2. Start backend: `npm run dev` eller `node server js` i `/backend`
-3. Åbn frontend i browser: `/frontend/pages/index.html`
+3. Åbn frontend i browser: `localhost:3000/frontend/pages/index.html`
 
-### Test Brugere
-4. Log ind med en af følgende test brugere:
-   ### Admin bruger:
-   - Email: admin@live.dk
-   - Password: admin
-   
-   ### Standard bruger:
-   - Email: user@live.dk
-   - Password: user
+### API Dokumentation
+- Swagger dokumentationen kan findes på: `localhost:3000/api-docs`
+- Her kan du se og teste alle API endpoints
+- Dokumentationen opdateres automatisk når du ændrer i koden
 
-## Projektstruktur
+### Test Konti
+Du kan logge ind med:
+    ### Admin bruger:
+    - Email: admin@live.dk
+    - Password: admin
+    
+    ### Standard bruger:
+    - Email: user@live.dk
+    - Password: user
+
+## System Arkitektur
 ### Frontend (`/frontend`)
 - `/assets` - Statiske filer (CSS, JS, Icons)
 - `/pages` - HTML sider
@@ -53,25 +63,20 @@
 - `/routes` - API endpoints
 - `/config` - Database og server konfiguration
 - `/middleware` - Authentication og validering
-- `/utils` - Hj��lpefunktioner
+- `/utils` - Hjælpefunktioner
+- `.env` - Miljøvariabler
+- `/config/swagger.js` - API dokumentation konfiguration
 
-### Database
+### Database Struktur
 - MySQL database med følgende tabeller:
-  - `Users` - Brugerdata og teams
-  - `Teams` - Team information
-  - `Projects` - Projekt konfigurationer
-  - `Templates` - YAML templates
-  - `Services` - Tilgængelige services
-  - `Roles` - Brugerrettigheder
+    - `Users` - Brugerdata og teams
+    - `Teams` - Team information
+    - `Projects` - Projekt konfigurationer
+    - `Templates` - YAML templates
+    - `Services` - Tilgængelige services
+    - `Roles` - Brugerrettigheder
 
-## Kernekoncepter
-
-### Database Setup
-- MySQL som primær database
-- Automatisk backup system
-- Relationel struktur mellem users, teams og projekter
-- YAML configs gemmes i database
-
+## Funktionalitet
 ### Templates
 - Foruddefinerede Docker stacks
 - Kan indeholde multiple services
@@ -89,41 +94,25 @@
 - Styres af admin
 - Har udløbsdato
 
-## Hovedfunktioner
-1. **Projekt Management**
-   - Vælg template
-   - Start projekt
-   - Stop projekt
-   - Slet projekt
+## Administration
+### Projekt Management
+- Overvåg aktive projekter
+- Start/stop projekter
+- Slet inaktive projekter
 
-2. **Template System**
-   - For undervisere:
-     - Opret templates
-     - Administrer templates
-   - For studerende:
-     - Vælg mellem eksisterende templates
-     - Start projekt fra template
+### Template System
+- Opret nye templates
+- Administrer eksisterende templates
+- Tilføj/fjern services
 
-## API Endpoints
-### Vigtigste endpoints:
-- `POST /api/auth/login` - Login
-- `GET /api/projects` - List projekter
-- `POST /api/projects` - Opret projekt
-- `GET /api/templates` - List templates
-- `GET /api/teams` - List teams
-
-## Sikkerhed
-- Login påkrævet
-- JWT authentication
-- Role-based access
-- Sikre passwords
-
-## Best Practices
-1. Vælg den rigtige template til dit behov
-2. Husk at stoppe projekter der ikke bruges
-3. Kontakt administrator ved problemer
+### Bruger Administration
+- Opret/slet teams
+- Administrer team medlemmer
+- Håndter brugerrettigheder
 
 ## Fejlfinding
-- Kontakt administrator hvis projektet ikke virker
-- Tjek at projektet er startet
-- Prøv at genstarte projektet
+- Tjek at `.env` filen er korrekt konfigureret
+- Verificer database forbindelse
+- Kontroller Docker status
+- Tjek server logs for fejl
+- Genstart services ved behov
