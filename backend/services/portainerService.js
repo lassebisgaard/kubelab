@@ -159,7 +159,7 @@ class PortainerService {
             );
 
             // Vent og tjek status 3 gange
-            let status = 'unknown';
+            let status = 'offline';
             for(let i = 0; i < 3; i++) {
                 await new Promise(resolve => setTimeout(resolve, 7000));
                 status = await this.getStackStatus(projectData.name);
