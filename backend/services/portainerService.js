@@ -108,28 +108,18 @@ class PortainerService {
             const stack = await this.getStack(stackName);
             if (!stack) {
                 console.log(`Stack ${stackName} not found in Portainer`);
-                return 'unknown';
+                return 'offline';
             }
 
-            console.log(`Stack ${stackName} status:`, stack.Status);
-
-            const statusMap = {
-                1: 'online',     // Active
-                2: 'offline',    // Inactive
-                'active': 'online',
-                'inactive': 'offline'
-            };
-
-            const status = statusMap[stack.Status];
-            if (!status) {
-                console.log(`Unknown status for stack ${stackName}:`, stack.Status);
-                return 'unknown';
+            if (stack.Status === 1 || stack.Status === 'active') {
+                return 'online';
             }
-
-            return status;
+            
+            return 'offline';
+            
         } catch (error) {
             console.error(`Error getting status for stack ${stackName}:`, error);
-            return 'unknown';
+            return 'offline';
         }
     }
 

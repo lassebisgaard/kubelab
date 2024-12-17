@@ -1923,6 +1923,15 @@ textarea.form-control2 {
     gap: 1rem;
     padding: 1.5rem;
     position: relative;
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.project-card:hover {
+    border: 1px solid var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .project-header {
