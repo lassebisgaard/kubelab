@@ -18,7 +18,6 @@ nav {
     padding: 24px;
 }
 
-/* Navigation Lists */
 nav ul {
     list-style: none;
     padding: 0;
@@ -28,7 +27,6 @@ nav ul {
     width: 100%;
 }
 
-/* Logo Container */
 nav > ul:first-of-type > li:first-child {
     display: flex;
     align-items: center;
@@ -50,7 +48,6 @@ nav > ul:first-of-type > li:first-child span {
     white-space: nowrap;
 }
 
-/* Navigation Links & Items */
 nav a, 
 .nav-bottom a,
 .create-button {
@@ -74,7 +71,6 @@ nav a img,
     min-width: 24px;
 }
 
-/* Create Button */
 .create-button {
     width: 206px;
     height: 41px;
@@ -105,7 +101,6 @@ nav a img,
     white-space: nowrap;
 }
 
-/* Bottom Navigation */
 .nav-bottom {
     margin-top: auto;
     padding-top: 31px;
@@ -113,7 +108,6 @@ nav a img,
     width: 100%;
 }
 
-/* Collapsed State */
 :root:not(.sb-expanded) aside {
     width: 89px;
 }
@@ -150,7 +144,6 @@ nav a img,
     display: none;
 }
 
-/* Profile Image Styling */
 .profile-image {
     border-radius: 50%;
     object-fit: cover;
@@ -164,7 +157,7 @@ nav a img:not(.profile-image),
 
 /* Mobile */
 @media (max-width: 768px) {
-    /* Opdater sidebar position og width */
+   
     aside {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
@@ -172,7 +165,6 @@ nav a img:not(.profile-image),
         z-index: 1000;
     }
 
-    /* Når navigation er åben */
     aside.mobile-nav-open {
         transform: translateX(0);
     }
@@ -182,7 +174,6 @@ nav a img:not(.profile-image),
         margin-left: 0 !important;
     }
 
-    /* Burger menu styling */
     .burger-menu {
         display: block !important;
         position: fixed;
@@ -199,28 +190,23 @@ nav a img:not(.profile-image),
         transition: transform 0.3s ease;
     }
 
-    /* Burger menu ikon */
     .burger-menu i {
         color: var(--text-color);
         font-size: 24px;
     }
 
-    /* Når menuen er åben */
     aside.mobile-nav-open + .burger-menu {
         transform: translateX(240px);
     }
 
-    /* Navigation styling for mobile */
     nav {
         padding: 16px;
     }
 
-    /* Skjul resize knap på mobile */
     [data-resize-btn] {
         display: none !important;
     }
 
-    /* Overlay når navigation er åben */
     .nav-overlay {
         display: none;
         position: fixed;
@@ -233,7 +219,6 @@ nav a img:not(.profile-image),
         display: block;
     }
 
-    /* Ensure navigation is always expanded on mobile */
     :root:not(.sb-expanded) aside {
         width: 280px !important;
     }
@@ -276,7 +261,6 @@ nav a.create-button {
     margin-top: 20px;
 }
 
-/* Resize Button */
 [data-resize-btn] {
     position: absolute !important;
     right: -16px;
@@ -306,13 +290,11 @@ nav a.create-button {
     transform: rotate(180deg);
 }
 
-/* Hover effect */
 [data-resize-btn]:hover {
     background: var(--hover-background) !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Active State Indicator */
 nav a.active {
     background: none;
     color: var(--text-color);
@@ -346,14 +328,13 @@ main {
     transition: all 0.3s ease;
 }
 
-/* Tilføj disse styles udenfor media query */
 .burger-menu {
-    display: none; /* Skjult som standard, vises kun på mobile */
+    display: none; 
 }
 
 .profile-link img {
     width: 32px;
     height: 32px;
-    border-radius: 50%;  /* Gør billedet rundt */
-    object-fit: cover;   /* Sikrer at billedet fylder hele cirklen */
+    border-radius: 50%;  
+    object-fit: cover;   
 }

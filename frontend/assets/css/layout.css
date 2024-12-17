@@ -5,12 +5,10 @@ main {
     padding-bottom: 1rem;
 }
 
-/* Tilføj margin-left kun på sider med sidebar */
 body:not(.no-sidebar) main {
     margin-left: var(--sb-width);
 }
 
-/* Fjern margin-left på sider uden sidebar */
 body.no-sidebar main {
     margin-left: 0;
 }
@@ -129,7 +127,6 @@ body.no-sidebar main {
     }
 }
 
-/* Project sections */
 .section {
     margin-bottom: 48px;
 }
