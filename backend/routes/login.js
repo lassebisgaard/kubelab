@@ -5,6 +5,64 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: Login og authentication endpoints
+ */
+
+/**
+ * @swagger
+ * /api/login:
+ *   post:
+ *     summary: Login bruger
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     UserId:
+ *                       type: integer
+ *                     Name:
+ *                       type: string
+ *                     Mail:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                       enum: [admin, student]
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Invalid credentials
+ *       400:
+ *         description: Email and password are required
+ */
+
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
 

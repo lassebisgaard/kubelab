@@ -50,6 +50,73 @@ const portainerService = new PortainerService();
  *                 type: string
  *               templateId:
  *                 type: integer
+ * 
+ * /api/projects/{id}:
+ *   delete:
+ *     summary: Slet projekt
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Projekt slettet
+ *       404:
+ *         description: Projekt ikke fundet
+ *       500:
+ *         description: Server fejl
+ * 
+ *   get:
+ *     summary: Hent specifikt projekt
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Projekt detaljer
+ *
+ * /api/projects/{id}/start:
+ *   post:
+ *     summary: Start projekt
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Projekt startet
+ *
+ * /api/projects/{id}/stop:
+ *   post:
+ *     summary: Stop projekt
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Projekt stoppet
  */
 
 // Get all projects with template, team and user info

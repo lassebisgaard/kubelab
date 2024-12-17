@@ -2,6 +2,51 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
+/**
+ * @swagger
+ * tags:
+ *   name: Account
+ *   description: Account creation and management
+ */
+
+/**
+ * @swagger
+ * /api/account-creation:
+ *   post:
+ *     summary: Opret ny bruger konto
+ *     tags: [Account]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - teamId
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *               teamId:
+ *                 type: integer
+ *               role:
+ *                 type: string
+ *                 enum: [studerende, admin]
+ *                 default: studerende
+ *     responses:
+ *       201:
+ *         description: Bruger oprettet
+ *       400:
+ *         description: Manglende påkrævede felter
+ */
+
 // Get all users
 router.get('/', async (req, res) => {
     try {

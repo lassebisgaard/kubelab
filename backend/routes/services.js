@@ -3,6 +3,86 @@ const router = express.Router();
 const pool = require('../config/database');
 const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
+/**
+ * @swagger
+ * tags:
+ *   name: Services
+ *   description: Håndtering af services
+ */
+
+/**
+ * @swagger
+ * /api/services:
+ *   get:
+ *     summary: Hent alle services
+ *     tags: [Services]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste af services
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   ServiceId:
+ *                     type: integer
+ *                   ServiceName:
+ *                     type: string
+ *                   Icon:
+ *                     type: string
+ *   post:
+ *     summary: Opret ny service (kun admin)
+ *     tags: [Services]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - icon
+ *             properties:
+ *               name:
+ *                 type: string
+ *               icon:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Service oprettet
+ *       403:
+ *         description: Ikke tilladelse (kun admin)
+ */
+
+/**
+ * @swagger
+ * /api/services/{id}:
+ *   delete:
+ *     summary: Slet service (kun admin)
+ *     tags: [Services]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Service slettet
+ *       403:
+ *         description: Ikke tilladelse
+ *       409:
+ *         description: Service kan ikke slettes (i brug)
+ */
+
 // Get all services
 router.get('/', verifyToken, async (req, res) => {
     try {

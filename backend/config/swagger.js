@@ -16,6 +16,28 @@ const options = {
     ],
     components: {
       schemas: {
+        User: {
+          type: 'object',
+          properties: {
+            UserId: {
+              type: 'integer'
+            },
+            Name: {
+              type: 'string'
+            },
+            Mail: {
+              type: 'string',
+              format: 'email'
+            },
+            TeamId: {
+              type: 'integer'
+            },
+            role: {
+              type: 'string',
+              enum: ['admin', 'student']
+            }
+          }
+        },
         Error: {
           type: 'object',
           properties: {
@@ -24,6 +46,67 @@ const options = {
             },
             details: {
               type: 'string'
+            }
+          }
+        },
+        Service: {
+          type: 'object',
+          properties: {
+            ServiceId: {
+              type: 'integer'
+            },
+            ServiceName: {
+              type: 'string'
+            },
+            Icon: {
+              type: 'string'
+            }
+          }
+        },
+        Template: {
+          type: 'object',
+          properties: {
+            TemplateId: {
+              type: 'integer'
+            },
+            TemplateName: {
+              type: 'string'
+            },
+            Description: {
+              type: 'string'
+            },
+            YamlContent: {
+              type: 'string'
+            },
+            PreviewImage: {
+              type: 'string'
+            },
+            UserId: {
+              type: 'integer'
+            }
+          }
+        },
+        Project: {
+          type: 'object',
+          properties: {
+            ProjectId: {
+              type: 'integer'
+            },
+            ProjectName: {
+              type: 'string'
+            },
+            Description: {
+              type: 'string'
+            },
+            Status: {
+              type: 'string',
+              enum: ['online', 'offline']
+            },
+            UserId: {
+              type: 'integer'
+            },
+            TemplateId: {
+              type: 'integer'
             }
           }
         }
