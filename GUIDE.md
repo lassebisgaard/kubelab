@@ -26,13 +26,13 @@
 
 ### Database Setup
 - Opret en ny database kaldet `Kubelab` i MySQL
-- 2. Åbn phpMyAdmin
-- 3. Klik "Ny" i venstre side
-- 4. Skriv `Kubelab` og klik "Opret"
-- 5. Vælg den nye `Kubelab` database i menuen til venstre
-- 6. Klik på "Importér" i toppen
-- 7. Find filen `Kubelab.sql` i projektets rod
-- 8. Klik "Start" eller "Go" for at importere databasen
+- 1. Åbn phpMyAdmin
+- 2. Klik "Ny" i venstre side
+- 3. Skriv `Kubelab` og klik "Opret"
+- 4. Vælg den nye `Kubelab` database i menuen til venstre
+- 5. Klik på "Importér" i toppen
+- 6. Find filen `Kubelab.sql` i projektets rod
+- 7. Klik "Start" eller "Go" for at importere databasen
 
 2. Start backend:
     Skriv i terminal:
