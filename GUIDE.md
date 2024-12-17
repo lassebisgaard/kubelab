@@ -38,7 +38,7 @@
     Skriv i terminal:
     node server.js (husk at starte i backend mappen)
 
-3. Åbn frontend i browser: `localhost:3000/frontend/pages/index.html`
+3. Åbn frontend i browser: `localhost:3000/pages/index.html`
 
 ### API Dokumentation
 - Swagger dokumentationen kan findes på: `localhost:3000/api-docs`
