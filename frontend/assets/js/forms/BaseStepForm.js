@@ -432,7 +432,25 @@ window.BaseStepForm = class BaseStepForm {
 
     updateNextButton() {
         if (this.currentStep === this.maxSteps) {
-            const text = this.type === 'template' ? 'Create template' : 'Create project';
+            // Brug den korrekte tekst baseret på type
+            let text;
+            switch(this.type) {
+                case 'template':
+                    text = 'Create template';
+                    break;
+                case 'project':
+                    text = 'Create project';
+                    break;
+                case 'team':
+                    text = 'Create team';
+                    break;
+                case 'user':
+                    text = 'Create user';
+                    break;
+                default:
+                    text = 'Create';
+            }
+            
             this.nextButton.innerHTML = `${text} <i class="bx bx-check"></i>`;
             this.nextButton.classList.add(`create-${this.type}-button`);
         } else {
