@@ -169,7 +169,7 @@ class PortainerService {
             );
 
             // Wait for services to start
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise(resolve => setTimeout(resolve, 10000));
             
             return { 
                 success: true, 

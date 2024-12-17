@@ -193,7 +193,6 @@ window.BaseStepForm = class BaseStepForm {
             modal.classList.remove('show');
         });
 
-        // Add other modal event listeners...
     }
 
     async loadUsers() {
