@@ -5,8 +5,8 @@ const pool = require('../config/database');
 class PortainerService {
     constructor() {
         this.portainerUrl = 'https://portainer.kubelab.dk';
-        this.portainerUsername = 'Lasse2024';
-        this.portainerPassword = 'Gulelefant7';
+        this.portainerUsername = process.env.PORTAINER_USERNAME;
+        this.portainerPassword = process.env.PORTAINER_PASSWORD;
         this.portainerToken = null;
         this.tokenExpiration = null;
         

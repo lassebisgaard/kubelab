@@ -15,11 +15,13 @@
     npm install
 
 ### Initial Setup
-1. Find filen `.env.example` i backend mappen
-2. Lav en kopi af den og kald den `.env`
-3. Erstat værdierne i .env med disse:
+1. Find filen `.env.example` i roden af projektet
+2. Lav en kopi af den og placer den i backend mappen som `.env`
+3. Erstat værdierne i backend/.env med disse:
     - DB_PASSWORD = root (eller dit MySQL password hvis det er anderledes)
     - JWT_SECRET = kubelab_development_secret_key_2024
+    - PORTAINER_USERNAME = Lasse2024
+    - PORTAINER_PASSWORD = Gulelefant7
     - Resten af værdierne kan blive som de er
 
 ### Database Setup
