@@ -168,11 +168,13 @@ class PortainerService {
                 { headers }
             );
 
-            // Wait for services to start
-            await new Promise(resolve => setTimeout(resolve, 20000));
-            
-            // Get initial status
-            const status = await this.getStackStatus(projectData.name);
+            // Vent og tjek status 3 gange
+            let status = 'unknown';
+            for(let i = 0; i < 3; i++) {
+                await new Promise(resolve => setTimeout(resolve, 7000));
+                status = await this.getStackStatus(projectData.name);
+                if(status === 'online') break;
+            }
             
             return { 
                 success: true, 
