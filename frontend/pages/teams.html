@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../assets/css/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
     <script src="../assets/js/script.js" defer></script>
+    <script src="../assets/js/pages/teams.js" defer></script>
 </head>
 <body class="dark-mode">
     <button class="burger-menu">
@@ -49,11 +50,7 @@
                             <span>Teams</span>
                         </div>
                         <div class="edit">
-                            <span>Edit</span>
-                            <span>Team Name</span>
-                        </div>
-                        <div class="edit">
-                            <span>Expiration Date</span>
+                            <span>Expiration</span>
                         </div>
                         <div class="members">
                             <span>Members</span>
@@ -61,107 +58,9 @@
                     </div>
                 </div>
 
-                <!-- Teams accordion container -->
-                <div class="accordion" id="teamsAccordion">
-                    <!-- Teams vil blive indsat her dynamisk -->
-                <!-- Accordion items -->
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <span>Teams</span>
-                             </div>
-                            <div class="edit">
-                                <span>Edit</span>
-                            </div>
-                            <div class="members">
-                                <span>Members</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <i class="bx bx-group"></i>
-                                <span>WUOE24</span>
-                            </div>
-                            <div class="edit">
-                                <input type="checkbox" checked>
-                            </div>
-                            <div class="members">
-                                <span>23</span>
-                                <button class="toggle-button">
-                                    <i class="bx bx-chevron-down"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="content-row">
-                                <span class="name">Navn</span>
-                                <span class="team">Mail</span>
-                                <span class="email">stacks</span>
-                            </div>
-                            <div class="content-row">
-                                <span class="name">Sarah English</span>
-                                <span class="team">WUOF23</span>
-                                <span class="email">2</span>
-                            </div>
-                        </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>WUOF23</span>
-                            </div>
-                            <div class="edit">
-                                <input type="checkbox" checked>
-                            </div>
-                            <div class="members">
-                                <span>12</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="content-row">
-                                <span class="name">Navn</span>
-                                <span class="team">Mail</span>
-                                <span class="email">stacks</span>
-                            </div>
-                            <div class="content-row">
-                                <span class="name">Sarah English</span>
-                                <span class="team">WUOF23</span>
-                                <span class="email">2</span>
-                            </div>
-                        </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <div class="team-info">
-                                <img src="../assets/Icons/Teams.svg" alt="Teams">
-                                <span>WUOE23</span>
-                            </div>
-                            <div class="edit">
-                                <input type="checkbox">
-                            </div>
-                            <div class="members">
-                                <span>8</span>
-                                <button class="toggle-button">▼</button>
-                            </div>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="content-row">
-                                <span class="name">Navn</span>
-                                <span class="team">Mail</span>
-                                <span class="email">stacks</span>
-                            </div>
-                            <div class="content-row">
-                                <span class="name">Sarah English</span>
-                                <span class="team">WUOF23</span>
-                                <span class="email">2</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Accordion items will be inserted here -->
+                <div id="teamsAccordion" class="accordion">
+                    <!-- Teams will be dynamically inserted here -->
                 </div>
             </div>
         </div>
@@ -171,7 +70,7 @@
         async function fetchTeams() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/teams-page', {
+                const response = await fetch('http://localhost:3000/api/teams', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

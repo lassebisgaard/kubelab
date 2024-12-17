@@ -6,24 +6,13 @@ const pool = require('../config/database');
  * @swagger
  * /api/teams:
  *   get:
- *     summary: Hent alle teams
+ *     summary: Hent alle teams med detaljerede informationer
  *     tags: [Teams]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Liste af teams
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   TeamId:
- *                     type: integer
- *                   TeamName:
- *                     type: string
+ *         description: Liste af teams med medlemmer
  *   post:
  *     summary: Opret nyt team
  *     tags: [Teams]
@@ -37,21 +26,102 @@ const pool = require('../config/database');
  *             type: object
  *             required:
  *               - teamName
+ *               - expiration
  *             properties:
  *               teamName:
  *                 type: string
+ *               expiration:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       201:
+ *         description: Team oprettet
+ *
+ * /api/teams/{id}:
+ *   put:
+ *     summary: Opdater team
+ *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               teamName:
+ *                 type: string
+ *               expiration:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Team opdateret
+ *
+ *   delete:
+ *     summary: Slet team
+ *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Team slettet
+ *       409:
+ *         description: Team kan ikke slettes (har medlemmer)
  */
 
 // Get all teams
 router.get('/', async (req, res) => {
     try {
-        console.log('Fetching teams...');
-        const [teams] = await pool.execute('SELECT * FROM Teams');
-        console.log('Found teams:', teams);
+        // Først henter vi teams med deres medlem antal
+        const [teams] = await pool.execute(`
+            SELECT 
+                t.TeamId,
+                t.TeamName,
+                t.Expiration,
+                COUNT(u.UserId) as MemberCount
+            FROM Teams t
+            LEFT JOIN Users u ON t.TeamId = u.TeamId
+            GROUP BY t.TeamId
+            ORDER BY t.TeamName
+        `);
+
+        // For hvert team henter vi deres medlemmer med projekt antal
+        for (let team of teams) {
+            const [members] = await pool.execute(`
+                SELECT 
+                    u.UserId,
+                    u.Name,
+                    u.Mail,
+                    (SELECT COUNT(*) FROM Projects p WHERE p.UserId = u.UserId) as ProjectCount
+                FROM Users u
+                WHERE u.TeamId = ?
+                ORDER BY u.Name
+            `, [team.TeamId]);
+            
+            team.Members = members;
+        }
+        
         res.json(teams);
     } catch (error) {
-        console.error('Error fetching teams:', error);
-        res.status(500).json({ error: 'Failed to fetch teams' });
+        console.error('Error:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch teams',
+            details: error.message
+        });
     }
 });
 

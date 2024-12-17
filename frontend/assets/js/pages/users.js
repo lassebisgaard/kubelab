@@ -1,7 +1,7 @@
 async function loadUsers() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/users-page', {
+        const response = await fetch('http://localhost:3000/api/users', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

@@ -18,20 +18,108 @@ async function loadTeams() {
         }
 
         const teams = await response.json();
-        const teamsContainer = document.querySelector('.teams-grid');
-        if (!teamsContainer) return;
-
-        teamsContainer.innerHTML = teams.map(team => `
-            <div class="card team-card">
-                <div class="card-content">
-                    <h2>${team.TeamName}</h2>
-                    <p>Users: ${team.UserCount || 0}</p>
-                </div>
-            </div>
-        `).join('');
-
+        displayTeams(teams);
     } catch (error) {
         console.error('Error:', error);
         showErrorMessage('Failed to load teams');
     }
-} 
+}
+
+function displayTeams(teams) {
+    if (!Array.isArray(teams)) {
+        throw new Error('Modtaget data er ikke et array');
+    }
+    
+    const accordionContainer = document.getElementById('teamsAccordion');
+    if (!accordionContainer) {
+        throw new Error('Kunne ikke finde accordion container');
+    }
+    
+    accordionContainer.innerHTML = ''; // Ryd eksisterende indhold
+    
+    if (teams.length === 0) {
+        accordionContainer.innerHTML = '<p class="no-data">Ingen teams fundet</p>';
+        return;
+    }
+    
+    teams.forEach(team => {
+        const accordionItem = `
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <div class="team-info">
+                        <i class='bx bx-group'></i>
+                        <span>${team.TeamName || 'N/A'}</span>
+                    </div>
+                    <div class="edit">
+                        <span>${new Date(team.Expiration).toLocaleDateString()}</span>
+                    </div>
+                    <div class="members">
+                        <span>${team.MemberCount || 0}</span>
+                        <button class="toggle-button">
+                            <i class="bx bx-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <!-- Medlemmer sektion -->
+                    <div class="members-section">
+                        <div class="content-row header">
+                            <span class="name">Member Name</span>
+                            <span class="email">Projects</span>
+                        </div>
+                        ${team.Members && team.Members.length > 0 ? 
+                            team.Members.map(member => `
+                                <div class="member-row">
+                                    <span class="member-name">${member.Name}</span>
+                                    <span class="project-count">${member.ProjectCount}</span>
+                                </div>
+                            `).join('')
+                            : '<p class="no-members">No members</p>'
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+        accordionContainer.innerHTML += accordionItem;
+    });
+
+    // Genaktiver accordion funktionalitet
+    setupAccordion();
+}
+
+function setupAccordion() {
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            const isVisible = content?.style.display === 'block';
+
+            document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.toggle-button i').forEach(icon => {
+                icon.classList.remove('bx-chevron-up');
+                icon.classList.add('bx-chevron-down');
+            });
+
+            if (!isVisible && content) {
+                content.style.display = 'block';
+                header.querySelector('.toggle-button i').classList.replace('bx-chevron-down', 'bx-chevron-up');
+            }
+        });
+    });
+}
+
+// Tilføj søgefunktionalitet
+document.addEventListener('DOMContentLoaded', () => {
+    loadTeams();
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                const teamName = item.querySelector('.team-info span').textContent.toLowerCase();
+                const hasMatch = teamName.includes(searchTerm);
+                item.style.display = hasMatch ? '' : 'none';
+            });
+        });
+    }
+}); 

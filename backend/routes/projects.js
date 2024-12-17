@@ -117,6 +117,46 @@ const portainerService = new PortainerService();
  *     responses:
  *       200:
  *         description: Projekt stoppet
+ *
+ * /api/projects/{id}/restart:
+ *   post:
+ *     summary: Genstart projekt
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Projekt genstartet
+ *
+ * /api/projects/{id}/status:
+ *   get:
+ *     summary: Hent projekt status
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Projekt status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   enum: [online, offline]
  */
 
 // Get all projects with template, team and user info

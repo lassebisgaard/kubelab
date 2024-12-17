@@ -34,8 +34,6 @@ const serviceRoutes = require('./routes/services');
 const userRoutes = require('./routes/users');
 const teamRoutes = require('./routes/teams');
 const accountCreationRoutes = require('./routes/account_creation');
-const usersPageRoutes = require('./routes/users_page');
-const teamsPageRoutes = require('./routes/teams_page');
 const { verifyToken, verifyAdmin } = require('./middleware/auth');
 
 // Public routes (no authentication required)
@@ -64,13 +62,6 @@ app.use('/api/teams', verifyToken, (req, res, next) => {
     }
     verifyAdmin(req, res, next);
 }, teamRoutes);
-app.use('/api/users-page', verifyToken, usersPageRoutes);
-app.use('/api/teams-page', verifyToken, (req, res, next) => {
-    if (req.method === 'GET') {
-        return next();
-    }
-    verifyAdmin(req, res, next);
-}, teamsPageRoutes);
 
 // Tilføj Swagger dokumentation route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));

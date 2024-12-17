@@ -38,6 +38,45 @@ const options = {
             }
           }
         },
+        UserDetailed: {
+          type: 'object',
+          properties: {
+            UserId: {
+              type: 'integer'
+            },
+            Name: {
+              type: 'string'
+            },
+            Mail: {
+              type: 'string',
+              format: 'email'
+            },
+            Expiration: {
+              type: 'string',
+              format: 'date'
+            },
+            TeamName: {
+              type: 'string'
+            },
+            ProjectCount: {
+              type: 'integer'
+            },
+            Projects: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  ProjectId: {
+                    type: 'integer'
+                  },
+                  ProjectName: {
+                    type: 'string'
+                  }
+                }
+              }
+            }
+          }
+        },
         Error: {
           type: 'object',
           properties: {
@@ -120,7 +159,7 @@ const options = {
       },
     },
   },
-  apis: ['./routes/*.js'], // Sti til dine route filer
+  apis: ['./routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);

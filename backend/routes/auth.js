@@ -12,14 +12,23 @@ const JWT_SECRET = 'development_secret_key_123';
  * /api/auth/verify:
  *   get:
  *     summary: Verificer JWT token
- *     tags: [Auth]
+ *     tags: [Authentication]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Token er valid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 valid:
+ *                   type: boolean
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       401:
- *         description: Invalid eller manglende token
+ *         description: Invalid token
  */
 router.get('/verify', verifyToken, (req, res) => {
     res.json({ valid: true, user: req.user });
@@ -29,8 +38,8 @@ router.get('/verify', verifyToken, (req, res) => {
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Login bruger
- *     tags: [Auth]
+ *     summary: Log ind
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:
@@ -48,20 +57,18 @@ router.get('/verify', verifyToken, (req, res) => {
  *                 type: string
  *     responses:
  *       200:
- *         description: Login successful
+ *         description: Login succesfuld
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
  *                 token:
  *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       401:
- *         description: Invalid credentials
+ *         description: Ugyldige loginoplysninger
  */
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;

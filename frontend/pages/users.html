@@ -70,9 +70,8 @@
         // Funktion til at hente brugere
         async function fetchUsers() {
             try {
-                console.log('Starter hentning af brugere...'); // Debug log
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/users-page', {
+                const response = await fetch('http://localhost:3000/api/users', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -83,69 +82,7 @@
                 }
                 
                 const users = await response.json();
-                console.log('Modtaget brugerdata:', users); // Debug log
-                
-                if (!Array.isArray(users)) {
-                    throw new Error('Modtaget data er ikke et array');
-                }
-                
-                const accordionContainer = document.getElementById('usersAccordion');
-                if (!accordionContainer) {
-                    throw new Error('Kunne ikke finde accordion container');
-                }
-                
-                accordionContainer.innerHTML = ''; // Ryd eksisterende indhold
-                
-                if (users.length === 0) {
-                    accordionContainer.innerHTML = '<p class="no-data">Ingen brugere fundet</p>';
-                    return;
-                }
-                
-                users.forEach(user => {
-                    console.log('Behandler bruger:', user); // Debug log
-                    const accordionItem = `
-                        <div class="accordion-item">
-                            <div class="accordion-header">
-                                <div class="team-info">
-                                    <i class='bx bx-user'></i>
-                                    <span>${user.Name || 'N/A'}</span>
-                                </div>
-                                <div class="edit">
-                                    <span>${user.TeamName || 'Intet Team'}</span>
-                                </div>
-                                <div class="members">
-                                    <span>${user.ProjectCount || 0}</span>
-                                    <button class="toggle-button">
-                                        <i class="bx bx-chevron-down"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="accordion-content">
-                                <!-- Projekter sektion -->
-                                <div class="projects-section">
-                                    <div class="content-row header">
-                                        <span class="name">Project Name</span>
-                                        <span class="email">Status</span>
-                                    </div>
-                                    ${user.Projects && user.Projects.length > 0 ? 
-                                        user.Projects.map(project => `
-                                            <div class="project-row">
-                                                <span class="project-name">${project.ProjectName}</span>
-                                                <span class="project-status">Active</span>
-                                            </div>
-                                        `).join('')
-                                        : '<p class="no-projects">No projects</p>'
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    accordionContainer.innerHTML += accordionItem;
-                });
-
-                // Genaktiver accordion funktionalitet
-                setupAccordion();
-                
+                displayUsers(users);
             } catch (error) {
                 console.error('Fejl ved hentning af brugere:', error);
                 const accordionContainer = document.getElementById('usersAccordion');
@@ -157,6 +94,69 @@
                     `;
                 }
             }
+        }
+
+        // Funktion til at vise brugere
+        function displayUsers(users) {
+            if (!Array.isArray(users)) {
+                throw new Error('Modtaget data er ikke et array');
+            }
+            
+            const accordionContainer = document.getElementById('usersAccordion');
+            if (!accordionContainer) {
+                throw new Error('Kunne ikke finde accordion container');
+            }
+            
+            accordionContainer.innerHTML = ''; // Ryd eksisterende indhold
+            
+            if (users.length === 0) {
+                accordionContainer.innerHTML = '<p class="no-data">Ingen brugere fundet</p>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const accordionItem = `
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <div class="team-info">
+                                <i class='bx bx-user'></i>
+                                <span>${user.Name || 'N/A'}</span>
+                            </div>
+                            <div class="edit">
+                                <span>${user.TeamName || 'Intet Team'}</span>
+                            </div>
+                            <div class="members">
+                                <span>${user.ProjectCount || 0}</span>
+                                <button class="toggle-button">
+                                    <i class="bx bx-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="accordion-content">
+                            <!-- Projekter sektion -->
+                            <div class="projects-section">
+                                <div class="content-row header">
+                                    <span class="name">Project Name</span>
+                                    <span class="email">Status</span>
+                                </div>
+                                ${user.Projects && user.Projects.length > 0 ? 
+                                    user.Projects.map(project => `
+                                        <div class="project-row">
+                                            <span class="project-name">${project.ProjectName}</span>
+                                            <span class="project-status">Active</span>
+                                        </div>
+                                    `).join('')
+                                    : '<p class="no-projects">No projects</p>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+                accordionContainer.innerHTML += accordionItem;
+            });
+
+            // Genaktiver accordion funktionalitet
+            setupAccordion();
         }
 
         // Funktion til at håndtere accordion funktionalitet

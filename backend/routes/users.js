@@ -2,18 +2,131 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
-// Get all users
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Hent alle brugere med detaljerede informationer
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste af brugere med deres projekter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserDetailed'
+ *
+ *   post:
+ *     summary: Opret ny bruger
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - teamId
+ *               - role
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               teamId:
+ *                 type: integer
+ *               role:
+ *                 type: string
+ *                 enum: [admin, student]
+ *               expiration:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       201:
+ *         description: Bruger oprettet
+ */
+
+// Opdater swagger.js med ny schema definition:
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UserDetailed:
+ *       type: object
+ *       properties:
+ *         UserId:
+ *           type: integer
+ *         Name:
+ *           type: string
+ *         Mail:
+ *           type: string
+ *         Expiration:
+ *           type: string
+ *           format: date
+ *         TeamName:
+ *           type: string
+ *         ProjectCount:
+ *           type: integer
+ *         Projects:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               ProjectId:
+ *                 type: integer
+ *               ProjectName:
+ *                 type: string
+ */
+
+// Get all users with detailed information
 router.get('/', async (req, res) => {
     try {
+        // Hent brugere med deres team og projekt antal
         const [users] = await pool.execute(`
-            SELECT u.*, t.TeamName 
+            SELECT 
+                u.UserId,
+                u.Name,
+                u.Mail,
+                u.Expiration,
+                t.TeamName,
+                (SELECT COUNT(*) 
+                 FROM Projects p 
+                 WHERE p.UserId = u.UserId) as ProjectCount
             FROM Users u
             LEFT JOIN Teams t ON u.TeamId = t.TeamId
+            ORDER BY u.Name
         `);
+
+        // For hver bruger henter vi deres projekter
+        for (let user of users) {
+            const [projects] = await pool.execute(`
+                SELECT 
+                    ProjectId,
+                    ProjectName
+                FROM Projects
+                WHERE UserId = ?
+                ORDER BY ProjectName
+            `, [user.UserId]);
+            
+            user.Projects = projects;
+        }
+        
         res.json(users);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to fetch users' });
+        res.status(500).json({ 
+            error: 'Failed to fetch users',
+            details: error.message
+        });
     }
 });
 
@@ -190,7 +303,76 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Tilføj denne nye route til at opdatere bruger
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     summary: Hent specifik bruger
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Bruger detaljer
+ *       404:
+ *         description: Bruger ikke fundet
+ *
+ *   put:
+ *     summary: Opdater bruger
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               teamId:
+ *                 type: integer
+ *               role:
+ *                 type: string
+ *                 enum: [admin, student]
+ *     responses:
+ *       200:
+ *         description: Bruger opdateret
+ *       404:
+ *         description: Bruger ikke fundet
+ *
+ *   delete:
+ *     summary: Slet bruger
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Bruger slettet
+ *       404:
+ *         description: Bruger ikke fundet
+ */
 router.put('/:id', async (req, res) => {
     try {
         const userId = req.params.id;
