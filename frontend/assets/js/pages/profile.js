@@ -384,6 +384,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Vis modal når man klikker på edit ikon
         changeAvatarBtn.addEventListener('click', () => {
+            // Tilføj modal-content-large klassen til modal content
+            const modalContent = avatarModal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.classList.add('modal-content-large');
+            }
             avatarModal.style.display = 'flex';
         });
 

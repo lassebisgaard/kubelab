@@ -1222,6 +1222,7 @@ textarea.form-control2 {
     justify-content: center;
 }
 
+/* Behold den eksisterende .modal-content styling */
 .modal-content {
     background: var(--background-color);
     border-radius: 8px;
@@ -1230,6 +1231,23 @@ textarea.form-control2 {
     overflow-y: auto;
     position: relative;
     padding: 1.5rem;
+}
+
+/* Tilføj ny klasse for større centreret modal */
+.modal-content.modal-content-large {
+    max-width: 50%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive justering for større modal */
+@media (max-width: 768px) {
+    .modal-content.modal-content-large {
+        max-width: 90%;
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+    }
 }
 
 .modal-header {
