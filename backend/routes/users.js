@@ -106,7 +106,31 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Flyt options route F��R :id route
+/**
+ * @swagger
+ * /api/users/options:
+ *   get:
+ *     summary: Hent bruger valgmuligheder
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste af roller og teams
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 roles:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 teams:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
 router.get('/options', async (req, res) => {
     try {
         // Hent alle unikke roller fra Roles tabellen

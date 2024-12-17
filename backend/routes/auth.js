@@ -7,12 +7,62 @@ const { verifyToken } = require('../middleware/auth');
 // Brug en default secret key for udvikling
 const JWT_SECRET = 'development_secret_key_123';
 
-// Verify token endpoint
+/**
+ * @swagger
+ * /api/auth/verify:
+ *   get:
+ *     summary: Verificer JWT token
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token er valid
+ *       401:
+ *         description: Invalid eller manglende token
+ */
 router.get('/verify', verifyToken, (req, res) => {
     res.json({ valid: true, user: req.user });
 });
 
-// Login endpoint - forenklet uden password hashing
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login bruger
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Invalid credentials
+ */
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 

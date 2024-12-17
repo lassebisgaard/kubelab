@@ -35,6 +35,34 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+/**
+ * @swagger
+ * /api/templates:
+ *   get:
+ *     summary: Hent alle templates
+ *     tags: [Templates]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste af templates
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   TemplateId:
+ *                     type: integer
+ *                   TemplateName:
+ *                     type: string
+ *                   Description:
+ *                     type: string
+ *                   YAMLConfig:
+ *                     type: string
+ */
+
 // Get all templates
 router.get('/', async (req, res) => {
     try {

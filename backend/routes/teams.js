@@ -2,6 +2,46 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
+/**
+ * @swagger
+ * /api/teams:
+ *   get:
+ *     summary: Hent alle teams
+ *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste af teams
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   TeamId:
+ *                     type: integer
+ *                   TeamName:
+ *                     type: string
+ *   post:
+ *     summary: Opret nyt team
+ *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - teamName
+ *             properties:
+ *               teamName:
+ *                 type: string
+ */
+
 // Get all teams
 router.get('/', async (req, res) => {
     try {

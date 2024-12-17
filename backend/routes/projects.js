@@ -4,6 +4,54 @@ const pool = require('../config/database');
 const PortainerService = require('../services/portainerService');
 const portainerService = new PortainerService();
 
+/**
+ * @swagger
+ * /api/projects:
+ *   get:
+ *     summary: Hent alle projekter
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste af projekter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   ProjectId:
+ *                     type: integer
+ *                   ProjectName:
+ *                     type: string
+ *                   UserId:
+ *                     type: integer
+ *                   Status:
+ *                     type: string
+ *                     enum: [online, offline]
+ *   post:
+ *     summary: Opret nyt projekt
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - projectName
+ *               - templateId
+ *             properties:
+ *               projectName:
+ *                 type: string
+ *               templateId:
+ *                 type: integer
+ */
+
 // Get all projects with template, team and user info
 router.get('/', async (req, res) => {
     try {

@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./config/swagger');
 
 // Middleware
 app.use(cors());
@@ -69,6 +71,9 @@ app.use('/api/teams-page', verifyToken, (req, res, next) => {
     }
     verifyAdmin(req, res, next);
 }, teamsPageRoutes);
+
+// Tilføj Swagger dokumentation route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
