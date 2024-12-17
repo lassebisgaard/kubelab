@@ -1,5 +1,3 @@
-/* components.css */
-
 /* === Utility Classes === */
 .flex-center {
     display: flex;
@@ -369,7 +367,6 @@ button.action-button i {
     margin-bottom: 8px;
 }
 
-/* Projects Table */
 .projects-table {
     background: var(--card-background);
     border-radius: 8px;
@@ -416,7 +413,6 @@ button.action-button i {
     z-index: 1;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
 
     .table-header,
@@ -470,7 +466,6 @@ label,
     font-family: inherit;
 }
 
-/* Specifikt for textarea */
 textarea.form-control {
     line-height: 1.5;
     resize: vertical;
@@ -482,7 +477,6 @@ textarea.form-control {
     background-color: var(--card-background);
 }
 
-/* Fjern browser's default hvide baggrund på autofill */
 .form-control:-webkit-autofill,
 .form-control:-webkit-autofill:hover,
 .form-control:-webkit-autofill:focus {
@@ -513,7 +507,6 @@ textarea.form-control {
     font-family: inherit;
 }
 
-/* Specifikt for textarea */
 textarea.form-control2 {
     line-height: 1;
     resize: vertical;
@@ -525,7 +518,6 @@ textarea.form-control2 {
     background-color: var(--card-background);
 }
 
-/* Fjern browser's default hvide baggrund på autofill */
 .form-control2:-webkit-autofill,
 .form-control2:-webkit-autofill:hover,
 .form-control2:-webkit-autofill:focus {
@@ -729,7 +721,6 @@ textarea.form-control2 {
     justify-content: center;
 }
 
-/* Preview container variants */
 .preview-container--template {
     height: 150px;
 }
@@ -784,7 +775,6 @@ textarea.form-control2 {
     height: 100px;
 }
 
-/* Preview container content */
 .preview-container img {
     width: 100%;
     height: 100%;
@@ -957,7 +947,6 @@ textarea.form-control2 {
     color: var(--accent-color);
 }
 
-/* Selectable service tags */
 .service-tag--selectable {
     cursor: pointer;
 }
@@ -973,7 +962,6 @@ textarea.form-control2 {
     color: var(--accent-color);
 }
 
-/* Static service tags */
 .service-tag--static {
     cursor: default;
 }
@@ -993,14 +981,14 @@ textarea.form-control2 {
     z-index: 1000;
     opacity: 0;
     transition: opacity 0.3s ease;
-    pointer-events: none; /* Tilføj denne linje */
+    pointer-events: none; 
 }
 
 .loading-overlay.show,
 .success-overlay.show {
     display: flex;
     opacity: 1;
-    pointer-events: auto; /* Tilføj denne linje */
+    pointer-events: auto; 
 }
 
 .loading-content,
@@ -1037,7 +1025,6 @@ textarea.form-control2 {
     color: var(--background-color);
 }
 
-/* Animation keyframes */
 @keyframes slide-in {
     to {
         transform: translateX(0);
@@ -1192,7 +1179,6 @@ textarea.form-control2 {
     padding: 12px 16px;
 }
 
-/* Modifier for grid layout */
 .detail-group--grid {
     display: flex;
     gap: 24px;
@@ -1222,7 +1208,6 @@ textarea.form-control2 {
     justify-content: center;
 }
 
-/* Behold den eksisterende .modal-content styling */
 .modal-content {
     background: var(--background-color);
     border-radius: 8px;
@@ -1233,7 +1218,6 @@ textarea.form-control2 {
     padding: 1.5rem;
 }
 
-/* Tilføj ny klasse for større centreret modal */
 .modal-content.modal-content-large {
     max-width: 50%;
     margin: auto;
@@ -1241,7 +1225,6 @@ textarea.form-control2 {
     flex-direction: column;
 }
 
-/* Responsive justering for større modal */
 @media (max-width: 768px) {
     .modal-content.modal-content-large {
         max-width: 90%;
@@ -1401,7 +1384,6 @@ textarea.form-control2 {
     opacity: 0.9;
 }
 
-/* Responsive adjustments for confirmation page */
 @media (max-width: 768px) {
     .confirmation-page {
         padding: 16px;
@@ -1560,7 +1542,6 @@ textarea.form-control2 {
     width: 100%;
 }
 
-/* Sørg for at containerne har samme højde */
 .yaml-upload,
 .preview-container--upload {
     height: 120px;
@@ -1578,7 +1559,6 @@ textarea.form-control2 {
     width: 100%;
     padding: 12px;
     padding-right: 40px;
-    /* Make room for the icon */
 }
 
 .date-input-wrapper i {
@@ -1589,13 +1569,10 @@ textarea.form-control2 {
     color: var(--text-color);
     opacity: 0.5;
     cursor: pointer;
-    /* Make the icon clickable */
     pointer-events: auto;
-    /* Enable clicking on the icon */
     z-index: 1;
 }
 
-/* Flatpickr styling */
 .flatpickr-calendar {
     background: var(--card-background) !important;
     border: 1px solid var(--border-color) !important;
@@ -1669,7 +1646,6 @@ textarea.form-control2 {
     font-size: 14px;
 }
 
-/* Når en option er valgt */
 .custom-select[data-value] .select-header .selected-option {
     opacity: 1;
 }
@@ -1719,7 +1695,6 @@ textarea.form-control2 {
     opacity: 1;
 }
 
-/* When an option is selected */
 .custom-select .selected-option:not(:empty):not(:contains('Select')) {
     opacity: 1;
 }
@@ -1840,7 +1815,6 @@ textarea.form-control2 {
     color: #ff4757;
 }
 
-/* Delete confirmation dialog */
 .delete-confirmation-dialog {
     position: fixed;
     inset: 0;
@@ -1883,7 +1857,6 @@ textarea.form-control2 {
     color: var(--text-color);
 }
 
-/* Service tag states */
 .service-tag {
     display: inline-flex;
     align-items: center;
@@ -1900,7 +1873,6 @@ textarea.form-control2 {
     text-transform: capitalize;
 }
 
-/* Selectable service tags */
 .service-tag--selectable {
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1920,7 +1892,6 @@ textarea.form-control2 {
     color: var(--background-color);
 }
 
-/* Remove button styling */
 .service-tag--remove {
     opacity: 0;
     background: none;
@@ -1935,7 +1906,6 @@ textarea.form-control2 {
     align-items: center;
 }
 
-/* Show remove button on hover */
 .service-tag:hover .service-tag--remove {
     opacity: 0.6;
 }
@@ -1944,7 +1914,6 @@ textarea.form-control2 {
     opacity: 1 !important;
 }
 
-/* Project Cards - Updated Design */
 .project-card {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
@@ -2047,14 +2016,12 @@ textarea.form-control2 {
     cursor: not-allowed;
 }
 
-/* Project Grid */
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 24px;
     margin-top: 24px;
 }
-
 
 .accordion {
     width: 100%;
@@ -2078,9 +2045,7 @@ textarea.form-control2 {
 
 .accordion-header>div {
     flex: 1;
-    /* Ensures even spacing between columns */
     text-align: left;
-    /* Aligns text */
 }
 
 .accordion-header .team-info {
@@ -2125,7 +2090,6 @@ textarea.form-control2 {
 .content-row {
     display: flex;
     justify-content: space-between;
-    /* Fordeler elementerne jævnt */
     padding: 4px 0;
     border-bottom: 1px solid var(--text-color);
 }
@@ -2139,25 +2103,20 @@ textarea.form-control2 {
 .content-row .team,
 .content-row .email {
     flex: 1;
-    /* Sikrer ensartet pladsfordeling */
     text-align: left;
-    /* Justerer tekst til venstre */
 }
 
 .content-row .team {
     text-align: center;
-    /* Centrerer holdnavn */
 }
 
 .content-row .email {
     text-align: right;
-    /* Justerer e-mail til højre */
 }
 
 .content-row {
     display: flex;
     justify-content: space-between;
-    /* Fordeler elementerne jævnt */
     padding: 4px 0;
     border-bottom: 1px solid #ffffff;
 }
@@ -2170,19 +2129,15 @@ textarea.form-control2 {
 .content-row .team,
 .content-row .email {
     flex: 1;
-    /* Sikrer ensartet pladsfordeling */
     text-align: left;
-    /* Justerer tekst til venstre */
 }
 
 .content-row .team {
     text-align: center;
-    /* Centrerer holdnavn */
 }
 
 .content-row .email {
     text-align: right;
-    /* Justerer e-mail til højre */
 }
 
 .accordion-content p {
@@ -2213,14 +2168,12 @@ textarea.form-control2 {
     text-align: left;
 }
 
-/* Option Styling */
 .settings-option {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 10px;
     border-bottom: 1px solid var(--border-color);
-    /* Ændret til variabel */
     cursor: pointer;
     margin-top: 50px;
 }
@@ -2232,23 +2185,19 @@ textarea.form-control2 {
 .option-label {
     font-size: 1rem;
     color: var(--text-color);
-    /* Ændret fra var(--text-color-dark) */
     text-transform: none;
 }
 
 .arrow {
     font-size: 1.2rem;
     color: var(--text-color);
-    /* Ændret fra var(--text-color-dark) */
 }
 
-/* Toggle Switch */
 .toggle-switch {
     appearance: none;
     width: 40px;
     height: 20px;
     background-color: var(--border-color);
-    /* Ændret */
     border-radius: 10px;
     position: relative;
     cursor: pointer;
@@ -2257,7 +2206,6 @@ textarea.form-control2 {
 
 .toggle-switch:checked {
     background-color: var(--accent-color);
-    /* Ændret */
 }
 
 .toggle-switch::before {
@@ -2268,7 +2216,6 @@ textarea.form-control2 {
     width: 16px;
     height: 16px;
     background-color: var(--background-color);
-    /* Ændret */
     border-radius: 50%;
     transition: 0.2s ease-in-out;
 }
@@ -2276,7 +2223,6 @@ textarea.form-control2 {
 .toggle-switch:checked::before {
     left: 22px;
     background-color: var(--background-color);
-    /* Ændret */
 }
 
 .settings-container-settings {
@@ -2311,7 +2257,6 @@ textarea.form-control2 {
     color: var(--text-color-dark);
 }
 
-/* Toast Messages */
 .toast-message {
     position: fixed;
     top: 20px;
@@ -2371,7 +2316,6 @@ textarea.form-control2 {
     background-color: var(--card-background);
 }
 
-/* Opdater også next button styling */
 .next-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -2435,7 +2379,6 @@ textarea.form-control2 {
     color: grey !important;
 }
 
-/* Project Details Grid Layout */
 .project-details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2451,11 +2394,9 @@ textarea.form-control2 {
     margin-bottom: 0.5rem;
 }
 
-/* Juster project header til at inkludere controls */
 .project-header {
     position: relative;
 }
-
 
 .project-details-grid {
     display: grid;
@@ -2476,7 +2417,6 @@ textarea.form-control2 {
     gap: 0.5rem;
 }
 
-/* Status Badge Styling */
 .status-badge {
     display: inline-flex;
     align-items: center;
@@ -2521,7 +2461,6 @@ textarea.form-control2 {
     }
 }
 
-/* Danger Zone Styling */
 .danger-zone {
     width: 100%;
     display: flex;
@@ -2553,14 +2492,11 @@ textarea.form-control2 {
     cursor: pointer;
 }
 
-
-/* Generelle project controls styles */
 .project-controls {
     display: flex;
     gap: 8px;
 }
 
-/* Specifik for project details siden */
 .project-header {
     display: flex;
     justify-content: space-between;
@@ -2571,13 +2507,11 @@ textarea.form-control2 {
     position: static;
 }
 
-/* Specifik for project cards på projects siden */
 .project-card>.project-controls {
     position: absolute;
     bottom: 1.5rem;
     right: 1.5rem;
 }
-
 
 .front-page-wrapper {
     display: flex;
@@ -2721,7 +2655,6 @@ textarea.form-control2 {
     margin-bottom: -2px;
 }
 
-
 .actions {
     grid-column: 2;
     display: flex;
@@ -2771,7 +2704,7 @@ textarea.form-control2 {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 0 16px; /* Tilføj lidt padding på siderne */
+    padding: 0 16px; 
 }
 
 .btn.confirm span {
@@ -2781,10 +2714,9 @@ textarea.form-control2 {
 
 .btn.confirm i {
     font-size: 20px;
-    margin-left: auto; /* Skub ikonet til højre */
+    margin-left: auto; 
 }
 
-/* Behold de eksisterende disabled styles */
 .btn.confirm:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -2819,16 +2751,15 @@ textarea.form-control2 {
     padding: 12px 0;
 }
 
-
 .edit-input {
     background: transparent;
     border: none;
     color: var(--text-color);
     width: 100%;
-    padding: 0; /* Fjernet padding */
+    padding: 0; 
     font-size: 16px;
-    line-height: normal; /* Tilføjet for at sikre korrekt vertikal alignment */
-    margin: 0; /* Tilføjet for at fjerne eventuelle margins */
+    line-height: normal; 
+    margin: 0; 
 }
 
 .edit-input:focus {
@@ -2857,12 +2788,10 @@ textarea.form-control2 {
     outline: none;
 }
 
-/* Opdater den eksisterende .detail div style */
 .detail div:not(:has(.custom-select2)) {
     border-bottom: 2px solid var(--border-color);
 }
 
-/* Tilpas select til at matche det eksisterende design */
 .detail select {
     background: transparent;
     border: none;
@@ -2875,7 +2804,6 @@ textarea.form-control2 {
     appearance: none;
 }
 
-/* Tilføj en lille pil til højre */
 .detail div:has(select) {
     position: relative;
 }
@@ -2894,7 +2822,6 @@ textarea.form-control2 {
     pointer-events: none;
 }
 
-/* Behold den eksisterende .custom-select2 styling og tilføj kombination */
 .detail .custom-select2 {
     width: 100%;
     border: none;
@@ -2915,7 +2842,6 @@ textarea.form-control2 {
     right: 0;
 }
 
-
 .profile-container {
     width: 70%;
     max-width: 70%;
@@ -2928,10 +2854,10 @@ textarea.form-control2 {
     border: none;
     color: var(--text-color);
     width: 100%;
-    padding: 0; /* Fjernet padding */
+    padding: 0; 
     font-size: 16px;
-    line-height: normal; /* Tilføjet for at sikre korrekt vertikal alignment */
-    margin: 0; /* Tilføjet for at fjerne eventuelle margins */
+    line-height: normal; 
+    margin: 0; 
 }
 
 .edit-input:focus {
@@ -2946,7 +2872,6 @@ textarea.form-control2 {
     cursor: pointer;
 }
 
-/* Profile Custom Select Styling */
 .profile-details .detail .custom-select2 {
     width: 404px;
     border: none;
@@ -2959,7 +2884,7 @@ textarea.form-control2 {
     height: auto;
     background: transparent;
     border: none;
-    border-bottom: 2px solid var(--border-color); /* Denne skal beholdes */
+    border-bottom: 2px solid var(--border-color); 
     border-radius: 0;
     display: flex;
     justify-content: space-between;
@@ -2967,7 +2892,7 @@ textarea.form-control2 {
 }
 
 .profile-details .detail .custom-select2.open .select-header {
-    border-bottom-color: var(--accent-color); /* Ændrer kun farven på den eksisterende border */
+    border-bottom-color: var(--accent-color); 
 }
 
 .profile-details .detail .custom-select2 .selected-option {
@@ -3003,7 +2928,6 @@ textarea.form-control2 {
     font-size: 16px;
 }
 
-/* Loading indikator for knapper */
 .action-button.loading {
     position: relative;
     pointer-events: none;
@@ -3040,7 +2964,6 @@ textarea.form-control2 {
     pointer-events: none;
 }
 
-/* Power button styles */
 .action-button[title="Power"] {
     transition: all 0.3s ease;
 }
@@ -3053,7 +2976,6 @@ textarea.form-control2 {
     color: var(--power-button-off);
 }
 
-/* Restart button animation */
 .action-button[title="Restart"].rotating i {
     animation: rotate-bounce 1.5s ease infinite;
 }
@@ -3076,12 +2998,10 @@ textarea.form-control2 {
     }
 }
 
-/* Project card specific status badge */
 .project-card .project-header .status-badge {
     margin-left: 12px;
 }
 
-/* Project details specific status badge */
 .project-details .header-left {
     display: flex;
     align-items: center;
@@ -3132,7 +3052,6 @@ body.frontpages .top-left-container {
     opacity: 1;
 }
 
-/* Fjern stregen kun for detail der indeholder select eller actions */
 .detail:has(select)::after,
 .detail:has(.actions)::after {
     display: none;
@@ -3198,8 +3117,6 @@ label.option-label {
     border-bottom: none;
 }
 
-
-
 .member-row .member-name {
     flex: 3;
 }
@@ -3229,7 +3146,6 @@ label.option-label {
     text-align: right;
 }
 
-/* User List Styling */
 .user-list {
     max-height: 300px;
     overflow-y: auto;
@@ -3277,7 +3193,6 @@ label.option-label {
     opacity: 0.7;
 }
 
-/* Checkbox styling */
 .checkbox-wrapper input[type="checkbox"] {
     width: 18px;
     height: 18px;
@@ -3286,41 +3201,33 @@ label.option-label {
     accent-color: var(--accent-color);
 }
 
-
-/* Search input margin */
 .modal-body .form-group {
     margin-bottom: 16px;
 }
 
-/* Ensure buttons still work independently */
 .table-row .project-controls button {
     position: relative;
     z-index: 1;
 }
 
-/* Accessibility */
 .table-row:focus {
     outline: 2px solid var(--accent-color);
     outline-offset: -2px;
 }
 
-/* Opdater eksisterende mobile media query */
 @media (max-width: 768px) {
 
-    /* Project Template Grid */
     .project-template-grid {
         grid-template-columns: 1fr;
         gap: 16px;
         margin-top: 16px;
     }
 
-    /* Form Cards */
     .form-card,
     .form-card2 {
         padding: 16px;
     }
 
-    /* Input Fields */
     .form-control2,
     .password-container input,
     .custom-select2 .select-header {
@@ -3328,7 +3235,6 @@ label.option-label {
         max-width: 100%;
     }
 
-    /* Account Button */
     .account-button,
     .account-create,
     .account-create-front,
@@ -3337,7 +3243,6 @@ label.option-label {
         max-width: 100%;
     }
 
-    /* Steps */
     .steps {
         gap: 8px;
         margin: 16px 0;
@@ -3348,7 +3253,6 @@ label.option-label {
         display: none;
     }
 
-    /* Projects Table */
     .table-header,
     .table-row {
         grid-template-columns: 1fr 1fr auto;
@@ -3364,31 +3268,26 @@ label.option-label {
         width: 100%;
     }
 
-    /* Remember Container */
     .remember-container {
         width: 100%;
     }
 
-    /* Flow Navigation */
     .flow-navigation {
         left: 0;
         padding: 16px;
     }
 
-    /* Project Details Grid */
     .project-details-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
 
-    /* Danger Zone */
     .danger-zone {
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
     }
 
-    /* Project Cards */
     .project-card {
         padding: 16px;
     }
@@ -3404,44 +3303,36 @@ label.option-label {
         justify-content: flex-end;
     }
 
-    /* Custom Select */
     .custom-select2 {
         width: 100%;
     }
 
-    /* Front Page Wrapper */
     .front-page-wrapper {
         padding: 0 16px;
     }
 
-    /* Login Wrapper */
     .login-wrapper {
         padding: 0 16px;
     }
 
-    /* Upload Areas */
     .upload-grid {
         grid-template-columns: 1fr;
     }
 
-    /* Template Actions */
     .template-actions {
         flex-wrap: wrap;
     }
 
-    /* Modal Content */
     .modal-content {
         margin: 16px;
         max-height: calc(100vh - 32px);
         overflow-y: auto;
     }
 
-    /* User List */
     .user-list {
         max-height: 50vh;
     }
 
-    /* Confirmation Page */
     .confirmation-page {
         padding: 16px;
     }
@@ -3459,14 +3350,12 @@ label.option-label {
         flex: none;
     }
 
-    /* Toast Messages */
     .toast-message {
         width: calc(100% - 32px);
         right: 16px;
     }
 }
 
-/* Tilføj responsive font sizes */
 @media (max-width: 480px) {
     html {
         font-size: 14px;
@@ -3486,7 +3375,6 @@ label.option-label {
     }
 }
 
-/* Message styling */
 .message {
     padding: 12px;
     border-radius: 4px;
@@ -3518,19 +3406,14 @@ label.option-label {
     text-decoration: underline;
 }
 
-
-
-/* For custom select */
 .profile-details .detail .custom-select2:focus-within .select-header {
     border-bottom-color: var(--accent-color);
 }
 
-/* For input felter */
 .profile-details .detail div:focus-within {
     border-bottom-color: var(--accent-color);
 }
 
-/* Tilføj disse styles til de eksisterende custom-select2 styles */
 .profile-details .detail .custom-select2.disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -3541,7 +3424,6 @@ label.option-label {
     cursor: not-allowed;
 }
 
-/* Avatar styling */
 .avatar-edit {
     position: absolute;
     bottom: 5px;
@@ -3566,7 +3448,6 @@ label.option-label {
     font-size: 18px;
 }
 
-/* Avatar modal styling */
 .avatar-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
