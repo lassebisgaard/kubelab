@@ -2116,6 +2116,7 @@ textarea.form-control2 {
     border-bottom: none;
 }
 
+
 .content-row .name,
 .content-row .team,
 .content-row .email {
@@ -3179,9 +3180,7 @@ label.option-label {
     border-bottom: none;
 }
 
-.member-row span {
-    flex: 2;
-}
+
 
 .member-row .member-name {
     flex: 3;
