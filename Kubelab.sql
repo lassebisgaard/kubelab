@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Vært: mysql
--- Genereringstid: 19. 12 2024 kl. 23:31:02
+-- Genereringstid: 19. 12 2024 kl. 23:42:53
 -- Serverversion: 8.4.2
 -- PHP-version: 8.2.24
 
@@ -43,7 +43,7 @@ CREATE TABLE `Projects` (
 
 INSERT INTO `Projects` (`ProjectId`, `ProjectName`, `Domain`, `Description`, `DateCreated`, `UserId`, `TemplateId`) VALUES
 (118, 'projektwuoe2024', 'projektwuoe2024', '', '2024-12-19 21:43:26', 14, 34),
-(129, 'UCL semesterprojekt 2024', 'ucl2024', '', '2024-12-19 22:52:17', 11, 33);
+(140, 'teststedet 2024', 'teststedet2024', '', '2024-12-19 23:39:40', 11, 33);
 
 -- --------------------------------------------------------
 
@@ -239,7 +239,7 @@ ALTER TABLE `Users`
 -- Tilføj AUTO_INCREMENT i tabel `Projects`
 --
 ALTER TABLE `Projects`
-  MODIFY `ProjectId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
+  MODIFY `ProjectId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `Roles`
@@ -257,7 +257,7 @@ ALTER TABLE `Services`
 -- Tilføj AUTO_INCREMENT i tabel `Teams`
 --
 ALTER TABLE `Teams`
-  MODIFY `TeamId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `TeamId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `Templates`

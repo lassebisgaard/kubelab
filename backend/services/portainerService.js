@@ -159,7 +159,7 @@ class PortainerService {
                 throw new Error('Template not found');
             }
 
-            e
+            // Fjern mellemrum og specialtegn fra navnet med det samme
             const stackName = projectData.name.replace(/[^a-zA-Z0-9]/g, '');
 
             const configuredStack = stackContent
@@ -250,8 +250,6 @@ class PortainerService {
                 console.log(`Stack ${stackName} already deleted or not found`);
                 return true;
             }
-
-            // Reducer ventetiderne
             await this.stopStack(stackName);
             await new Promise(resolve => setTimeout(resolve, 1000));  
 
@@ -262,7 +260,7 @@ class PortainerService {
            
             await new Promise(resolve => setTimeout(resolve, 1000));  
             return true;
-
+            
         } catch (error) {
             console.error('Error deleting stack:', error);
             const stillExists = await this.getStack(stackName);
