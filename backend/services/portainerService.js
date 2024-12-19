@@ -96,6 +96,7 @@ class PortainerService {
     async getStack(stackName) {
         try {
             const stacks = await this.getStacks();
+            // Simpel søgning efter stack navn
             return stacks.find(s => s.Name === stackName);
         } catch (error) {
             console.error('Failed to get stack:', error);
@@ -106,58 +107,43 @@ class PortainerService {
     async getStackStatus(stackName) {
         try {
             const stack = await this.getStack(stackName);
+            
+            // Log stack data for debugging
+            console.log(`Getting status for ${stackName}:`, stack ? {
+                id: stack.Id,
+                status: stack.Status,
+                name: stack.Name
+            } : 'not found');
+
+            // Simpel status logik
             if (!stack) {
-                console.log(`Stack ${stackName} not found in Portainer`);
-                return 'unknown';
+                return 'offline';
             }
 
-            console.log(`Stack ${stackName} status:`, stack.Status);
+            // Status 1 er active/online i Portainer
+            return stack.Status === 1 ? 'online' : 'offline';
 
-            const statusMap = {
-                1: 'online',     // Active
-                2: 'offline',    // Inactive
-                'active': 'online',
-                'inactive': 'offline'
-            };
-
-            const status = statusMap[stack.Status];
-            if (!status) {
-                console.log(`Unknown status for stack ${stackName}:`, stack.Status);
-                return 'unknown';
-            }
-
-            return status;
         } catch (error) {
             console.error(`Error getting status for stack ${stackName}:`, error);
-            return 'unknown';
+            return 'offline';
         }
     }
 
     async createStack(projectData) {
         try {
-            // Get stack template
             const stackContent = await this.getStackConfig(projectData.templateId);
             if (!stackContent) {
                 throw new Error('Template not found');
             }
 
-            // Configure stack content with correct domain names
             const configuredStack = stackContent
                 .replace(/CHANGEME01/g, projectData.name)
                 .replace(/CHANGEME02/g, `${projectData.name}-phpmyadmin`)
                 .replace(/SUBDOMAIN01/g, `${projectData.domain}`)
                 .replace(/SUBDOMAIN02/g, `db.${projectData.domain}`);
 
-            console.log('Creating stack:', {
-                name: projectData.name,
-                domains: {
-                    wordpress: `${projectData.domain}.kubelab.dk`,
-                    phpmyadmin: `db.${projectData.domain}.kubelab.dk`
-                }
-            });
-
-            // Deploy stack
-            const headers = await this.getAuthHeaders();
+            console.log(`Creating stack: ${projectData.name}`);
+            
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/create/swarm/string?endpointId=5`,
                 {
@@ -165,16 +151,15 @@ class PortainerService {
                     stackFileContent: configuredStack,
                     swarmID: "myst1l6mbp6kysq7rinrzzvda"
                 },
-                { headers }
+                { headers: await this.getAuthHeaders() }
             );
 
-            // Wait for services to start
-            await new Promise(resolve => setTimeout(resolve, 15000));
-            
+            // Vent på at stacken initialiseres
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
             return { 
                 success: true, 
-                status: 'online',  // Altid returner online for nye projekter
-                data: response.data,
+                status: 'online',
                 domains: {
                     wordpress: `${projectData.domain}.kubelab.dk`,
                     phpmyadmin: `db.${projectData.domain}.kubelab.dk`
@@ -182,8 +167,8 @@ class PortainerService {
             };
         } catch (error) {
             console.error('Stack deployment failed:', error);
-            if (error.response) {
-                console.error('Portainer error response:', error.response.data);
+            if (error.response?.data) {
+                console.error('Portainer error details:', error.response.data);
             }
             return { success: false, message: error.message };
         }
@@ -191,25 +176,20 @@ class PortainerService {
 
     async startStack(stackName) {
         try {
-            console.log(`Starting stack ${stackName}`);
             const stack = await this.getStack(stackName);
             if (!stack) {
-                console.log(`Stack ${stackName} not found`);
-                return false;
+                return false;  // Kan ikke starte en stack der ikke findes
             }
 
-            // Brug axios i stedet for fetch for konsistens
-            const response = await this.client.post(
+            await this.client.post(
                 `${this.portainerUrl}/api/stacks/${stack.Id}/start?endpointId=5`,
                 {},
                 { headers: await this.getAuthHeaders() }
             );
 
-            // Vent og tjek status
+            // Vent på at stacken starter
             await new Promise(resolve => setTimeout(resolve, 5000));
-            const status = await this.getStackStatus(stackName);
-            
-            return status === 'online';
+            return true;
 
         } catch (error) {
             console.error(`Error starting stack ${stackName}:`, error);
@@ -219,24 +199,20 @@ class PortainerService {
 
     async stopStack(stackName) {
         try {
-            console.log(`Stopping stack ${stackName}`);
             const stack = await this.getStack(stackName);
             if (!stack) {
-                console.log(`Stack ${stackName} not found`);
-                return false;
+                return true;  
             }
 
-            const response = await this.client.post(
+            await this.client.post(
                 `${this.portainerUrl}/api/stacks/${stack.Id}/stop?endpointId=5`,
                 {},
                 { headers: await this.getAuthHeaders() }
             );
 
-            // Vent og tjek status
+            // Vent på at stacken stopper
             await new Promise(resolve => setTimeout(resolve, 5000));
-            const status = await this.getStackStatus(stackName);
-            
-            return status === 'offline';
+            return true;
 
         } catch (error) {
             console.error(`Error stopping stack ${stackName}:`, error);
