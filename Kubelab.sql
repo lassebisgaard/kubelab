@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Vært: mysql
--- Genereringstid: 17. 12 2024 kl. 19:15:03
+-- Genereringstid: 19. 12 2024 kl. 23:31:02
 -- Serverversion: 8.4.2
 -- PHP-version: 8.2.24
 
@@ -42,9 +42,8 @@ CREATE TABLE `Projects` (
 --
 
 INSERT INTO `Projects` (`ProjectId`, `ProjectName`, `Domain`, `Description`, `DateCreated`, `UserId`, `TemplateId`) VALUES
-(36, 'myawesomewp', 'myawesomewp', '', '2024-12-09 20:42:00', 14, 34),
-(37, 'mitnyeste', 'mitnyeste', '', '2024-12-09 20:45:44', 14, 33),
-(92, 'wptest', 'wptest', '', '2024-12-17 18:49:04', 11, 34);
+(118, 'projektwuoe2024', 'projektwuoe2024', '', '2024-12-19 21:43:26', 14, 34),
+(129, 'UCL semesterprojekt 2024', 'ucl2024', '', '2024-12-19 22:52:17', 11, 33);
 
 -- --------------------------------------------------------
 
@@ -175,7 +174,7 @@ CREATE TABLE `Users` (
 --
 
 INSERT INTO `Users` (`UserId`, `Name`, `Mail`, `Password`, `Expiration`, `TeamId`, `AvatarSeed`) VALUES
-(11, 'Admin', 'admin@live.dk', 'admin', '2024-12-18', 11, 'cute3'),
+(11, 'Admin', 'admin@live.dk', 'admin', '2024-12-18', 11, 'cute4'),
 (14, 'User', 'user@live.dk', 'user', '2025-01-30', 9, 'cute1');
 
 --
@@ -240,37 +239,37 @@ ALTER TABLE `Users`
 -- Tilføj AUTO_INCREMENT i tabel `Projects`
 --
 ALTER TABLE `Projects`
-  MODIFY `ProjectId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `ProjectId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `Roles`
 --
 ALTER TABLE `Roles`
-  MODIFY `RoleId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `RoleId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `Services`
 --
 ALTER TABLE `Services`
-  MODIFY `ServiceId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `ServiceId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `Teams`
 --
 ALTER TABLE `Teams`
-  MODIFY `TeamId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `TeamId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `Templates`
 --
 ALTER TABLE `Templates`
-  MODIFY `TemplateId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `TemplateId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `UserId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `UserId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- Begrænsninger for dumpede tabeller
