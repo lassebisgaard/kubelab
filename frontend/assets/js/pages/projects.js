@@ -78,14 +78,14 @@ class ProjectManager {
         const user = JSON.parse(localStorage.getItem('user'));
         const isAdmin = user?.isAdmin;
 
-        // Filter projects
+       
         const myProjects = this.projects.filter(p => p.ProjectType === 'own');
         const studentProjects = this.projects.filter(p => p.ProjectType === 'other');
 
         const templateSource = document.getElementById('project-card-template');
         const templateFunction = Handlebars.compile(templateSource.innerHTML);
 
-        // Render My Projects
+      
         myProjectsGrid.innerHTML = myProjects.map(project => templateFunction({
             id: project.ProjectId,
             name: project.ProjectName,
@@ -245,16 +245,19 @@ class ProjectManager {
 
     initProjectControls() {
         document.querySelectorAll('.project-controls .action-button').forEach(button => {
-            button.addEventListener('click', (e) => {
+            button.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 
                 const container = button.closest('.project-card, .table-row');
                 const projectId = container.dataset.projectId;
                 
                 if (button.title === 'Power') {
-                    this.handlePowerToggle(projectId, button);
+                    await this.handlePowerToggle(projectId, button);
                 } else if (button.title === 'Restart') {
-                    this.handleRestart(projectId, button);
+                    
+                    const powerButton = container.querySelector('[title="Power"]');
+                    await this.handlePowerToggle(projectId, powerButton);  
+                    await this.handlePowerToggle(projectId, powerButton);  
                 }
             });
         });
@@ -342,6 +345,35 @@ class ProjectManager {
                 );
             }
         });
+    }
+
+    async handleDelete(projectId) {
+        try {
+            const container = document.querySelector(`[data-project-id="${projectId}"]`);
+            if (container) {
+                container.classList.add('loading');  // Tilføj loading state
+            }
+
+            const response = await fetch(`http://localhost:3000/api/projects/${projectId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) throw new Error('Failed to delete project');
+            
+            // Redirect eller opdater UI
+            window.location.href = '/pages/projects.html';
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorMessage('Failed to delete project');
+        } finally {
+            const container = document.querySelector(`[data-project-id="${projectId}"]`);
+            if (container) {
+                container.classList.remove('loading');
+            }
+        }
     }
 }
 

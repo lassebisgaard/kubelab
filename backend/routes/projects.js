@@ -313,14 +313,14 @@ router.delete('/:id', async (req, res) => {
 
         if (project && project[0]) {
             try {
-                // Slet stack i Portainer
+           
                 await portainerService.deleteStack(project[0].ProjectName);
             } catch (portainerError) {
-                // Hvis fejlen er "not found", er det okay - fortsæt bare
+              
                 if (!portainerError.message?.includes('not found')) {
                     console.error('Portainer deletion failed:', portainerError);
                 }
-                // Vi fortsætter med at slette fra databasen uanset hvad
+    
             }
         }
 
@@ -438,6 +438,25 @@ router.get('/:id/status', async (req, res) => {
         res.json({ status });
     } catch (error) {
         res.status(500).json({ error: 'Failed to get project status' });
+    }
+});
+
+// Debug route
+router.get('/:id/debug', async (req, res) => {
+    try {
+        const [project] = await pool.execute(
+            'SELECT ProjectName FROM Projects WHERE ProjectId = ?',
+            [req.params.id]
+        );
+
+        if (!project || project.length === 0) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        await portainerService.debugStack(project[0].ProjectName);
+        res.json({ message: 'Debug info logged to console' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to debug project' });
     }
 });
 

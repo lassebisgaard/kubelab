@@ -10,14 +10,14 @@ class PortainerService {
         this.portainerToken = null;
         this.tokenExpiration = null;
         
-        // Create axios instance that accepts self-signed certificates
+    
         this.client = axios.create({
             httpsAgent: new https.Agent({  
                 rejectUnauthorized: false
             })
         });
 
-        // Add response interceptor for token handling
+
         this.client.interceptors.response.use(
             response => response,
             async error => {
@@ -86,6 +86,16 @@ class PortainerService {
                 `${this.portainerUrl}/api/stacks`,
                 { headers: await this.getAuthHeaders() }
             );
+
+            // Log kun de relevante properties
+            console.log('All stacks from Portainer:', response.data.map(stack => ({
+                name: stack.Name,
+                id: stack.Id,
+                status: stack.Status,
+                endpointId: stack.EndpointId,
+                swarmId: stack.SwarmId
+            })));
+
             return response.data;
         } catch (error) {
             console.error('Failed to get stacks:', error);
@@ -96,8 +106,15 @@ class PortainerService {
     async getStack(stackName) {
         try {
             const stacks = await this.getStacks();
-            // Simpel søgning efter stack navn
-            return stacks.find(s => s.Name === stackName);
+            // Gør søgningen case-insensitive og fjern mellemrum
+            const normalizedSearchName = stackName.toLowerCase().replace(/\s+/g, '');
+            const stack = stacks.find(s => s.Name.toLowerCase().replace(/\s+/g, '') === normalizedSearchName);
+            
+            if (stack) {
+                console.log(`Found stack ${stackName} with status: ${stack.Status}`);
+            }
+            
+            return stack;
         } catch (error) {
             console.error('Failed to get stack:', error);
             return null;
@@ -108,23 +125,29 @@ class PortainerService {
         try {
             const stack = await this.getStack(stackName);
             
-            // Log stack data for debugging
-            console.log(`Getting status for ${stackName}:`, stack ? {
-                id: stack.Id,
-                status: stack.Status,
-                name: stack.Name
-            } : 'not found');
+            // Mere detaljeret logging
+            if (stack) {
+                console.log(`Stack status check for ${stackName}:`, {
+                    id: stack.Id,
+                    status: stack.Status,
+                    name: stack.Name,
+                    endpointId: stack.EndpointId,
+                    swarmId: stack.SwarmId,
+                    creationDate: new Date(stack.CreationDate * 1000).toISOString()
+                });
+            } else {
+                console.log(`Stack ${stackName} not found in Portainer`);
+            }
 
-            // Simpel status logik
             if (!stack) {
                 return 'offline';
             }
 
-            // Status 1 er active/online i Portainer
+            // Vi ved nu at Status: 1 er den korrekte online status
             return stack.Status === 1 ? 'online' : 'offline';
 
         } catch (error) {
-            console.error(`Error getting status for stack ${stackName}:`, error);
+            console.error(`Error getting status for ${stackName}:`, error);
             return 'offline';
         }
     }
@@ -136,26 +159,28 @@ class PortainerService {
                 throw new Error('Template not found');
             }
 
+            e
+            const stackName = projectData.name.replace(/[^a-zA-Z0-9]/g, '');
+
             const configuredStack = stackContent
-                .replace(/CHANGEME01/g, projectData.name)
-                .replace(/CHANGEME02/g, `${projectData.name}-phpmyadmin`)
+                .replace(/CHANGEME01/g, stackName)  
+                .replace(/CHANGEME02/g, `${stackName}-phpmyadmin`)
                 .replace(/SUBDOMAIN01/g, `${projectData.domain}`)
                 .replace(/SUBDOMAIN02/g, `db.${projectData.domain}`);
 
-            console.log(`Creating stack: ${projectData.name}`);
+            console.log(`Creating stack: ${stackName}`);
             
             const response = await this.client.post(
                 `${this.portainerUrl}/api/stacks/create/swarm/string?endpointId=5`,
                 {
-                    name: projectData.name,
+                    name: stackName,  
                     stackFileContent: configuredStack,
                     swarmID: "myst1l6mbp6kysq7rinrzzvda"
                 },
                 { headers: await this.getAuthHeaders() }
             );
 
-            // Vent på at stacken initialiseres
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise(resolve => setTimeout(resolve, 20000));
 
             return { 
                 success: true, 
@@ -167,9 +192,6 @@ class PortainerService {
             };
         } catch (error) {
             console.error('Stack deployment failed:', error);
-            if (error.response?.data) {
-                console.error('Portainer error details:', error.response.data);
-            }
             return { success: false, message: error.message };
         }
     }
@@ -178,7 +200,7 @@ class PortainerService {
         try {
             const stack = await this.getStack(stackName);
             if (!stack) {
-                return false;  // Kan ikke starte en stack der ikke findes
+                return false;  
             }
 
             await this.client.post(
@@ -187,7 +209,7 @@ class PortainerService {
                 { headers: await this.getAuthHeaders() }
             );
 
-            // Vent på at stacken starter
+           
             await new Promise(resolve => setTimeout(resolve, 5000));
             return true;
 
@@ -210,7 +232,7 @@ class PortainerService {
                 { headers: await this.getAuthHeaders() }
             );
 
-            // Vent på at stacken stopper
+          
             await new Promise(resolve => setTimeout(resolve, 5000));
             return true;
 
@@ -222,27 +244,69 @@ class PortainerService {
 
     async deleteStack(stackName) {
         try {
-            // Først henter vi stack ID baseret på navnet
-            const stacks = await this.getStacks();
-            const stack = stacks.find(s => s.Name === stackName);
+            const stack = await this.getStack(stackName);
             
             if (!stack) {
-                throw new Error(`Stack ${stackName} not found`);
+                console.log(`Stack ${stackName} already deleted or not found`);
+                return true;
             }
 
-            // Brug this.client i stedet for fetch
-            const response = await this.client.delete(
+            // Reducer ventetiderne
+            await this.stopStack(stackName);
+            await new Promise(resolve => setTimeout(resolve, 1000));  
+
+            await this.client.delete(
                 `${this.portainerUrl}/api/stacks/${stack.Id}?endpointId=5`,
                 { headers: await this.getAuthHeaders() }
             );
-
-            // Vent kort tid for at sikre sletningen er gennemført
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
+           
+            await new Promise(resolve => setTimeout(resolve, 1000));  
             return true;
+
         } catch (error) {
             console.error('Error deleting stack:', error);
+            const stillExists = await this.getStack(stackName);
+            if (!stillExists) {
+                return true; 
+            }
             throw error;
+        }
+    }
+
+    async debugStack(stackName) {
+        try {
+            console.log(`\n=== Debug info for stack: ${stackName} ===`);
+            
+           
+            const response = await this.client.get(
+                `${this.portainerUrl}/api/stacks`,
+                { headers: await this.getAuthHeaders() }
+            );
+            
+            const stack = response.data.find(s => s.Name === stackName);
+            
+            if (stack) {
+                console.log('Stack found:', {
+                    id: stack.Id,
+                    name: stack.Name,
+                    status: stack.Status,
+                    endpointId: stack.EndpointId,
+                    swarmId: stack.SwarmId,
+                    creationDate: new Date(stack.CreationDate * 1000).toISOString()
+                });
+                
+        
+                const status = await this.getStackStatus(stackName);
+                console.log('Status from getStackStatus:', status);
+                
+            } else {
+                console.log('Stack not found in Portainer');
+            }
+            
+            console.log('===============================\n');
+            
+        } catch (error) {
+            console.error('Debug error:', error);
         }
     }
 }

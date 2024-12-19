@@ -116,8 +116,5 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Fjern eller udkommenter disse routes da de ikke bruges i prototypen
-// router.post('/forgot-password', async (req, res) => { ... });
-// router.post('/reset-password', async (req, res) => { ... });
 
 module.exports = router; 
