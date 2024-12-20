@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// Brug samme secret key som i auth.js
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {

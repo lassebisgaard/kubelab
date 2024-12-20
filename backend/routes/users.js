@@ -106,7 +106,6 @@ router.get('/', async (req, res) => {
             ORDER BY u.Name
         `);
 
-        // For hver bruger henter vi deres projekter
         for (let user of users) {
             const [projects] = await pool.execute(`
                 SELECT 
@@ -269,7 +268,7 @@ router.get('/options', async (req, res) => {
     }
 });
 
-// Derefter kommer ID route
+//  ID route
 router.get('/:id', async (req, res) => {
     try {
         const userId = req.params.id;
@@ -398,7 +397,6 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Bruger ikke fundet' });
         }
 
-        // Hvis vi har et nyt avatar seed, opdater det
         if (avatarSeed) {
             console.log('Updating avatar seed:', avatarSeed);
             try {
@@ -417,7 +415,6 @@ router.put('/:id', async (req, res) => {
             }
         }
 
-        // Resten af den eksisterende kode for andre opdateringer...
         const updates = {
             name,
             email,
@@ -470,7 +467,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Tilføj denne nye route til at slette bruger
 router.delete('/:id', async (req, res) => {
     const connection = await pool.getConnection();
     try {

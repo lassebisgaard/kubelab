@@ -24,7 +24,7 @@ class PortainerService {
                 if (error.response?.status === 401) {
                     this.portainerToken = null;
                     this.tokenExpiration = null;
-                    // Retry the request once
+    
                     const config = error.config;
                     config.headers = await this.getAuthHeaders();
                     return this.client.request(config);
@@ -42,7 +42,6 @@ class PortainerService {
             });
             
             this.portainerToken = response.data.jwt;
-            // Set token expiration to 7 hours from now
             this.tokenExpiration = Date.now() + (7 * 60 * 60 * 1000);
             return this.portainerToken;
         } catch (error) {
@@ -52,7 +51,6 @@ class PortainerService {
     }
 
     async getAuthHeaders() {
-        // Check if token is expired or will expire in the next 5 minutes
         if (!this.portainerToken || !this.tokenExpiration || 
             Date.now() > (this.tokenExpiration - 5 * 60 * 1000)) {
             await this.login();
@@ -87,7 +85,6 @@ class PortainerService {
                 { headers: await this.getAuthHeaders() }
             );
 
-            // Log kun de relevante properties
             console.log('All stacks from Portainer:', response.data.map(stack => ({
                 name: stack.Name,
                 id: stack.Id,
@@ -106,7 +103,6 @@ class PortainerService {
     async getStack(stackName) {
         try {
             const stacks = await this.getStacks();
-            // Gør søgningen case-insensitive og fjern mellemrum
             const normalizedSearchName = stackName.toLowerCase().replace(/\s+/g, '');
             const stack = stacks.find(s => s.Name.toLowerCase().replace(/\s+/g, '') === normalizedSearchName);
             
@@ -125,7 +121,6 @@ class PortainerService {
         try {
             const stack = await this.getStack(stackName);
             
-            // Mere detaljeret logging
             if (stack) {
                 console.log(`Stack status check for ${stackName}:`, {
                     id: stack.Id,
@@ -143,7 +138,6 @@ class PortainerService {
                 return 'offline';
             }
 
-            // Vi ved nu at Status: 1 er den korrekte online status
             return stack.Status === 1 ? 'online' : 'offline';
 
         } catch (error) {
@@ -159,7 +153,6 @@ class PortainerService {
                 throw new Error('Template not found');
             }
 
-            // Fjern mellemrum og specialtegn fra navnet med det samme
             const stackName = projectData.name.replace(/[^a-zA-Z0-9]/g, '');
 
             const configuredStack = stackContent

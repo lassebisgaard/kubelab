@@ -115,7 +115,6 @@ router.post('/', upload.single('preview'), async (req, res) => {
         console.log('File received:', req.file);
         console.log('Form data:', req.body);
         
-        // Get YAML content directly from the request body
         const yamlContent = req.body.yamlContent;
         if (!yamlContent) {
             throw new Error('YAML content is required');
@@ -249,7 +248,6 @@ router.delete('/:id', async (req, res) => {
     try {
         await connection.beginTransaction();
         
-        // Slet service relations og template i én transaktion
         await connection.execute(
             'DELETE FROM template_services WHERE template_id = ?',
             [req.params.id]

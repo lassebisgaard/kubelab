@@ -4,7 +4,6 @@ const pool = require('../config/database');
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('../middleware/auth');
 
-// Brug en default secret key for udvikling
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {

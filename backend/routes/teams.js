@@ -83,10 +83,9 @@ const pool = require('../config/database');
  *         description: Team kan ikke slettes (har medlemmer)
  */
 
-// Get all teams
+// Hent alle teams
 router.get('/', async (req, res) => {
     try {
-        // Først henter vi teams med deres medlem antal
         const [teams] = await pool.execute(`
             SELECT 
                 t.TeamId,
@@ -99,7 +98,6 @@ router.get('/', async (req, res) => {
             ORDER BY t.TeamName
         `);
 
-        // For hvert team henter vi deres medlemmer med projekt antal
         for (let team of teams) {
             const [members] = await pool.execute(`
                 SELECT 
@@ -125,7 +123,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Create new team
+//Opret nyt team
 router.post('/', async (req, res) => {
     const connection = await pool.getConnection();
     try {

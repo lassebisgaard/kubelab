@@ -24,14 +24,12 @@ class TeamForm extends BaseStepForm {
             }
         };
 
-        // Lyt efter ændringer i input felter
         nameInput?.addEventListener('input', checkInputs);
         expirationInput?.addEventListener('change', checkInputs);
         descriptionInput?.addEventListener('input', () => {
             this.formData.description = descriptionInput.value;
         });
         
-        // Kør initial check
         checkInputs();
     }
 
@@ -57,7 +55,6 @@ class TeamForm extends BaseStepForm {
             modal.classList.remove('show');
         });
 
-        // Tilføj søgefunktionalitet
         const searchInput = modal.querySelector('input[type="text"]');
         searchInput?.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
@@ -135,7 +132,6 @@ class TeamForm extends BaseStepForm {
             };
         });
 
-        // Opdater visningen i step 2
         const container = document.querySelector('.services-selection');
         if (container) {
             container.innerHTML = this.formData.members.map(member => `
@@ -148,7 +144,6 @@ class TeamForm extends BaseStepForm {
                 </div>
             `).join('');
 
-            // Tilføj event listeners til remove knapper
             container.querySelectorAll('.service-tag--remove').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const tag = e.target.closest('.service-tag--removable');
@@ -175,7 +170,6 @@ class TeamForm extends BaseStepForm {
             </div>
         `).join('');
 
-        // Tilføj event listeners til remove knapper
         container.querySelectorAll('.service-tag--remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tag = e.target.closest('.service-tag--removable');
@@ -184,7 +178,6 @@ class TeamForm extends BaseStepForm {
             });
         });
 
-        // Opdater confirmation step
         const membersConfirm = document.getElementById('team-members-confirm');
         if (membersConfirm) {
             membersConfirm.innerHTML = this.formData.members.length > 0 
@@ -197,7 +190,6 @@ class TeamForm extends BaseStepForm {
         this.formData.members = this.formData.members.filter(m => m.userId !== userId);
         this.updateMemberDisplay();
         
-        // Fjern checkmark i modal hvis den er åben
         const checkbox = document.querySelector(`.user-option[data-id="${userId}"] input[type="checkbox"]`);
         if (checkbox) {
             checkbox.checked = false;
@@ -233,12 +225,10 @@ class TeamForm extends BaseStepForm {
             return true;
         }
         else if (this.currentStep === 2) {
-            // Opdater members display i confirmation step
             this.updateMemberDisplay();
             return true;
         }
         else if (this.currentStep === 3) {
-            // På confirmation step skal vi bare returnere true for at tillade submission
             return true;
         }
 
@@ -286,11 +276,10 @@ class TeamForm extends BaseStepForm {
                 throw new Error('Failed to create team');
             }
 
-            // Skjul loading og vis success
             document.querySelector('.loading-overlay').classList.remove('show');
             document.querySelector('.success-overlay').classList.add('show');
 
-            // Vent 2 sekunder og redirect
+            
             setTimeout(() => {
                 window.location.href = '/pages/teams.html';
             }, 2000);
