@@ -1,12 +1,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const currentPath = window.location.pathname;
-    
-    // Kun tjek auth hvis vi er på login siden
+
     if (!currentPath.includes('login.html')) {
         return;
     }
 
-    // Check if already logged in
     const token = localStorage.getItem('token');
     if (token) {
         try {
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Auth check error:', error);
         }
         
-        // Token er invalid, fjern det
         localStorage.removeItem('token');
         localStorage.removeItem('user');
     }
@@ -53,7 +50,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const handleLoginSuccess = async (response) => {
                     const { token, user } = response;
 
-                    // Hent den fulde brugerdata inklusiv avatar
                     const userResponse = await fetch(`http://localhost:3000/api/users/${user.UserId}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -66,11 +62,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const userData = await userResponse.json();
 
-                    // Gem både token og den komplette brugerdata (inklusiv avatarSeed)
                     localStorage.setItem('token', token);
                     localStorage.setItem('user', JSON.stringify({
                         ...user,
-                        avatarSeed: userData.avatarSeed  // Tilføj avatarSeed til localStorage
+                        avatarSeed: userData.avatarSeed
                     }));
 
                     window.location.href = '/pages/projects.html';

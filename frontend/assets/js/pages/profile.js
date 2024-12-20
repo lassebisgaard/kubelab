@@ -220,24 +220,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             confirmBtn.addEventListener('click', async () => {
                 try {
                     const getValue = (selector) => {
-                        // Hvis det er team eller role og brugeren ikke er admin, returner den oprindelige værdi
+
                         if ((selector === 'userTeam' || selector === 'userRole') && !isAdmin) {
                             return userData[selector.replace('user', '').toLowerCase()];
                         }
                         
-                        // For almindelige input felter
                         const input = document.querySelector(`[for="${selector}"] input`);
                         if (input) {
                             return input.value;
                         }
 
-                        // Hvis ikke der er et input, brug den eksisterende værdi fra span
                         const span = document.getElementById(selector);
                         if (span) {
                             return span.textContent;
                         }
 
-                        // Hvis vi ikke kan finde værdien, brug den oprindelige værdi fra userData
                         switch(selector) {
                             case 'userName':
                                 return userData.name;
@@ -274,7 +271,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     
                     // Opdater UI med nye værdier
                     Object.entries(updatedData).forEach(([key, value]) => {
-                        if (value) { // Kun opdater hvis vi har en værdi
+                        if (value) { 
                             updateElement(`user${key.charAt(0).toUpperCase() + key.slice(1)}`, value);
                         }
                     });
@@ -314,7 +311,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (style) {
                 const avatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${userData.avatarSeed}&backgroundColor=${style.color}`;
                 
-                // Opdater både profil og sidebar avatar
                 const profileAvatar = document.getElementById('profileAvatar');
                 const sidebarAvatar = document.querySelector('.profile-link img');
                 
@@ -327,7 +323,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Fejl ved indlæsning af profil:', error);
     }
 
-    // Håndter logout knap
     const logoutButton = document.querySelector('.logout button');
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
@@ -337,11 +332,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Tilføj dette i DOMContentLoaded event listener
     const deleteButton = document.querySelector('.button.delete');
     if (deleteButton) {
         deleteButton.addEventListener('click', async () => {
-            // Vis bekræftelses dialog
             if (confirm('Er du sikker på at du vil slette din profil? Dette kan ikke fortrydes.')) {
                 try {
                     const response = await fetch(`http://localhost:3000/api/users/${currentUser.UserId}`, {
@@ -355,7 +348,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         throw new Error('Kunne ikke slette bruger');
                     }
 
-                    // Log ud og redirect til login siden
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
                     window.location.href = '/pages/login.html';
@@ -367,14 +359,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Tilføj i DOMContentLoaded event listener
+
 
     const changeAvatarBtn = document.getElementById('changeAvatar');
     const avatarModal = document.getElementById('avatarModal');
     const avatarGrid = document.querySelector('.avatar-grid');
 
     if (changeAvatarBtn && avatarModal && avatarGrid) {
-        // Generer avatar muligheder
+
         avatarGrid.innerHTML = avatarStyles.map(style => `
             <div class="avatar-option" data-seed="${style.seed}">
                 <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${style.seed}&backgroundColor=${style.color}" 
@@ -382,9 +374,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
         `).join('');
 
-        // Vis modal når man klikker på edit ikon
+
         changeAvatarBtn.addEventListener('click', () => {
-            // Tilføj modal-content-large klassen til modal content
+
             const modalContent = avatarModal.querySelector('.modal-content');
             if (modalContent) {
                 modalContent.classList.add('modal-content-large');
@@ -392,14 +384,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             avatarModal.style.display = 'flex';
         });
 
-        // Luk modal når man klikker udenfor
         avatarModal.addEventListener('click', (e) => {
             if (e.target === avatarModal) {
                 avatarModal.style.display = 'none';
             }
         });
 
-        // Tilføj denne event listener for close button
+
         const closeModalBtn = document.querySelector('.close-modal');
         if (closeModalBtn) {
             closeModalBtn.addEventListener('click', () => {
@@ -412,19 +403,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             const option = e.target.closest('.avatar-option');
             if (!option) return;
 
-            // Fjern tidligere selection
             document.querySelectorAll('.avatar-option.selected').forEach(el => 
                 el.classList.remove('selected')
             );
             
-            // Tilføj selection til den valgte
             option.classList.add('selected');
 
             const seed = option.dataset.seed;
             const style = avatarStyles.find(s => s.seed === seed);
             const newAvatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${seed}&backgroundColor=${style.color}`;
 
-            // Opdater avatar i UI (både profil og sidebar)
             document.getElementById('profileAvatar').src = newAvatarUrl;
             const sidebarAvatar = document.querySelector('.profile-link img');
             if (sidebarAvatar) {
@@ -445,7 +433,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (!response.ok) throw new Error('Kunne ikke opdatere avatar');
                 
-                // Opdater også avatar i localStorage
                 const updatedUser = JSON.parse(localStorage.getItem('user'));
                 if (updatedUser) {
                     updatedUser.avatarSeed = seed;
@@ -454,7 +441,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 avatarModal.style.display = 'none';
                 
-                // Nulstil edit tilstand efter avatar opdatering
                 updateButtonStates(false);
             } catch (error) {
                 console.error('Fejl ved opdatering af avatar:', error);

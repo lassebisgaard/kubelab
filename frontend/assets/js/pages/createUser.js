@@ -11,16 +11,13 @@ class UserForm {
     }
 
     async initForm() {
-        // Load teams for dropdown
-        await this.loadTeams();
         
-        // Initialize custom selects
+        await this.loadTeams();
+       
         this.initCustomSelects();
         
-        // Initialize role select
         this.initRoleSelect();
 
-        // Add submit handler
         const createButton = document.querySelector('.create-user-button');
         createButton?.addEventListener('click', () => this.handleSubmission());
     }
@@ -49,7 +46,6 @@ class UserForm {
                 </div>
             `).join('');
 
-            // Add click handlers for team options
             optionsContainer.querySelectorAll('.option').forEach(option => {
                 option.addEventListener('click', () => {
                     const selectedText = teamSelect.querySelector('.selected-option');
@@ -70,17 +66,14 @@ class UserForm {
     initCustomSelects() {
         document.querySelectorAll('.custom-select').forEach(select => {
             const header = select.querySelector('.select-header');
-            
-            // Toggle dropdown on header click
+
             header?.addEventListener('click', () => {
-                // Close all other dropdowns
                 document.querySelectorAll('.custom-select').forEach(s => {
                     if (s !== select) s.classList.remove('open');
                 });
                 select.classList.toggle('open');
             });
 
-            // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
                 if (!select.contains(e.target)) {
                     select.classList.remove('open');
@@ -111,7 +104,6 @@ class UserForm {
         const emailInput = document.getElementById('user-email-input');
         const expirationInput = document.getElementById('user-expiration-input');
 
-        // Check if all elements exist
         if (!nameInput || !emailInput || !expirationInput) {
             console.error('Missing form elements:', {
                 nameInput: !!nameInput,
@@ -165,7 +157,6 @@ class UserForm {
 
         const formCard = document.querySelector('.form-card');
         if (formCard) {
-            // Fjern eksisterende fejlmeddelelser
             formCard.querySelectorAll('.error-message').forEach(el => el.remove());
             formCard.insertBefore(errorDiv, formCard.firstChild);
         }
@@ -200,11 +191,10 @@ class UserForm {
                 throw new Error('Failed to create user');
             }
 
-            // Skjul loading og vis success
+            
             document.querySelector('.loading-overlay').classList.remove('show');
             document.querySelector('.success-overlay').classList.add('show');
 
-            // Vent 2 sekunder og redirect
             setTimeout(() => {
                 window.location.href = '/pages/users.html';
             }, 2000);

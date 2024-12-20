@@ -35,7 +35,7 @@ function displayTeams(teams) {
         throw new Error('Kunne ikke finde accordion container');
     }
     
-    accordionContainer.innerHTML = ''; // Ryd eksisterende indhold
+    accordionContainer.innerHTML = ''; 
     
     if (teams.length === 0) {
         accordionContainer.innerHTML = '<p class="no-data">Ingen teams fundet</p>';
@@ -83,7 +83,6 @@ function displayTeams(teams) {
         accordionContainer.innerHTML += accordionItem;
     });
 
-    // Genaktiver accordion funktionalitet
     setupAccordion();
 }
 
@@ -107,7 +106,7 @@ function setupAccordion() {
     });
 }
 
-// Tilføj søgefunktionalitet
+
 document.addEventListener('DOMContentLoaded', () => {
     loadTeams();
     

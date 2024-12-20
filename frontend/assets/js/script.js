@@ -1,12 +1,9 @@
-// Define services as a regular object (no localStorage)
 window.SERVICES = {};
 
-// Update saveService to not use localStorage, but keep window.SERVICES functionality
 window.saveService = function(service) {
     window.SERVICES[service.id] = service;
 };
-
-// Add this function to initialize services
+    
 window.initializeServices = async function() {
     try {
         const token = localStorage.getItem('token');
@@ -58,12 +55,12 @@ function initServiceFilters() {
         const activeFilters = Array.from(newFilterContainer.querySelectorAll('.service-tag.active'))
             .map(tag => tag.dataset.service);
         
-        console.log('Active filters:', activeFilters); // Debug log
+        console.log('Active filters:', activeFilters); 
         
         // Filter template cards
         templateGrid.querySelectorAll('.project-template-card').forEach(card => {
             const cardServices = (card.dataset.services || '').split(',').filter(Boolean);
-            console.log('Card services:', cardServices); // Debug log
+            console.log('Card services:', cardServices); 
             
             const isVisible = activeFilters.length === 0 || 
                             activeFilters.some(filter => cardServices.includes(filter));
@@ -82,17 +79,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Initialize theme for all pages
         initializeTheme();
         
-        // If it's a public page, we don't need to initialize services or other protected features
         if (publicPages.some(page => currentPath.endsWith(page))) {
             return;
         }
         
-        // For protected pages, initialize everything
         await window.initializeServices();
         initSidebarToggle();
         await renderNavigation();
         
-        // Initialize service filters if we're on a page that uses them
         if (document.querySelector('.services-filter')) {
             initServiceFilters();
         }
@@ -344,7 +338,7 @@ async function renderNavigation() {
         const navigationHtml = template({
             user: {
                 ...user,
-                avatarUrl: avatarUrl  // Tilføj avatar URL til template data
+                avatarUrl: avatarUrl  
             },
             isProjectsPage: currentPath.includes('projects.html'),
             isTemplatesPage: currentPath.includes('templates.html'),
@@ -360,7 +354,6 @@ async function renderNavigation() {
     }
 }
 
-// Tilføj denne funktion for at håndtere navigation events
 function initializeNavigationEvents() {
     // Burger menu toggle
     const burgerMenu = document.querySelector('.burger-menu');

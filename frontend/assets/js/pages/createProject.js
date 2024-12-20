@@ -49,7 +49,6 @@ async function loadTemplates() {
             </div>
         `).join('');
 
-        // Add click handlers
         templateGrid.querySelectorAll('.project-template-card').forEach(card => {
             card.addEventListener('click', () => {
                 templateGrid.querySelectorAll('.project-template-card')
@@ -97,7 +96,6 @@ async function loadServices() {
             </div>
         `).join('');
 
-        // Initialize service filters
         window.initServiceFilters();
 
     } catch (error) {
@@ -106,7 +104,6 @@ async function loadServices() {
     }
 }
 
-// Add this function to handle search
 function initSearchFunctionality() {
     const searchInput = document.getElementById('template-search');
     if (!searchInput) return;

@@ -37,7 +37,6 @@ async function deleteUser(userId) {
 
         if (!response.ok) throw new Error('Failed to delete user');
         
-        // Reload users list
         loadUsers();
     } catch (error) {
         console.error('Error:', error);

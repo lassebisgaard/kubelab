@@ -12,7 +12,6 @@ window.BaseStepForm = class BaseStepForm {
         // Update maxSteps logic
         this.maxSteps = this.getMaxSteps();
         
-        // edit mode check...
         const urlParams = new URLSearchParams(window.location.search);
         this.editMode = urlParams.has('edit');
         this.editId = urlParams.get('edit');
@@ -586,13 +585,13 @@ window.BaseStepForm = class BaseStepForm {
         formData.append('userId', user.UserId);
         
         if (this.formData.yamlFile) {
-            // Read YAML file content and send it directly
+           
             const yamlContent = await this.formData.yamlFile.text();
             formData.append('yamlContent', yamlContent);
         }
         
         if (this.formData.previewImage) {
-            // If previewImage is a base64 string, convert to blob
+            
             if (typeof this.formData.previewImage === 'string' && this.formData.previewImage.startsWith('data:')) {
                 const response = await fetch(this.formData.previewImage);
                 const blob = await response.blob();
@@ -638,10 +637,8 @@ window.BaseStepForm = class BaseStepForm {
             const servicesContainer = document.querySelector('.services-selection');
             if (!servicesContainer) return;
 
-            // Fjern loading indicator
             servicesContainer.querySelector('.loading-indicator')?.remove();
 
-            // Brug samme HTML struktur som i templates.js
             servicesContainer.innerHTML = services.map(service => `
                 <div class="service-tag service-tag--selectable" 
                      data-service="${service.ServiceId}"
@@ -657,7 +654,6 @@ window.BaseStepForm = class BaseStepForm {
                 </div>
             `).join('');
 
-            // Tilføj click handlers som i templates.js
             servicesContainer.querySelectorAll('.service-tag--selectable').forEach(tag => {
                 // Handle service selection
                 tag.addEventListener('click', (e) => {
@@ -667,7 +663,6 @@ window.BaseStepForm = class BaseStepForm {
                     }
                 });
 
-                // Handle remove button hvis det er en template
                 if (this.type === 'template') {
                     const removeBtn = tag.querySelector('.service-tag--remove');
                     removeBtn?.addEventListener('click', async (e) => {
@@ -845,13 +840,12 @@ window.BaseStepForm = class BaseStepForm {
         this.formData.name = nameInput.value;
         this.formData.description = document.getElementById('template-description-input')?.value || '';
         
-        // Opdater preview før vi går videre
         this.updateTemplatePreview();
         return true;
     }
 
     updateTemplatePreview() {
-        // Opdater template navn og beskrivelse i step 2
+
         document.getElementById('template-name-confirm').textContent = this.formData.name;
         document.getElementById('template-description-confirm').textContent = 
             this.formData.description || 'No description';
@@ -963,7 +957,6 @@ window.BaseStepForm = class BaseStepForm {
         
         this.formData.services = selectedServices;
         
-        // Hvis vi er på template siden, opdater preview
         if (this.type === 'template') {
             this.updateTemplatePreview();
         }
@@ -983,7 +976,7 @@ window.BaseStepForm = class BaseStepForm {
 
             const closeModal = () => {
                 createServiceModal?.classList.remove('show');
-                // Reset form
+                
                 document.getElementById('service-name-input').value = '';
                 document.querySelectorAll('.icon-option').forEach(opt => 
                     opt.classList.remove('selected'));

@@ -17,7 +17,7 @@ class TemplateForm extends BaseStepForm {
         });
 
         modal.querySelector('#saveCreateService')?.addEventListener('click', () => {
-            // Implementer gem logik her
+            
             modal.classList.remove('show');
         });
 

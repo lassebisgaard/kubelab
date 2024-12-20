@@ -94,7 +94,6 @@ class ProjectManager {
             domain: `${project.Domain}.kubelab.dk`
         })).join('');
 
-        // Render Students Projects if admin
         if (isAdmin && studentProjects.length > 0) {
             studentsSection.style.display = 'block';
             const tableBody = studentsSection.querySelector('.table-body');
@@ -347,7 +346,6 @@ class ProjectManager {
 
             if (!response.ok) throw new Error('Failed to delete project');
             
-            // Redirect tilbage til projektlisten
             window.location.href = '/pages/projects.html';
 
         } catch (error) {

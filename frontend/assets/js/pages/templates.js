@@ -52,10 +52,8 @@ class TemplateManager {
 
             templateGrid.innerHTML = templatesHtml;
             
-            // Initialize template actions
             this.initTemplateActions();
             
-            // Hide loading indicator
             document.querySelector('.loading-indicator')?.classList.add('hidden');
         } catch (error) {
             console.error('Error:', error);
@@ -212,7 +210,6 @@ class TemplateManager {
         `;
         document.querySelector('.content-wrapper')?.appendChild(errorDiv);
         
-        // Remove error after 5 seconds
         setTimeout(() => errorDiv.remove(), 5000);
     }
 }
